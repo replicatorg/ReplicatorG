@@ -10,7 +10,7 @@ expected to uphold this code. Please report any unacceptable behavior to liam@cp
 
 ## Submitting issues
 
-* You can create an issue on [our issue tracker](https://github.com/archimedespi/ReplicatorG/issues/),
+* You can create an issue on [our issue tracker](https://github.com/replicatorg/ReplicatorG/issues/),
   but before doing that, please read the following notes on debugging and submitting issues,
   and include as many details as possible with your report.
   Also, we like it when people read [How To Ask Questions](http://www.catb.org/esr/faqs/smart-questions.html).
@@ -20,7 +20,7 @@ expected to uphold this code. Please report any unacceptable behavior to liam@cp
 * Include all stack traces.
 * On Mac, check Console.app for stack traces to include if reporting a crash.
 * If at all possible, please try to use a debugger to find out what line it crashes on, and include that.
-* Perform a [cursory search](https://github.com/ArchimedesPi/ReplicatorG/search?q=&type=Issues)
+* Perform a [cursory search](https://github.com/replicatorg/ReplicatorG/search?q=&type=Issues)
   to see if a similar issue has already been submitted.
 
 ## Pull requests
