@@ -1,0 +1,14 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix newlines, always insert a final newline, always use utf-8.
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+[*.{java,gradle,groovy}]
+indent_style = space
+indent_size = 2
