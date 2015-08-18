@@ -1,3 +1,14 @@
+plugins {
+  id 'java'
+}
+
+dependencies {
+  compile files("libs/*.jar")
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 version = '0050'
 ant.properties['replicatorg.version'] = this.version
 ant.importBuild 'build.xml'
