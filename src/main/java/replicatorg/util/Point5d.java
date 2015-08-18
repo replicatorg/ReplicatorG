@@ -6,7 +6,7 @@ import replicatorg.machine.model.AxisId;
 
 public class Point5d {
 	private static final int DIMENSIONS = 5;
-	private final double values[DIMENSIONS];
+	private final double[] values = new double[DIMENSIONS];
 
 	public Point5d() {
 		this(0d, 0d, 0d, 0d, 0d);
