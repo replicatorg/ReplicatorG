@@ -1,2 +1,3 @@
-ant.properties['replicatorg.version'] = '0050'
+version = '0050'
+ant.properties['replicatorg.version'] = this.version
 ant.importBuild 'build.xml'
