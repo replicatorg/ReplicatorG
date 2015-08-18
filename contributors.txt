@@ -33,6 +33,7 @@ the contributor could not be found, their github handle is listed instead.
 * Jetty
 * Alison Leonard
 * Ted Branston
+* Tom Lynch
 
 If you should be on this list and haven't been added, let us know immediately,
 on [our issue tracker](https://github.com/replicatorg/ReplicatorG/issues/)
