@@ -4,6 +4,7 @@ import javax.vecmath.Point3d;
 
 import replicatorg.machine.model.AxisId;
 
+
 public class Point5d {
 	private static final int DIMENSIONS = 5;
 	private final double[] values = new double[DIMENSIONS];
