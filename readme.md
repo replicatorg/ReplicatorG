@@ -1,5 +1,7 @@
 ReplicatorG
 ===========
+[![Issue Stats](http://issuestats.com/github/replicatorg/ReplicatorG/badge/issue?style=flat-square)](http://issuestats.com/github/replicatorg/ReplicatorG) [![Issue Stats](http://issuestats.com/github/replicatorg/ReplicatorG/badge/pr?style=flat-square)](http://issuestats.com/github/replicatorg/ReplicatorG)
+
 ReplicatorG is an open-source GCode based controller for RepRap / CNC machines.  It has 3 main goals:
 
 1. Be as simple to use, and as easy to install as possible.
@@ -21,12 +23,13 @@ ReplicatorG was forked from Arduino in August 2008 by Zach Smith.
 Adam Mayer took over maintenance of ReplicatorG in 2009.
 ReplicatorG was forked from Makerbot in August 2015 by Liam Marshall.
 
-See changelog.txt for a list of changes in each version.
+See [changelog.txt](https://github.com/replicatorg/ReplicatorG/blob/master/changelog.txt) for a list of changes in each version.
 
 People who have worked on ReplicatorG include:
 
-Zach 'Hoeken' Smith (http://www.zachhoeken.com)
-Marius Kintel (http://reprap.soup.io)
-Adam Mayer (http://makerbot.com)
-Far McKon (http://makerbot.com)
+- Zach 'Hoeken' Smith (http://www.zachhoeken.com)
+- Marius Kintel (http://reprap.soup.io)
+- Adam Mayer (http://makerbot.com)
+- Far McKon (http://makerbot.com)
+
 A full list of contributers is in contributers.txt
