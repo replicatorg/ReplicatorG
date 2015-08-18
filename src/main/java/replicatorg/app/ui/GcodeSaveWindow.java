@@ -1,7 +1,6 @@
 package replicatorg.app.ui;
 
 import java.io.File;
-import java.io.FileFilter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -16,7 +15,7 @@ public class GcodeSaveWindow
 		JFrame chooseFramer = new JFrame("Save Gcode...");
 		// Note: source for ExampleFileFilter can be found in FileChooserDemo,
 		// under the demo/jfc directory in the Java 2 SDK, Standard Edition.
-		myFileFilter filter = new myFileFilter();
+		GcodeFileFilter filter = new GcodeFileFilter();
 		chooser.setFileFilter(filter);
 		chooser.showSaveDialog(chooseFramer);
 		File fr = chooser.getSelectedFile();
@@ -33,7 +32,7 @@ public class GcodeSaveWindow
 		JFrame chooseFramer = new JFrame("Save Gcode...");
 		// Note: source for ExampleFileFilter can be found in FileChooserDemo,
 		// under the demo/jfc directory in the Java 2 SDK, Standard Edition.
-		myFileFilter filter = new myFileFilter();
+		GcodeFileFilter filter = new GcodeFileFilter();
 		chooser.setFileFilter(filter);
 		chooser.showSaveDialog(chooseFramer);
 		File f = chooser.getSelectedFile();
