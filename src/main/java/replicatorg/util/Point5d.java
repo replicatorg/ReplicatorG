@@ -162,7 +162,7 @@ public class Point5d {
 	
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 		sb.append(values[0]);
 		for (int idx = 1; idx < DIMENSIONS; idx++) {
