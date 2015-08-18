@@ -153,7 +153,9 @@ public class Point5d {
 		double ret = 0d;
 		for (int idx = 0; idx < DIMENSIONS; idx++) {
 			double absValue = Math.abs(values[idx]);
-			if ( absValue > ret )	ret = absValue;
+			if ( absValue > ret ) {
+				ret = absValue;
+			}
 		}
 		return ret;	
 	}
