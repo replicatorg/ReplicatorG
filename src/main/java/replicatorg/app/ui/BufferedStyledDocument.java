@@ -1,9 +1,5 @@
 package replicatorg.app.ui;
 
-/**
- * Created by @archimedespi on 8/18/15.
- */
-
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
