@@ -11,12 +11,12 @@ public class Point5d {
 	public Point5d() {
 		this(0d, 0d, 0d, 0d, 0d);
 	}
-	
+
 	public Point5d(double x, double y, double z, double a, double b) {
 		values[0] = x; values[1] = y; values[2] = z;
 		values[3] = a; values[4] = b;
 	}
-	
+
 	public Point5d(double x, double y, double z) {
 		values[0] = x; values[1] = y; values[2] = z;
 		values[3] = 0; values[4] = 0;
@@ -25,15 +25,15 @@ public class Point5d {
 	public Point5d(Point5d p) {
 		System.arraycopy(p.values,0,values,0,DIMENSIONS);
 	}
-	
+
 	// Getter/setter for by-AxisId access
 	public double axis(AxisId axis) { return values[axis.getIndex()]; }
 	public void setAxis(AxisId axis, double v) { values[axis.getIndex()] = v; }
-	
+
 	// Getter/setter for by-index access
 	public double get(int idx) { return values[idx]; }
 	public void set(int idx, double v) { values[idx] = v; }
-	
+
 	// Getters/setters for by-name access
 	public double x() { return values[0]; }
 	public double y() { return values[1]; }
@@ -46,7 +46,7 @@ public class Point5d {
 	public void setA(double a) { values[3] = a; }
 	public void setB(double b) { values[4] = b; }
 	public Point3d get3D() { return new Point3d(values); }
-	
+
 	public void add(Point5d p1) {
 		for (int idx = 0; idx < DIMENSIONS; idx++) {
 			values[idx] += p1.values[idx];
@@ -66,7 +66,7 @@ public class Point5d {
 	}
 
 	/** Set the value of each element of this point to be the
-	 * the value of the respective element of p1 divided by 
+	 * the value of the respective element of p1 divided by
 	 * p2: this.value[axis] = p1.value[axis] / p2.value[axis].
 	 * @param p1 numerator
 	 * @param p2 denominator
@@ -78,7 +78,7 @@ public class Point5d {
 	}
 
 	/** Set the value of each element of this point to be the
-	 * the value of the respective element of p1 multiplied by 
+	 * the value of the respective element of p1 multiplied by
 	 * p2: this.value[axis] = p1.value[axis] * p2.value[axis].
 	 * @param p1 multiplicand A
 	 * @param p2 multiplicand B
@@ -126,7 +126,7 @@ public class Point5d {
 		}
 		return Math.sqrt(acc);
 	}
-	
+
 	public double length() {
 		double acc = 0d;
 	for (int idx = 0; idx < DIMENSIONS; idx++) {
@@ -135,14 +135,14 @@ public class Point5d {
 		}
 		return Math.sqrt(acc);
 	}
-	
+
 	public double magnitude() {
 		double acc = 0d;
 		for (int idx = 0; idx < DIMENSIONS; idx++) {
 			double delta = values[idx];
 			acc += (delta*delta);
 		}
-		return Math.sqrt(acc);		
+		return Math.sqrt(acc);
 	}
 
 	/*
@@ -157,9 +157,9 @@ public class Point5d {
 				ret = absValue;
 			}
 		}
-		return ret;	
+		return ret;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
