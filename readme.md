@@ -1,6 +1,6 @@
 ReplicatorG
 ===========
-[![Java Style: Google](https://img.shields.io/badge/java%20style-google-3369e8.svg)](https://google.github.io/styleguide/javaguide.html)
+[![Java Style: Google](https://img.shields.io/badge/java%20style-google-3369e8.svg?style=flat-square)](https://google.github.io/styleguide/javaguide.html)
 [![Issue Stats](http://issuestats.com/github/replicatorg/ReplicatorG/badge/issue?style=flat-square)](http://issuestats.com/github/replicatorg/ReplicatorG) [![Issue Stats](http://issuestats.com/github/replicatorg/ReplicatorG/badge/pr?style=flat-square)](http://issuestats.com/github/replicatorg/ReplicatorG)
 
 ReplicatorG is an open-source GCode based controller for RepRap / CNC machines.  It has 3 main goals:
