@@ -1,5 +1,11 @@
 plugins {
   id 'java'
+  id 'application'
+  id 'checkstyle'
+}
+
+checkstyle {
+  configFile = new File(rootDir, "checkstyle.xml")
 }
 
 repositories {
@@ -14,6 +20,8 @@ dependencies {
   compile 'com.miglayout:miglayout:3.7.4'
   compile 'org.devzendo:Quaqua:7.3.4'
 }
+
+mainClassName = "replicatorg.app.Base"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
