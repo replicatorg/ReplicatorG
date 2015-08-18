@@ -150,7 +150,7 @@
 
 	<!--
   <taskdef name="testng" classpath="test/lib/testng.jar" classname="org.testng.TestNGAntTask" />
-  
+
   <target name="test" depends="jar,compile-tests">
   	<testng classpathref="test.cp" suiteName="" testName="">
 		<sysproperty key="java.library.path" path="${native.lib.dir}"/>
@@ -201,7 +201,7 @@
 		</copy>
 
 		<copy todir="${reso.dir}">
-			<filelist dir="." files="license.txt,readme.txt,todo.txt,contributors.txt" />
+			<filelist dir="." files="license.txt,readme.md,contributors.txt" />
 		</copy>
 		<copy todir="${reso.dir}/skein_engines">
 			<fileset dir="skein_engines" excludes="*.pyc" />
@@ -218,7 +218,7 @@
 		<copy todir="${reso.dir}/docs">
 			<fileset dir="docs/" excludes="HOWTO-add-new-skeinforge.txt,overview.odg" />
 		</copy>
-	
+
 		<!-- permissions -->
 		<chmod file="${reso.dir}/skein_engines/mg_engines/mac/miracle_grue" perm="ugo+rx" />
 		<chmod file="${reso.dir}/skein_engines/slic3r_engines/mac/slic3r" perm="ugo+rx" />
@@ -230,9 +230,8 @@
 		<delete dir="${target.dir}/slic3r" />
 		<delete dir="${target.dir}/scripts" />
 		<delete dir="${target.dir}/skein_engines" />
-		<delete file="${target.dir}/todo.txt" />
 		<delete file="${target.dir}/contributors.txt" />
-		<delete file="${target.dir}/readme.txt" />
+		<delete file="${target.dir}/readme.md" />
 		<delete file="${target.dir}/license.txt" />
 
 		<chmod file="${reso.dir}/tools/avrdude" perm="ugo+rx" />
@@ -277,7 +276,7 @@
 		<echo message="Preparing replicatorG. Version: ${replicatorg.version}" />
 		<mkdir dir="${target.dir}" />
 		<copy todir="${target.dir}">
-			<filelist dir="." files="license.txt,readme.txt,todo.txt,contributors.txt" />
+			<filelist dir="." files="license.txt,readme.md,contributors.txt" />
 		</copy>
 		<copy todir="${target.dir}/skein_engines">
 			<fileset dir="skein_engines" excludes="*.pyc" />
