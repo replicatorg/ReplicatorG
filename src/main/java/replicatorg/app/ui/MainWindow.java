@@ -178,14 +178,14 @@ ToolpathGenerator.GeneratorListener
 	static final String WINDOW_TITLE = "ReplicatorG" + " - " + Base.VERSION_NAME;
 
 
-	final static String MODEL_TAB_KEY = "MODEL";
-	final static String GCODE_TAB_KEY = "GCODE";
+	static final String MODEL_TAB_KEY = "MODEL";
+	static final String GCODE_TAB_KEY = "GCODE";
 	// p5 icon for the window
 	Image icon;
 
 	MachineLoader machineLoader;
 
-	static public final KeyStroke WINDOW_CLOSE_KEYSTROKE = 
+	public static final KeyStroke WINDOW_CLOSE_KEYSTROKE =
 			KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
 	static final int HANDLE_NEW = 1;
