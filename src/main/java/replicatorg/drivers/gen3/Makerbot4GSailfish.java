@@ -27,15 +27,12 @@
 package replicatorg.drivers.gen3;
 
 import java.awt.Color;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Hashtable;
-import java.util.logging.Level;
 
 import replicatorg.app.Base;
 import replicatorg.drivers.InteractiveDisplay;
-import replicatorg.drivers.OnboardParameters;
 import replicatorg.drivers.RetryException;
 import replicatorg.drivers.Version;
 import replicatorg.machine.model.AxisId;
@@ -430,7 +427,7 @@ public class Makerbot4GSailfish extends Makerbot4GAlternateDriver
 			current.setA(0);	//Because A is a relative move
 			current.setB(0);	//Because B is a relative move
 			Point5d deltaStepsFinal = getAbsDeltaSteps(current, target);
-			double dda_interval = usec / deltaStepsFinal.absolute_maximum();
+			double dda_interval = usec / deltaStepsFinal.absoluteMaximum();
 
 			//Convert dda_interval into dda_rate (dda steps per second on the master axis)
 			double dda_rate = 1000000d / dda_interval;
@@ -438,7 +435,7 @@ public class Makerbot4GSailfish extends Makerbot4GAlternateDriver
 			//System.out.println(p.toString());
 			//System.out.println(target.toString());
 			//System.out.println("\t steps: " + steps.toString() +"\t dda_rate: " + dda_rate);
-			//System.out.println("\t usec: " + usec + " dda_interval: " + dda_interval + " absolute_maximum: " + deltaSteps.absolute_maximum());
+			//System.out.println("\t usec: " + usec + " dda_interval: " + dda_interval + " absoluteMaximum: " + deltaSteps.absoluteMaximum());
 			//System.out.println("\t deltaSteps: " + deltaStepsFinal.toString() + " distance: " + distance + " feedrate: " + feedrate);
 			int relativeAxes = (1 << AxisId.A.getIndex()) | (1 << AxisId.B.getIndex());
 
