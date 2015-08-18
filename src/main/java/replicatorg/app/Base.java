@@ -84,8 +84,8 @@ import replicatorg.machine.model.MachineType;
 import replicatorg.uploader.FirmwareUploader;
 import ch.randelshofer.quaqua.QuaquaManager;
 
-//import com.apple.mrj.MRJApplicationUtils;
-//import com.apple.mrj.MRJOpenDocumentHandler;
+import com.apple.mrj.MRJApplicationUtils;
+import com.apple.mrj.MRJOpenDocumentHandler;
 
 /**
  * Primary role of this class is for platform identification and general
@@ -550,16 +550,16 @@ public class Base {
 		// register a temporary/early version of the mrj open document handler,
 		// because the event may be lost (sometimes, not always) by the time
 		// that MainWindow is properly constructed.
-//		MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
-//			public void handleOpenFile(File file) {
-//				// this will only get set once.. later will be handled
-//				// by the MainWindow version of this fella
-//				if (Base.openedAtStartup == null) {
-//					Base.openedAtStartup = file.getAbsolutePath();
-//				}
-//			}
-//		};
-//		MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
+		MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
+			public void handleOpenFile(File file) {
+				// this will only get set once.. later will be handled
+				// by the MainWindow version of this fella
+				if (Base.openedAtStartup == null) {
+					Base.openedAtStartup = file.getAbsolutePath();
+				}
+			}
+		};
+		MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
 
 		// Create the new application "Base" class.
 		new Base(cleanPrefs);
@@ -887,7 +887,7 @@ public class Base {
 						url = sb.toString();
 					}
 				}
-//				com.apple.mrj.MRJFileUtils.openURL(url);
+				com.apple.mrj.MRJFileUtils.openURL(url);
 
 			} else if (Base.isLinux()) {
 				String launcher = preferences.get("launcher.linux","gnome-open");
