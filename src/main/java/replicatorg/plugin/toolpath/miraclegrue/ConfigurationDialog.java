@@ -147,4 +147,4 @@ class ConfigurationDialog extends JDialog {
 		MiracleGrueGenerator.setSelectedProfile(p.toString());
 		return true;
 	}
-};
+}

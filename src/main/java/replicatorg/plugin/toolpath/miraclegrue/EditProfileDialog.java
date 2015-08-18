@@ -256,4 +256,4 @@ class EditProfileDialog extends JDialog {
 			}
 		});
 	}
-};
+}

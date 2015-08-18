@@ -25,7 +25,7 @@ public class UsingRemoteFile implements MachineBuilder{
 			return;
 		}
 		
-		sdcc = (SDCardCapture)driver;;
+		sdcc = (SDCardCapture)driver;
 		
 		if (SDCardCapture.ResponseCode.processSDResponse(sdcc.playback(remoteName))) {
 			setupFailed = false;

@@ -5,7 +5,7 @@ import replicatorg.drivers.RetryException;
 
 public class DisableSpindle implements DriverCommand {
 
-	public DisableSpindle() {};
+	public DisableSpindle() {}
 	
 	@Override
 	public void run(Driver driver) throws RetryException {

@@ -34,11 +34,11 @@ public class UploaderDialog extends JDialog implements ActionListener {
 	FirmwareUploader uploader;
 	
 	enum State {
-		SELECTING_BOARD,
-		SELECTING_FIRMWARE,
-		SELECTING_PORT,
-		UPLOADING
-	};
+    SELECTING_BOARD,
+    SELECTING_FIRMWARE,
+    SELECTING_PORT,
+    UPLOADING
+  }
 	
 	State state;
 

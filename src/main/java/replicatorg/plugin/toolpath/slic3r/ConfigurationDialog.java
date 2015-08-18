@@ -147,4 +147,4 @@ class ConfigurationDialog extends JDialog {
 		Slic3rGenerator.setSelectedProfile(p.toString());
 		return true;
 	}
-};
+}

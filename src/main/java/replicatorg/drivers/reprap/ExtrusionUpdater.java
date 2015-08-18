@@ -38,7 +38,7 @@ public class ExtrusionUpdater {
 	public enum Direction
 	{
 		forward,
-		reverse;
+		reverse
 	}
 
 	public ExtrusionUpdater(RepRap5DDriver driver)

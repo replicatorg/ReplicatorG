@@ -198,4 +198,4 @@ class ConfigurationDialog extends JDialog {
 		SkeinforgeGenerator.setSelectedProfile(p.toString());
 		return true;
 	}
-};
+}

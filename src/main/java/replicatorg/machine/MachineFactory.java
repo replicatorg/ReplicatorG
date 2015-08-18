@@ -91,7 +91,7 @@ public class MachineFactory {
 	}
 
 	static class MachineMap extends HashMap<String,Element> {
-	};
+	}
 	
 	private static MachineMap machineMap = null;
 	

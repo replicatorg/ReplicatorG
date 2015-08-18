@@ -100,7 +100,7 @@ public class ToolpathGeneratorFactory {
 				*/
 				return prefs;
 			}
-		};
+		}
 		
 		class Skeinforge31 extends SkeinforgeGenerator {
 
@@ -124,7 +124,7 @@ public class ToolpathGeneratorFactory {
 
 				return prefs;
 			}
-		};
+		}
 		
 	
 		class Skeinforge35 extends SkeinforgeGenerator {
@@ -202,7 +202,7 @@ public class ToolpathGeneratorFactory {
 
 				return prefs;
 			}
-		};
+		}
 
 		class Skeinforge40 extends SkeinforgeGenerator {
 
@@ -252,7 +252,7 @@ public class ToolpathGeneratorFactory {
 
 				return prefs;
 			}
-		};
+		}
 		
 		class Skeinforge44 extends SkeinforgeGenerator {
 
@@ -274,7 +274,7 @@ public class ToolpathGeneratorFactory {
 
 				return prefs;
 			}
-		};
+		}
 		
 		class Skeinforge47 extends SkeinforgeGenerator {
 
@@ -353,7 +353,7 @@ public class ToolpathGeneratorFactory {
 				
 				return prefs;
 			}
-		};
+		}
 
 		class Skeinforge50 extends SkeinforgeGenerator {
 
@@ -434,7 +434,7 @@ public class ToolpathGeneratorFactory {
 				
 				return prefs;
 			}
-		};
+		}
 
 		
 		class MiracleGrueBeta extends MiracleGrueGenerator {
@@ -469,7 +469,7 @@ public class ToolpathGeneratorFactory {
 				List <MiracleGruePreference> prefs = new LinkedList<MiracleGruePreference>();
 				return prefs;
 			}
-		};
+		}
 		
 		
 		if((new MiracleGrueBeta()).getDefaultMiracleGrueDir().exists());

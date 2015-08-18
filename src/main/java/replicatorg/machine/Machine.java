@@ -127,7 +127,7 @@ public class Machine implements MachineInterface {
 		REMOTE_FILE,
 		/** Operations are being captured to a file. */
 		FILE
-	};
+	}
 
 //	// Test idea for a print job: specifies a gcode source and a target
 //	class JobInformation {
