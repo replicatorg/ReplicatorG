@@ -315,6 +315,7 @@ ToolpathGenerator.GeneratorListener
 
 		// add listener to handle window close box hit event
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				handleQuitInternal();
 			}
