@@ -9,7 +9,7 @@ package replicatorg.machine;
  * @author phooky
  * 
  */
-public class MachineState extends Object implements Cloneable {
+public class MachineState implements Cloneable {
 	/**
 	 * The state of a machine controller abstraction.
 	 */
@@ -29,7 +29,7 @@ public class MachineState extends Object implements Cloneable {
 		PAUSED,
 		/** The machine reported a fatal error, and is halted (but still connected). **/
 		ERROR,
-	};
+	}
 	
 	private State state;
 
