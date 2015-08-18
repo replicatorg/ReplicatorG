@@ -36,7 +36,7 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
 			if (Tool.this instanceof ChangeListener) {
 				spinner.addChangeListener((ChangeListener)Tool.this);
 			}
-		}	
+		}
 	}
 
 	public JButton createToolButton(String text, String iconPath) {
@@ -58,20 +58,20 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
 			axes[1] = new AxisControl("Y",parent, coordinate.y);
 			axes[2] = new AxisControl("Z",parent, coordinate.z);
 		}
-		
+
 		public void update() {
 			axes[0].model.setValue(new Double(coordinate.x));
 			axes[1].model.setValue(new Double(coordinate.y));
 			axes[2].model.setValue(new Double(coordinate.z));
 		}
 	}
-	
+
 	abstract String getTitle();
 	abstract String getButtonName();
 	abstract Icon getButtonIcon();
 	abstract String getInstructions();
 	abstract JPanel getControls();
-	
+
 	final protected ToolPanel parent;
 	public Tool(ToolPanel parent) {
 		this.parent = parent;
@@ -83,13 +83,13 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
 	public void mouseDragged(MouseEvent e) {
 		if (startPoint == null) return;
 		Point p = e.getPoint();
-		DragMode mode = DragMode.ROTATE_VIEW; 
+		DragMode mode = DragMode.ROTATE_VIEW;
 		if (Base.isMacOS()) {
 			if (button == MouseEvent.BUTTON1 && !e.isShiftDown()) { mode = DragMode.ROTATE_VIEW; }
-			else if (button == MouseEvent.BUTTON1 && e.isShiftDown()) { mode = DragMode.ROTATE_VIEW; }
+			else if (button == MouseEvent.BUTTON1 && e.isShiftDown()) { mode = DragMode.TRANSLATE_VIEW; }
 		} else {
 			if (button == MouseEvent.BUTTON1) { mode = DragMode.ROTATE_VIEW; }
-			else if (button == MouseEvent.BUTTON3) { mode = DragMode.ROTATE_VIEW; }
+			else if (button == MouseEvent.BUTTON3) { mode = DragMode.TRANSLATE_VIEW; }
 		}
 		double xd = (double)(p.x - startPoint.x);
 		double yd = (double)(p.y - startPoint.y);
