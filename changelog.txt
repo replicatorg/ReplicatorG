@@ -1,3 +1,8 @@
+v1-alpha ReplicatorG
+* Removed Twitter functionality
+* Moved to Gradle for build platform
+* Enabled panning in the UI
+
 0040 ReplicatorG
 * Replicator 2 profile now more robust
 * support for selecting between s3g, x3g file formats (future bots)
