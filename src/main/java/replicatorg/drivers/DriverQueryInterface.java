@@ -9,40 +9,40 @@ import replicatorg.machine.model.MachineModel;
 /**
  * Interface for querying a Driver about its current state. This is used by
  * the parser when devolving GCodes into DriverCommands.
- * 
+ *
  * @author matt.mets
  */
 public interface DriverQueryInterface {
-	public Point3d getOffset(int i);
-	
-	public Point5d getMaximumFeedrates();
+  public Point3d getOffset(int i);
 
-	public double getSpindleRPM();
-	
-	public double getMotorRPM();
-	
-	public int getMotorSpeedPWM();
+  public Point5d getMaximumFeedrates();
 
-	public double getTemperature(int toolhead);
+  public double getSpindleRPM();
 
-	public double getTemperatureSetting();
+  public double getMotorRPM();
 
-	public boolean hasAutomatedBuildPlatform();
-	
-	public double getPlatformTemperature(int toolhead);
+  public int getMotorSpeedPWM();
 
-	public double getPlatformTemperatureSetting();
+  public double getTemperature(int toolhead);
 
-	public Point5d getCurrentPosition(boolean b);
+  public double getTemperatureSetting();
 
-	public boolean isPassthroughDriver();
-	
-	public Version getVersion();
+  public boolean hasAutomatedBuildPlatform();
 
-	public Version getPreferredVersion();
+  public double getPlatformTemperature(int toolhead);
 
-	/// Queries the machine for a machine specific config value
-	public String getConfigValue(String value, String baseline);		
+  public double getPlatformTemperatureSetting();
 
-	public MachineModel getMachine();
+  public Point5d getCurrentPosition(boolean b);
+
+  public boolean isPassthroughDriver();
+
+  public Version getVersion();
+
+  public Version getPreferredVersion();
+
+  /// Queries the machine for a machine specific config value
+  public String getConfigValue(String value, String baseline);
+
+  public MachineModel getMachine();
 }

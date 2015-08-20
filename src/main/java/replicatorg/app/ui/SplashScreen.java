@@ -14,8 +14,7 @@ public class SplashScreen extends JWindow {
 //    this.imageIcon = imageIcon;
     try {
       jbInit();
-    }
-    catch(Exception ex) {
+    } catch(Exception ex) {
       ex.printStackTrace();
     }
   }
@@ -32,13 +31,11 @@ public class SplashScreen extends JWindow {
     this.pack();
   }
 
-  public void setProgressMax(int maxProgress)
-  {
+  public void setProgressMax(int maxProgress) {
     progressBar.setMaximum(maxProgress);
   }
 
-  public void setProgress(int progress)
-  {
+  public void setProgress(int progress) {
     final int theProgress = progress;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -47,8 +44,7 @@ public class SplashScreen extends JWindow {
     });
   }
 
-  public void setProgress(String message, int progress)
-  {
+  public void setProgress(String message, int progress) {
     final int theProgress = progress;
     final String theMessage = message;
     setProgress(progress);
@@ -60,8 +56,7 @@ public class SplashScreen extends JWindow {
     });
   }
 
-  public void setScreenVisible(boolean b)
-  {
+  public void setScreenVisible(boolean b) {
     final boolean boo = b;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -70,15 +65,11 @@ public class SplashScreen extends JWindow {
     });
   }
 
-  private void setMessage(String message)
-  {
-    if (message==null)
-    {
+  private void setMessage(String message) {
+    if (message==null) {
       message = "";
       progressBar.setStringPainted(false);
-    }
-    else
-    {
+    } else {
       progressBar.setStringPainted(true);
     }
     progressBar.setString(message);

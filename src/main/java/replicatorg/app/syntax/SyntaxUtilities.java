@@ -25,8 +25,7 @@ import javax.swing.text.Utilities;
  * @author Slava Pestov
  * @version $Id: SyntaxUtilities.java 85 2006-01-12 23:24:12Z mellis $
  */
-public class SyntaxUtilities
-{
+public class SyntaxUtilities {
   /**
    * Checks if a subregion of a <code>Segment</code> is equal to a
    * string.
@@ -36,24 +35,21 @@ public class SyntaxUtilities
    * @param match The string to match
    */
   public static boolean regionMatches(boolean ignoreCase, Segment text,
-                                      int offset, String match)
-  {
+                                      int offset, String match) {
     int length = offset + match.length();
     char[] textArray = text.array;
     if(length > text.offset + text.count)
       return false;
-    for(int i = offset, j = 0; i < length; i++, j++)
-      {
-        char c1 = textArray[i];
-        char c2 = match.charAt(j);
-        if(ignoreCase)
-          {
-            c1 = Character.toUpperCase(c1);
-            c2 = Character.toUpperCase(c2);
-          }
-        if(c1 != c2)
-          return false;
+    for(int i = offset, j = 0; i < length; i++, j++) {
+      char c1 = textArray[i];
+      char c2 = match.charAt(j);
+      if(ignoreCase) {
+        c1 = Character.toUpperCase(c1);
+        c2 = Character.toUpperCase(c2);
       }
+      if(c1 != c2)
+        return false;
+    }
     return true;
   }
 
@@ -67,24 +63,21 @@ public class SyntaxUtilities
    * @param match The character array to match
    */
   public static boolean regionMatches(boolean ignoreCase, Segment text,
-                                      int offset, char[] match)
-  {
+                                      int offset, char[] match) {
     int length = offset + match.length;
     char[] textArray = text.array;
     if(length > text.offset + text.count)
       return false;
-    for(int i = offset, j = 0; i < length; i++, j++)
-      {
-        char c1 = textArray[i];
-        char c2 = match[j];
-        if(ignoreCase)
-          {
-            c1 = Character.toUpperCase(c1);
-            c2 = Character.toUpperCase(c2);
-          }
-        if(c1 != c2)
-          return false;
+    for(int i = offset, j = 0; i < length; i++, j++) {
+      char c1 = textArray[i];
+      char c2 = match[j];
+      if(ignoreCase) {
+        c1 = Character.toUpperCase(c1);
+        c2 = Character.toUpperCase(c2);
       }
+      if(c1 != c2)
+        return false;
+    }
     return true;
   }
 
@@ -94,8 +87,7 @@ public class SyntaxUtilities
    * <code>setStyles()</code> method of <code>SyntaxDocument</code>
    * to use the default syntax styles.
    */
-  public static SyntaxStyle[] getDefaultSyntaxStyles()
-  {
+  public static SyntaxStyle[] getDefaultSyntaxStyles() {
     SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
 
     styles[Token.COMMENT1] = new SyntaxStyle(Color.black,true,false);
@@ -129,36 +121,32 @@ public class SyntaxUtilities
   public static int paintSyntaxLine(Segment line, Token tokens,
                                     SyntaxStyle[] styles,
                                     TabExpander expander, Graphics gfx,
-                                    int x, int y)
-  {
+                                    int x, int y) {
     Font defaultFont = gfx.getFont();
     Color defaultColor = gfx.getColor();
 
     int offset = 0;
-    for(;;)
-      {
-        byte id = tokens.id;
-        if(id == Token.END)
-          break;
+    for(;;) {
+      byte id = tokens.id;
+      if(id == Token.END)
+        break;
 
-        int length = tokens.length;
-        if(id == Token.NULL)
-          {
-            if(!defaultColor.equals(gfx.getColor()))
-              gfx.setColor(defaultColor);
-            if(!defaultFont.equals(gfx.getFont()))
-              gfx.setFont(defaultFont);
-          }
-        else
-          styles[id].setGraphicsFlags(gfx,defaultFont);
+      int length = tokens.length;
+      if(id == Token.NULL) {
+        if(!defaultColor.equals(gfx.getColor()))
+          gfx.setColor(defaultColor);
+        if(!defaultFont.equals(gfx.getFont()))
+          gfx.setFont(defaultFont);
+      } else
+        styles[id].setGraphicsFlags(gfx,defaultFont);
 
-        line.count = length;
-        x = Utilities.drawTabbedText(line,x,y,gfx,expander,0);
-        line.offset += length;
-        offset += length;
+      line.count = length;
+      x = Utilities.drawTabbedText(line,x,y,gfx,expander,0);
+      line.offset += length;
+      offset += length;
 
-        tokens = tokens.next;
-      }
+      tokens = tokens.next;
+    }
 
     return x;
   }

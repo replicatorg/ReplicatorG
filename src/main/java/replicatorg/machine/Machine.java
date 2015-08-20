@@ -73,61 +73,61 @@ import replicatorg.util.Point5d;
  * are performed asynchronously by a thread maintained by the MachineController;
  * calls to MachineController ordinarily trigger an operation and return
  * immediately.
- * 
+ *
  * When the machine is paused, the machine thread waits on notification to the
  * machine thread object.
- * 
+ *
  * In general, the machine thread should *not* be interrupted, as this can cause
  * synchronization issues. Interruption should only really happen on hanging
  * connections and shutdown.
- * 
+ *
  * @author phooky
- * 
+ *
  */
 public class Machine implements MachineInterface {
 
-	public enum RequestType {
-		// Set up the connection to the machine
-		CONNECT, // Establish connection with the target
-		DISCONNECT, // Detach from target
-		DISCONNECT_REMOTE_BUILD, // Disconnect from a remote build without stopping it.
-		RESET, // Reset the driver
+  public enum RequestType {
+    // Set up the connection to the machine
+    CONNECT, // Establish connection with the target
+    DISCONNECT, // Detach from target
+    DISCONNECT_REMOTE_BUILD, // Disconnect from a remote build without stopping it.
+    RESET, // Reset the driver
 
-		// Start a build
-		SIMULATE, // Build to the simulator
-		BUILD_DIRECT, // Build in real time on the machine
-		BUILD_TO_FILE, // Build, but instruct the machine to save it to the
-						// local filesystem
-		BUILD_TO_REMOTE_FILE, // Build, but instruct the machine to save it to
-								// the machine's filesystem
-		BUILD_REMOTE, // Instruct the machine to run a build from it's
-						// filesystem
+    // Start a build
+    SIMULATE, // Build to the simulator
+    BUILD_DIRECT, // Build in real time on the machine
+    BUILD_TO_FILE, // Build, but instruct the machine to save it to the
+    // local filesystem
+    BUILD_TO_REMOTE_FILE, // Build, but instruct the machine to save it to
+    // the machine's filesystem
+    BUILD_REMOTE, // Instruct the machine to run a build from it's
+    // filesystem
 
-		// Control a build
-		PAUSE, // Pause the current build
-		UNPAUSE, // Unpause the current build
-		STOP_MOTION, // Stop all motion and abort the current build
-		STOP_ALL, // Stop everything (motion and actuators) and abort the current build
+    // Control a build
+    PAUSE, // Pause the current build
+    UNPAUSE, // Unpause the current build
+    STOP_MOTION, // Stop all motion and abort the current build
+    STOP_ALL, // Stop everything (motion and actuators) and abort the current build
 
-		// Interactive command
-		RUN_COMMAND, // Run a single command on the driver, interleaved with the
-						// build.
-		
-		SHUTDOWN,	// Stop build (disconnect if building remotely), and stop the thread. 
-	}
+    // Interactive command
+    RUN_COMMAND, // Run a single command on the driver, interleaved with the
+    // build.
 
-	public enum JobTarget {
-		/** No target selected. */
-		NONE,
-		/** Operations are being simulated. */
-		SIMULATOR,
-		/** Operations are performed on a physical machine. */
-		MACHINE,
-		/** Operations are being captured to an SD card on the machine. */
-		REMOTE_FILE,
-		/** Operations are being captured to a file. */
-		FILE
-	}
+    SHUTDOWN,	// Stop build (disconnect if building remotely), and stop the thread.
+  }
+
+  public enum JobTarget {
+    /** No target selected. */
+    NONE,
+    /** Operations are being simulated. */
+    SIMULATOR,
+    /** Operations are performed on a physical machine. */
+    MACHINE,
+    /** Operations are being captured to an SD card on the machine. */
+    REMOTE_FILE,
+    /** Operations are being captured to a file. */
+    FILE
+  }
 
 //	// Test idea for a print job: specifies a gcode source and a target
 //	class JobInformation {
@@ -139,538 +139,518 @@ public class Machine implements MachineInterface {
 //		}
 //	}
 
-	/**
-	 * Get the machine state. This is a snapshot of the state when the method
-	 * was called, not a live object.
-	 * 
-	 * @return a copy of the machine's state object
-	 */
-	public MachineState getMachineState() {
-		return machineThread.getMachineState();
-	}
+  /**
+   * Get the machine state. This is a snapshot of the state when the method
+   * was called, not a live object.
+   *
+   * @return a copy of the machine's state object
+   */
+  public MachineState getMachineState() {
+    return machineThread.getMachineState();
+  }
 
-	MachineThread machineThread;
-	final MachineCallbackHandler callbackHandler;
-	
-	// TODO: WTF is this here for.
-	// this is the xml config for this machine.
-	protected Node machineNode;
+  MachineThread machineThread;
+  final MachineCallbackHandler callbackHandler;
+
+  // TODO: WTF is this here for.
+  // this is the xml config for this machine.
+  protected Node machineNode;
 
 
-	public String getMachineName() {
-		return machineThread.getMachineName();
-	}
+  public String getMachineName() {
+    return machineThread.getMachineName();
+  }
 
-	/**
-	 * Creates the machine object.
-	 */
-	public Machine(Node mNode, MachineCallbackHandler callbackHandler) {
-		this.callbackHandler = callbackHandler; 
-		
-		machineNode = mNode;
-		machineThread = new MachineThread(this, mNode);
-		machineThread.start();
+  /**
+   * Creates the machine object.
+   */
+  public Machine(Node mNode, MachineCallbackHandler callbackHandler) {
+    this.callbackHandler = callbackHandler;
 
-		/// set initial state to propigate new machine info via callbacks
-		machineThread.scheduleRequest(new MachineCommand(
-				RequestType.DISCONNECT, null, null));
+    machineNode = mNode;
+    machineThread = new MachineThread(this, mNode);
+    machineThread.start();
 
-	}
+    /// set initial state to propigate new machine info via callbacks
+    machineThread.scheduleRequest(new MachineCommand(
+                                    RequestType.DISCONNECT, null, null));
 
-	public boolean buildRemote(String remoteName) {
-		machineThread.scheduleRequest(new MachineCommand(
-				RequestType.BUILD_REMOTE, null, remoteName));
-		return true;
-	}
-	
-	/**
-	 * Begin running a job.
-	 */
-	@Override
-	public void buildDirect(final GCodeSource source) {
+  }
 
-		Runnable prepareAndStart = new Runnable(){
+  public boolean buildRemote(String remoteName) {
+    machineThread.scheduleRequest(new MachineCommand(
+                                    RequestType.BUILD_REMOTE, null, remoteName));
+    return true;
+  }
 
-			private Map<String, Integer> messages = new TreeMap<String, Integer>();
-			private boolean cancelled = false;
-			@Override
-			public void run() {
+  /**
+   * Begin running a job.
+   */
+  @Override
+  public void buildDirect(final GCodeSource source) {
 
-				// start simulator
+    Runnable prepareAndStart = new Runnable() {
 
-				// TODO: Re-enable the simulator.
-				// if (simulator != null &&
-				// Base.preferences.getBoolean("build.showSimulator",false))
-				// simulator.createWindow();
-				
-				Base.logger.info("Estimating build time and scanning code for errors...");
-				
-				if(Base.preferences.getBoolean("build.safetyChecks", true))
-				{
-					emitStateChange(new MachineState(State.BUILDING), "Running safety checks...");
-					
-					safetyCheck(source, messages);
+      private Map<String, Integer> messages = new TreeMap<String, Integer>();
+      private boolean cancelled = false;
+      @Override
+      public void run() {
 
-					if(! messages.isEmpty())
-					{
-						System.out.println("errors");
-						final JPanel displayPanel = new JPanel(new MigLayout("fill"));
-						final JDialog dialog = new JDialog(Base.getEditor(), "GCode warning", true);
-//						
+        // start simulator
+
+        // TODO: Re-enable the simulator.
+        // if (simulator != null &&
+        // Base.preferences.getBoolean("build.showSimulator",false))
+        // simulator.createWindow();
+
+        Base.logger.info("Estimating build time and scanning code for errors...");
+
+        if(Base.preferences.getBoolean("build.safetyChecks", true)) {
+          emitStateChange(new MachineState(State.BUILDING), "Running safety checks...");
+
+          safetyCheck(source, messages);
+
+          if(! messages.isEmpty()) {
+            System.out.println("errors");
+            final JPanel displayPanel = new JPanel(new MigLayout("fill"));
+            final JDialog dialog = new JDialog(Base.getEditor(), "GCode warning", true);
+//
 //						displayPanel.add(new JLabel("<html>The pre-run check has found some potentially problematic GCode.<br/>" +
 //								"This may be a result of trying to run code on a machine other than the one it's<br/>" +
 //								"intended for (i.e. running dual headed GCode on a single headed machine).</html>"), "growx, wrap");
-						JTextArea testLabel = new JTextArea();
-						testLabel.setLineWrap(true);
-						testLabel.setWrapStyleWord(true);
-						testLabel.setEditable(false);
-						testLabel.setOpaque(false);
-						testLabel.setBorder(BorderFactory.createEmptyBorder());
-						testLabel.setFont(new JLabel().getFont());
-						testLabel.setText("The pre-run check has found some potentially problematic GCode. This may be a result of trying" +
-								" to run code on a machine other than the one it's intended for (i.e. running dual headed GCode on a " +
-								"single headed machine).\n\nClick on a message to see the last place it occurred.");
-						displayPanel.add(testLabel, "growx, wrap");
-						
-						final JPanel messagePanel = new JPanel(new MigLayout("fill, ins 0"));
-						
-						List<String> displayMessages = new ArrayList<String>(messages.keySet());
-						if(displayMessages.size() > 10)
-						{
-							String moreMessage = "And " + (displayMessages.size()-10) + " more...";
-							displayMessages = displayMessages.subList(0, 10);
-							displayMessages.add(moreMessage);
-						}
-						final JList messageList = new JList(displayMessages.toArray());
-						
-						messageList.addMouseListener(new MouseAdapter(){
-							@Override
-							public void mouseClicked(MouseEvent arg0) {
-								if(arg0.getClickCount() == 1)
-									highlightLine(messageList.getSelectedValue());
-							}
-						});
-						/// do initial highlight and selection of default item (the 0th)
-						messageList.setSelectedIndex(0);
-						highlightLine(displayMessages.get(0));
-						
-						messageList.addKeyListener(new KeyAdapter(){
-							@Override
-							public void keyPressed(KeyEvent arg0) {
-								if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
-								{
-									highlightLine(messageList.getSelectedValue());
-								} else if(arg0.getKeyCode() == KeyEvent.VK_UP) {
-									messageList.setSelectedIndex(Math.max(messageList.getSelectedIndex(), 0));
-								} else if(arg0.getKeyCode() == KeyEvent.VK_DOWN) {
-									messageList.setSelectedIndex(Math.min(messageList.getSelectedIndex(), messageList.getModel().getSize()));
-								}
-							}
-						});
-						
-						messagePanel.add(messageList, "growx, growy");
-						displayPanel.add(new JScrollPane(messagePanel), "growx, growy, wrap");
-						
-						JButton proceedButton = new JButton("Proceed anyway");
-						proceedButton.addActionListener(new ActionListener(){
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								dialog.dispose();
-							}
-						});
-						displayPanel.add(proceedButton, "align right, split");
-	
-						JButton cancelButton = new JButton("Cancel build");
-						cancelButton.addActionListener(new ActionListener(){
-							@Override
-							public void actionPerformed(ActionEvent arg0) {
-								cancelled = true;
-								// TRICKY:
-								// see machine thread for a full explanation of this.
-								// basically, we need to get mainwindow to forget it was printing
-								boolean connected = getMachineState().canPrint();
-								emitStateChange(new MachineState(State.ERROR), "Print cancelled");
-								emitStateChange(new MachineState(State.NOT_ATTACHED), "Print cancelled");
-								if(connected)
-									emitStateChange(new MachineState(State.READY), "Print cancelled");
-								dialog.dispose();
-							}
-						});
-						displayPanel.add(cancelButton, "align right, wrap");
-						
-						dialog.add(displayPanel);
-						dialog.pack();
-						dialog.setVisible(true);
-					}
-				}
+            JTextArea testLabel = new JTextArea();
+            testLabel.setLineWrap(true);
+            testLabel.setWrapStyleWord(true);
+            testLabel.setEditable(false);
+            testLabel.setOpaque(false);
+            testLabel.setBorder(BorderFactory.createEmptyBorder());
+            testLabel.setFont(new JLabel().getFont());
+            testLabel.setText("The pre-run check has found some potentially problematic GCode. This may be a result of trying" +
+                              " to run code on a machine other than the one it's intended for (i.e. running dual headed GCode on a " +
+                              "single headed machine).\n\nClick on a message to see the last place it occurred.");
+            displayPanel.add(testLabel, "growx, wrap");
 
-				if(!cancelled)
-				{
-					// estimate build time.
-					emitStateChange(new MachineState(State.BUILDING), "Estimating time to completion...");
-					estimate(source);
-					
-					// do that build!
-					Base.logger.info("Beginning build.");
-	
-					machineThread.scheduleRequest(new MachineCommand(RequestType.BUILD_DIRECT, source, null));
-				}
-			}
-			
-			private void highlightLine(Object atWhichLine)
-			{
-				Base.getEditor().highlightLine(messages.get(atWhichLine));
-			}
-		};
-		Executors.newSingleThreadExecutor().execute(prepareAndStart);
-	}
+            final JPanel messagePanel = new JPanel(new MigLayout("fill, ins 0"));
 
-	public void simulate(GCodeSource source) {
-		// start simulator
-		// if (simulator != null)
-		// simulator.createWindow();
+            List<String> displayMessages = new ArrayList<String>(messages.keySet());
+            if(displayMessages.size() > 10) {
+              String moreMessage = "And " + (displayMessages.size()-10) + " more...";
+              displayMessages = displayMessages.subList(0, 10);
+              displayMessages.add(moreMessage);
+            }
+            final JList messageList = new JList(displayMessages.toArray());
 
-		// estimate build time.
-		Base.logger.info("Estimating build time...");
-		estimate(source);
+            messageList.addMouseListener(new MouseAdapter() {
+              @Override
+              public void mouseClicked(MouseEvent arg0) {
+                if(arg0.getClickCount() == 1)
+                  highlightLine(messageList.getSelectedValue());
+              }
+            });
+            /// do initial highlight and selection of default item (the 0th)
+            messageList.setSelectedIndex(0);
+            highlightLine(displayMessages.get(0));
 
-		// do that build!
-		Base.logger.info("Beginning simulation.");
-		machineThread.scheduleRequest(new MachineCommand(RequestType.SIMULATE,
-				source, null));
-	}
+            messageList.addKeyListener(new KeyAdapter() {
+              @Override
+              public void keyPressed(KeyEvent arg0) {
+                if(arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+                  highlightLine(messageList.getSelectedValue());
+                } else if(arg0.getKeyCode() == KeyEvent.VK_UP) {
+                  messageList.setSelectedIndex(Math.max(messageList.getSelectedIndex(), 0));
+                } else if(arg0.getKeyCode() == KeyEvent.VK_DOWN) {
+                  messageList.setSelectedIndex(Math.min(messageList.getSelectedIndex(), messageList.getModel().getSize()));
+                }
+              }
+            });
 
-	public void safetyCheck(GCodeSource source, Map<String, Integer> messages)
-	{
-		int nToolheads = machineThread.getModel().getTools().size();
-		Point5d maxRates = machineThread.getModel().getMaximumFeedrates();
-		
+            messagePanel.add(messageList, "growx, growy");
+            displayPanel.add(new JScrollPane(messagePanel), "growx, growy, wrap");
+
+            JButton proceedButton = new JButton("Proceed anyway");
+            proceedButton.addActionListener(new ActionListener() {
+              @Override
+              public void actionPerformed(ActionEvent arg0) {
+                dialog.dispose();
+              }
+            });
+            displayPanel.add(proceedButton, "align right, split");
+
+            JButton cancelButton = new JButton("Cancel build");
+            cancelButton.addActionListener(new ActionListener() {
+              @Override
+              public void actionPerformed(ActionEvent arg0) {
+                cancelled = true;
+                // TRICKY:
+                // see machine thread for a full explanation of this.
+                // basically, we need to get mainwindow to forget it was printing
+                boolean connected = getMachineState().canPrint();
+                emitStateChange(new MachineState(State.ERROR), "Print cancelled");
+                emitStateChange(new MachineState(State.NOT_ATTACHED), "Print cancelled");
+                if(connected)
+                  emitStateChange(new MachineState(State.READY), "Print cancelled");
+                dialog.dispose();
+              }
+            });
+            displayPanel.add(cancelButton, "align right, wrap");
+
+            dialog.add(displayPanel);
+            dialog.pack();
+            dialog.setVisible(true);
+          }
+        }
+
+        if(!cancelled) {
+          // estimate build time.
+          emitStateChange(new MachineState(State.BUILDING), "Estimating time to completion...");
+          estimate(source);
+
+          // do that build!
+          Base.logger.info("Beginning build.");
+
+          machineThread.scheduleRequest(new MachineCommand(RequestType.BUILD_DIRECT, source, null));
+        }
+      }
+
+      private void highlightLine(Object atWhichLine) {
+        Base.getEditor().highlightLine(messages.get(atWhichLine));
+      }
+    };
+    Executors.newSingleThreadExecutor().execute(prepareAndStart);
+  }
+
+  public void simulate(GCodeSource source) {
+    // start simulator
+    // if (simulator != null)
+    // simulator.createWindow();
+
+    // estimate build time.
+    Base.logger.info("Estimating build time...");
+    estimate(source);
+
+    // do that build!
+    Base.logger.info("Beginning simulation.");
+    machineThread.scheduleRequest(new MachineCommand(RequestType.SIMULATE,
+                                  source, null));
+  }
+
+  public void safetyCheck(GCodeSource source, Map<String, Integer> messages) {
+    int nToolheads = machineThread.getModel().getTools().size();
+    Point5d maxRates = machineThread.getModel().getMaximumFeedrates();
+
 //		BuildVolume buildVolume = new BuildVolume();
 //		buildVolume.setX(machineThread.getModel().getBuildVolume().getX()/2);
 //		buildVolume.setY(machineThread.getModel().getBuildVolume().getY()/2);
 //		buildVolume.setZ(machineThread.getModel().getBuildVolume().getZ()/2);
-		
-		GCodeCommand gcode;
-		String message, cmd, mainCode;
-		Integer lineNumber = 0;
-		
-		for(String line : source)
-		{
-			try
-			{
-				gcode = new GCodeCommand(line);
-			} //Catching every kind of exception is generally bad form,
-			//  It can hide where the problem is happening, and should be avoided
-			//  But I'm doing it anyway.
-			catch(Exception e)
-			{
-				message = "ReplicatorG can't parse '" + line +"'";
 
-				messages.put(message, lineNumber);
-				Base.logger.log(Level.SEVERE, message);
-				continue;
-			}
+    GCodeCommand gcode;
+    String message, cmd, mainCode;
+    Integer lineNumber = 0;
 
-			cmd = gcode.getCommand();
-			if(cmd.split(" ").length < 1) continue; //to avoid null index problems
-			
-			mainCode = cmd.split(" ")[0];
+    for(String line : source) {
+      try {
+        gcode = new GCodeCommand(line);
+      } //Catching every kind of exception is generally bad form,
+      //  It can hide where the problem is happening, and should be avoided
+      //  But I'm doing it anyway.
+      catch(Exception e) {
+        message = "ReplicatorG can't parse '" + line +"'";
 
-			if(!("").equals(mainCode) && GCodeEnumeration.getGCode(mainCode) == null)
-			{
-				message = "ReplicatorG doesn't recognize GCode '" + line +"'";
+        messages.put(message, lineNumber);
+        Base.logger.log(Level.SEVERE, message);
+        continue;
+      }
 
-				messages.put(message, lineNumber);
-				Base.logger.log(Level.SEVERE, message);
-			}
-			
-			// Check for homing in the wrong direction
-			if(!homingDirectionIsSafe(gcode))
-			{
-				message = "Homing in the wrong direction for selected machine: '" + line +"'";
+      cmd = gcode.getCommand();
+      if(cmd.split(" ").length < 1) continue; //to avoid null index problems
 
-				messages.put(message, lineNumber);
-				Base.logger.log(Level.SEVERE, message);
-			}
+      mainCode = cmd.split(" ")[0];
 
-			// we're going to check for the correct number of toolheads in each command
-			// the list of exceptions keeps growing, do we really need to do this check?
-			// maybe we should just specify the things to check, rather than the reverse
-			if(gcode.getCodeValue('T') > nToolheads-1 && gcode.getCodeValue('M') != 109
-													   && gcode.getCodeValue('M') != 106
-													   && gcode.getCodeValue('M') != 107)
-			{
-				message = "Toolheads index error! You don't have a toolhead numbered " + gcode.getCodeValue('T');
-				messages.put(message, lineNumber);
-				message = "Only the first Toolhead index error is logged. Please regenrate your GCode or manually check your gcode to correct.";
-				messages.put(message, lineNumber);
-				Base.logger.log(Level.SEVERE, message);
-				return; //TRICKY: see footnote [1]
-			}
-			if(gcode.hasCode('F'))
-			{
-				double fVal = gcode.getCodeValue('F');
-				if( (gcode.hasCode('X') && fVal > maxRates.x()) ||
-					(gcode.hasCode('Y') && fVal > maxRates.y()) ||
-// we're going to ignore this for now, since most of the time the z isn't actually moving 
-//					(gcLine.hasCode('Z') && fVal > maxRates.z()) ||  
-					(gcode.hasCode('A') && fVal > maxRates.a()) ||
-					(gcode.hasCode('B') && fVal > maxRates.b()))
-				{
-					message = "You're moving too fast! " + line +
-							 " turns at least one axis faster than it's max speed.";
+      if(!("").equals(mainCode) && GCodeEnumeration.getGCode(mainCode) == null) {
+        message = "ReplicatorG doesn't recognize GCode '" + line +"'";
 
-					messages.put(message, lineNumber);
-					Base.logger.log(Level.WARNING, message);
-				}
-				//BUGFIX! Can cause problems when used on reprap machines!
-				if (fVal < 0)
-				{
-					message = "Negative feedrate detected! '" + line +
-							 "' causes crashes in the reprap driver.";
+        messages.put(message, lineNumber);
+        Base.logger.log(Level.SEVERE, message);
+      }
 
-					messages.put(message, lineNumber);
-					Base.logger.log(Level.SEVERE, message);
-				}
-			}
-			
-			lineNumber++;
-		}
-	}
-	//footnote [1]:
-	/// Because this error can be thrown thousands of times in a file, and is generally a 'all wrong, or all right' error,
-	// we shortcut return on the first instance of a toolhead count error.  This avoids long timeouts before displaying errors, and avoids (literally) hundreds to 
-	// thousands of exactly the same error
-	
-	private boolean homingDirectionIsSafe(GCodeCommand gcode) {
-		Endstops xstop, ystop, zstop;
-		
-		// If it doesn't have the code, ignore it
-		xstop = ystop = zstop = Endstops.BOTH;
-		
-		if(gcode.hasCode('X'))
-			xstop = machineThread.getModel().getEndstops(AxisId.X);
-		if(gcode.hasCode('Y'))
-			ystop = machineThread.getModel().getEndstops(AxisId.Y);
-		if(gcode.hasCode('Z'))
-			zstop = machineThread.getModel().getEndstops(AxisId.Z);
-		
-		if(gcode.getCodeValue('G') == 161)
-		{
-			if((xstop != Endstops.MIN) && (xstop != Endstops.BOTH))
-				return false;
-			if((ystop != Endstops.MIN) && (ystop != Endstops.BOTH))
-				return false;
-			if((zstop != Endstops.MIN) && (zstop != Endstops.BOTH))
-				return false;
-		}
-		else if(gcode.getCodeValue('G') == 162)
-		{
-			if((xstop != Endstops.MAX) && (xstop != Endstops.BOTH))
-				return false;
-			if((ystop != Endstops.MAX) && (ystop != Endstops.BOTH))
-				return false;
-			if((zstop != Endstops.MAX) && (zstop != Endstops.BOTH))
-				return false;
-		}
-		return true;
-	}
-	
-	// TODO: Spawn a new thread to handle this for us?
-	public void estimate(GCodeSource source) {
-		if (source == null) {
-			return;
-		}
+      // Check for homing in the wrong direction
+      if(!homingDirectionIsSafe(gcode)) {
+        message = "Homing in the wrong direction for selected machine: '" + line +"'";
 
-		EstimationDriver estimator = new EstimationDriver();
-		// TODO: Is this correct?
-		estimator.setMachine(machineThread.getModel());
-		
-		Queue<DriverCommand> estimatorQueue = new LinkedList<DriverCommand>();
+        messages.put(message, lineNumber);
+        Base.logger.log(Level.SEVERE, message);
+      }
 
-		GCodeParser estimatorParser = new GCodeParser();
-		estimatorParser.init(estimator);
+      // we're going to check for the correct number of toolheads in each command
+      // the list of exceptions keeps growing, do we really need to do this check?
+      // maybe we should just specify the things to check, rather than the reverse
+      if(gcode.getCodeValue('T') > nToolheads-1 && gcode.getCodeValue('M') != 109
+          && gcode.getCodeValue('M') != 106
+          && gcode.getCodeValue('M') != 107) {
+        message = "Toolheads index error! You don't have a toolhead numbered " + gcode.getCodeValue('T');
+        messages.put(message, lineNumber);
+        message = "Only the first Toolhead index error is logged. Please regenrate your GCode or manually check your gcode to correct.";
+        messages.put(message, lineNumber);
+        Base.logger.log(Level.SEVERE, message);
+        return; //TRICKY: see footnote [1]
+      }
+      if(gcode.hasCode('F')) {
+        double fVal = gcode.getCodeValue('F');
+        if( (gcode.hasCode('X') && fVal > maxRates.x()) ||
+            (gcode.hasCode('Y') && fVal > maxRates.y()) ||
+// we're going to ignore this for now, since most of the time the z isn't actually moving
+//					(gcLine.hasCode('Z') && fVal > maxRates.z()) ||
+            (gcode.hasCode('A') && fVal > maxRates.a()) ||
+            (gcode.hasCode('B') && fVal > maxRates.b())) {
+          message = "You're moving too fast! " + line +
+                    " turns at least one axis faster than it's max speed.";
 
-		// run each line through the estimator
-		for (String line : source) {
-			// TODO: Hooks for plugins to add estimated time?
-			estimatorParser.parse(line, estimatorQueue);
-			
-			for (DriverCommand command : estimatorQueue) {
-				try {
-					command.run(estimator);
-				} catch (RetryException r) {
-					// Ignore.
-				} catch (StopException e) {
-					// TODO: Should we stop the estimator when we get a stop???
-				}
-			}
-			estimatorQueue.clear();
-		}
+          messages.put(message, lineNumber);
+          Base.logger.log(Level.WARNING, message);
+        }
+        //BUGFIX! Can cause problems when used on reprap machines!
+        if (fVal < 0) {
+          message = "Negative feedrate detected! '" + line +
+                    "' causes crashes in the reprap driver.";
 
-		// TODO: Set simulator up properly.
-		// if (simulator != null) {
-		// simulator.setSimulationBounds(estimator.getBounds());
-		// }
-		// // oh, how this needs to be cleaned up...
-		// if (driver instanceof SimulationDriver) {
-		// ((SimulationDriver)driver).setSimulationBounds(estimator.getBounds());
-		// }
+          messages.put(message, lineNumber);
+          Base.logger.log(Level.SEVERE, message);
+        }
+      }
 
-		machineThread.setEstimatedBuildTime(estimator.getBuildTime());
-		Base.logger.info("Estimated build time is: " + 
-					EstimationDriver.getBuildTimeString(estimator.getBuildTime()));
-	}
+      lineNumber++;
+    }
+  }
+  //footnote [1]:
+  /// Because this error can be thrown thousands of times in a file, and is generally a 'all wrong, or all right' error,
+  // we shortcut return on the first instance of a toolhead count error.  This avoids long timeouts before displaying errors, and avoids (literally) hundreds to
+  // thousands of exactly the same error
 
-	public DriverQueryInterface getDriverQueryInterface() {
-		return (DriverQueryInterface) machineThread.getDriver();
-	}
+  private boolean homingDirectionIsSafe(GCodeCommand gcode) {
+    Endstops xstop, ystop, zstop;
 
-	public Driver getDriver() {
-		return machineThread.getDriver();
-	}
+    // If it doesn't have the code, ignore it
+    xstop = ystop = zstop = Endstops.BOTH;
 
-	public SimulationDriver getSimulatorDriver() {
-		return machineThread.getSimulator();
-	}
+    if(gcode.hasCode('X'))
+      xstop = machineThread.getModel().getEndstops(AxisId.X);
+    if(gcode.hasCode('Y'))
+      ystop = machineThread.getModel().getEndstops(AxisId.Y);
+    if(gcode.hasCode('Z'))
+      zstop = machineThread.getModel().getEndstops(AxisId.Z);
 
-	public MachineModel getModel() {
-		return machineThread.getModel();
-	}
+    if(gcode.getCodeValue('G') == 161) {
+      if((xstop != Endstops.MIN) && (xstop != Endstops.BOTH))
+        return false;
+      if((ystop != Endstops.MIN) && (ystop != Endstops.BOTH))
+        return false;
+      if((zstop != Endstops.MIN) && (zstop != Endstops.BOTH))
+        return false;
+    } else if(gcode.getCodeValue('G') == 162) {
+      if((xstop != Endstops.MAX) && (xstop != Endstops.BOTH))
+        return false;
+      if((ystop != Endstops.MAX) && (ystop != Endstops.BOTH))
+        return false;
+      if((zstop != Endstops.MAX) && (zstop != Endstops.BOTH))
+        return false;
+    }
+    return true;
+  }
 
-	public void stopMotion() {
-		machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_MOTION,
-				null, null));
-	}
-	
-	public void stopAll() {
-		machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_ALL,
-				null, null));
-	}
+  // TODO: Spawn a new thread to handle this for us?
+  public void estimate(GCodeSource source) {
+    if (source == null) {
+      return;
+    }
 
-	synchronized public boolean isConnected() {
-		return machineThread.isConnected();
-	}
+    EstimationDriver estimator = new EstimationDriver();
+    // TODO: Is this correct?
+    estimator.setMachine(machineThread.getModel());
 
-	public void pause() {
-		machineThread.scheduleRequest(new MachineCommand(RequestType.PAUSE,
-				null, null));
-	}
+    Queue<DriverCommand> estimatorQueue = new LinkedList<DriverCommand>();
 
-	public void upload(GCodeSource source, String remoteName) {
-		/**
-		 * Upload the gcode to the given remote SD name.
-		 * 
-		 * @param source
-		 * @param remoteName
-		 */
-		machineThread.scheduleRequest(new MachineCommand(
-				RequestType.BUILD_TO_REMOTE_FILE, source, remoteName));
-	}
+    GCodeParser estimatorParser = new GCodeParser();
+    estimatorParser.init(estimator);
 
-	public void buildToFile(GCodeSource source, String path) {
-		/**
-		 * Upload the gcode to the given file.
-		 * 
-		 * @param source
-		 * @param remoteName
-		 */
-		machineThread.scheduleRequest(new MachineCommand(
-				RequestType.BUILD_TO_FILE, source, path));
-	}
+    // run each line through the estimator
+    for (String line : source) {
+      // TODO: Hooks for plugins to add estimated time?
+      estimatorParser.parse(line, estimatorQueue);
 
-	public void unpause() {
-		machineThread.scheduleRequest(new MachineCommand(RequestType.UNPAUSE,
-				null, null));
-	}
+      for (DriverCommand command : estimatorQueue) {
+        try {
+          command.run(estimator);
+        } catch (RetryException r) {
+          // Ignore.
+        } catch (StopException e) {
+          // TODO: Should we stop the estimator when we get a stop???
+        }
+      }
+      estimatorQueue.clear();
+    }
 
-	public void reset() {
-		machineThread.scheduleRequest(new MachineCommand(RequestType.RESET,
-				null, null));
-	}
+    // TODO: Set simulator up properly.
+    // if (simulator != null) {
+    // simulator.setSimulationBounds(estimator.getBounds());
+    // }
+    // // oh, how this needs to be cleaned up...
+    // if (driver instanceof SimulationDriver) {
+    // ((SimulationDriver)driver).setSimulationBounds(estimator.getBounds());
+    // }
 
-	// TODO: make this more generic to handle non-serial connections.
-	public void connect(String portName) {
-		// recreate thread if stopped
-		// TODO: Evaluate this!
-		if (!machineThread.isAlive()) {
-			machineThread = new MachineThread(this, machineNode);
-			machineThread.start();
-		}
-		
-		machineThread.scheduleRequest(new MachineCommand(RequestType.CONNECT,
-				null, portName));
-	}
+    machineThread.setEstimatedBuildTime(estimator.getBuildTime());
+    Base.logger.info("Estimated build time is: " +
+                     EstimationDriver.getBuildTimeString(estimator.getBuildTime()));
+  }
 
-	synchronized public void disconnect() {
-		machineThread.scheduleRequest(new MachineCommand(
-				RequestType.DISCONNECT, null, null));
-	}
+  public DriverQueryInterface getDriverQueryInterface() {
+    return (DriverQueryInterface) machineThread.getDriver();
+  }
 
-	synchronized public boolean isPaused() {
-		return getMachineState().isPaused();
-	}
+  public Driver getDriver() {
+    return machineThread.getDriver();
+  }
 
-	public void runCommand(DriverCommand command) {
-		machineThread.scheduleRequest(new MachineCommand(
-				RequestType.RUN_COMMAND, command));
-	}
+  public SimulationDriver getSimulatorDriver() {
+    return machineThread.getSimulator();
+  }
 
-	public void dispose() {
-		if (machineThread != null) {
-			machineThread.scheduleRequest(new MachineCommand(
-					RequestType.SHUTDOWN, null, null));
+  public MachineModel getModel() {
+    return machineThread.getModel();
+  }
 
-			// Wait 5 seconds for the thread to stop.
-			try {
-				machineThread.join(5000);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+  public void stopMotion() {
+    machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_MOTION,
+                                  null, null));
+  }
 
-	protected void emitStateChange(MachineState current, String message) {
-		MachineStateChangeEvent e = new MachineStateChangeEvent(this, current, message);
-		callbackHandler.schedule(e);
-	}
+  public void stopAll() {
+    machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_ALL,
+                                  null, null));
+  }
 
-	protected void emitProgress(MachineProgressEvent progress) {
-		callbackHandler.schedule(progress);
-	}
+  synchronized public boolean isConnected() {
+    return machineThread.isConnected();
+  }
 
-	protected void emitToolStatus(ToolModel tool) {
-		MachineToolStatusEvent e = new MachineToolStatusEvent(this, tool);
-		callbackHandler.schedule(e);
-	}
+  public void pause() {
+    machineThread.scheduleRequest(new MachineCommand(RequestType.PAUSE,
+                                  null, null));
+  }
 
-	
-	public int getLinesProcessed() {
-		/*
-		 * This is for jumping to the right line when aborting or pausing. This
-		 * way you'll have the ability to track down where to continue printing.
-		 */
-		return machineThread.getLinesProcessed();
-	}
+  public void upload(GCodeSource source, String remoteName) {
+    /**
+     * Upload the gcode to the given remote SD name.
+     *
+     * @param source
+     * @param remoteName
+     */
+    machineThread.scheduleRequest(new MachineCommand(
+                                    RequestType.BUILD_TO_REMOTE_FILE, source, remoteName));
+  }
 
-	// TODO: Drop this
-	public boolean isSimulating() {
-		return machineThread.isSimulating();
-	}
+  public void buildToFile(GCodeSource source, String path) {
+    /**
+     * Upload the gcode to the given file.
+     *
+     * @param source
+     * @param remoteName
+     */
+    machineThread.scheduleRequest(new MachineCommand(
+                                    RequestType.BUILD_TO_FILE, source, path));
+  }
 
-	// TODO: Drop this
-	public boolean isInteractiveTarget() {
-		return machineThread.isInteractiveTarget();
-	}
+  public void unpause() {
+    machineThread.scheduleRequest(new MachineCommand(RequestType.UNPAUSE,
+                                  null, null));
+  }
 
-	// TODO: Drop this
-	public JobTarget getTarget() {
-		return machineThread.getTarget();
-	}
-	
-	@Override
-	public MachineType getMachineType()
-	{
-		return getModel().getMachineType();
-	}
+  public void reset() {
+    machineThread.scheduleRequest(new MachineCommand(RequestType.RESET,
+                                  null, null));
+  }
+
+  // TODO: make this more generic to handle non-serial connections.
+  public void connect(String portName) {
+    // recreate thread if stopped
+    // TODO: Evaluate this!
+    if (!machineThread.isAlive()) {
+      machineThread = new MachineThread(this, machineNode);
+      machineThread.start();
+    }
+
+    machineThread.scheduleRequest(new MachineCommand(RequestType.CONNECT,
+                                  null, portName));
+  }
+
+  synchronized public void disconnect() {
+    machineThread.scheduleRequest(new MachineCommand(
+                                    RequestType.DISCONNECT, null, null));
+  }
+
+  synchronized public boolean isPaused() {
+    return getMachineState().isPaused();
+  }
+
+  public void runCommand(DriverCommand command) {
+    machineThread.scheduleRequest(new MachineCommand(
+                                    RequestType.RUN_COMMAND, command));
+  }
+
+  public void dispose() {
+    if (machineThread != null) {
+      machineThread.scheduleRequest(new MachineCommand(
+                                      RequestType.SHUTDOWN, null, null));
+
+      // Wait 5 seconds for the thread to stop.
+      try {
+        machineThread.join(5000);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  protected void emitStateChange(MachineState current, String message) {
+    MachineStateChangeEvent e = new MachineStateChangeEvent(this, current, message);
+    callbackHandler.schedule(e);
+  }
+
+  protected void emitProgress(MachineProgressEvent progress) {
+    callbackHandler.schedule(progress);
+  }
+
+  protected void emitToolStatus(ToolModel tool) {
+    MachineToolStatusEvent e = new MachineToolStatusEvent(this, tool);
+    callbackHandler.schedule(e);
+  }
+
+
+  public int getLinesProcessed() {
+    /*
+     * This is for jumping to the right line when aborting or pausing. This
+     * way you'll have the ability to track down where to continue printing.
+     */
+    return machineThread.getLinesProcessed();
+  }
+
+  // TODO: Drop this
+  public boolean isSimulating() {
+    return machineThread.isSimulating();
+  }
+
+  // TODO: Drop this
+  public boolean isInteractiveTarget() {
+    return machineThread.isInteractiveTarget();
+  }
+
+  // TODO: Drop this
+  public JobTarget getTarget() {
+    return machineThread.getTarget();
+  }
+
+  @Override
+  public MachineType getMachineType() {
+    return getModel().getMachineType();
+  }
 }

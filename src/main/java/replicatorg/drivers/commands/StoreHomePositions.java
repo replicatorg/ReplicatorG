@@ -8,13 +8,13 @@ import replicatorg.machine.model.AxisId;
 
 public class StoreHomePositions implements DriverCommand {
 
-	EnumSet<AxisId> axes;
-	
-	public StoreHomePositions(EnumSet<AxisId> axes) {
-		this.axes = axes;
-	}
-	@Override
-	public void run(Driver driver) throws RetryException {
-		driver.storeHomePositions(axes);
-	}
+  EnumSet<AxisId> axes;
+
+  public StoreHomePositions(EnumSet<AxisId> axes) {
+    this.axes = axes;
+  }
+  @Override
+  public void run(Driver driver) throws RetryException {
+    driver.storeHomePositions(axes);
+  }
 }

@@ -18,8 +18,7 @@ import java.awt.Font;
  * The advantage of doing this over calling lots of set() methods after
  * creating the text area is that this method is faster.
  */
-public class TextAreaDefaults
-{
+public class TextAreaDefaults {
   private static TextAreaDefaults DEFAULTS;
 
   public InputHandler inputHandler;
@@ -57,8 +56,7 @@ public class TextAreaDefaults
    * Returns a new TextAreaDefaults object with the default values filled
    * in.
    */
-  public static TextAreaDefaults getDefaults()
-  {
+  public static TextAreaDefaults getDefaults() {
     if (DEFAULTS == null) {
       DEFAULTS = new TextAreaDefaults();
 

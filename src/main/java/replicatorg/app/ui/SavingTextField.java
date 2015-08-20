@@ -3,19 +3,19 @@ package replicatorg.app.ui;
 import replicatorg.app.Base;
 
 public class SavingTextField extends ActionTextField {
-	final String parameterName;
-	
-	public SavingTextField(String parameterName, String text, int columns) {
-		super(text, columns, null);
+  final String parameterName;
 
-		this.parameterName = parameterName;
-	}
+  public SavingTextField(String parameterName, String text, int columns) {
+    super(text, columns, null);
 
-	@Override
-	public void doSaveEvent() {
-		String value = getText();
-		Base.logger.fine("here: " + parameterName + "=" + value);
-		Base.preferences.put(parameterName, value);
-	}
+    this.parameterName = parameterName;
+  }
+
+  @Override
+  public void doSaveEvent() {
+    String value = getText();
+    Base.logger.fine("here: " + parameterName + "=" + value);
+    Base.preferences.put(parameterName, value);
+  }
 
 }

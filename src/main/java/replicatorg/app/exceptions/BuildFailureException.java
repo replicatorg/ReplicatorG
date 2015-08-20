@@ -23,11 +23,9 @@
 
 package replicatorg.app.exceptions;
 
-public class BuildFailureException extends Exception
-{
-	public BuildFailureException(String s)
-	{
-		super(s);
-	}
+public class BuildFailureException extends Exception {
+  public BuildFailureException(String s) {
+    super(s);
+  }
 }
 

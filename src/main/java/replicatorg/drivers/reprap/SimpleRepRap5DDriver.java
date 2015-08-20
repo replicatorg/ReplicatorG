@@ -22,8 +22,8 @@
  */
 /* TODOs:
  * (M6 T0 (Wait for tool to heat up)) - not supported? Rewrite to other code?
- * 
- * 
+ *
+ *
  */
 package replicatorg.drivers.reprap;
 
@@ -47,181 +47,181 @@ import replicatorg.machine.model.ToolModel;
 import replicatorg.util.Point5d;
 
 public class SimpleRepRap5DDriver extends SerialDriver {
-	/**
-	 * To keep track of outstanding commands
-	 */
-	private Queue<Integer> commands;
+  /**
+   * To keep track of outstanding commands
+   */
+  private Queue<Integer> commands;
 
-	/**
-	 * the size of the buffer on the GCode host
-	 */
-	private int maxBufferSize = 128;
+  /**
+   * the size of the buffer on the GCode host
+   */
+  private int maxBufferSize = 128;
 
-	/**
-	 * the amount of data we've sent and is in the buffer.
-	 */
-	private int bufferSize = 0;
+  /**
+   * the amount of data we've sent and is in the buffer.
+   */
+  private int bufferSize = 0;
 
-	/**
-	 * What did we get back from serial?
-	 */
-	private String result = "";
+  /**
+   * What did we get back from serial?
+   */
+  private String result = "";
 
-	private DecimalFormat df;
+  private DecimalFormat df;
 
-	private byte[] responsebuffer = new byte[512];
+  private byte[] responsebuffer = new byte[512];
 
-	public SimpleRepRap5DDriver() {
-		super();
+  public SimpleRepRap5DDriver() {
+    super();
 
-		// init our variables.
-		commands = new LinkedList<Integer>();
-		bufferSize = 0;
-		setInitialized(false);
+    // init our variables.
+    commands = new LinkedList<Integer>();
+    bufferSize = 0;
+    setInitialized(false);
 
-		//Thank you Alexey (http://replicatorg.lighthouseapp.com/users/166956)
-		DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance();
-		dfs.setDecimalSeparator('.');
-		df = new DecimalFormat("#.######", dfs);
-	}
+    //Thank you Alexey (http://replicatorg.lighthouseapp.com/users/166956)
+    DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance();
+    dfs.setDecimalSeparator('.');
+    df = new DecimalFormat("#.######", dfs);
+  }
 
-	public String getDriverName() {
-		return "SimpleRepRap5D";
-	}
+  public String getDriverName() {
+    return "SimpleRepRap5D";
+  }
 
-	public void loadXML(Node xml) {
-		super.loadXML(xml);
-	}
+  public void loadXML(Node xml) {
+    super.loadXML(xml);
+  }
 
-	public void initialize() {
-		// declare our serial guy.
-		if (serial == null) {
-			Base.logger.severe("No Serial Port found.\n");
-			return;
-		}
-		// wait till we're initialized
-		if (!isInitialized()) {
-			try {
-				// record our start time.
-				Date date = new Date();
-				long end = date.getTime() + 10000;
+  public void initialize() {
+    // declare our serial guy.
+    if (serial == null) {
+      Base.logger.severe("No Serial Port found.\n");
+      return;
+    }
+    // wait till we're initialized
+    if (!isInitialized()) {
+      try {
+        // record our start time.
+        Date date = new Date();
+        long end = date.getTime() + 10000;
 
-				Base.logger.info("Initializing Serial.");
+        Base.logger.info("Initializing Serial.");
 //				serial.clear();
-				while (!isInitialized()) {
-					readResponse();
+        while (!isInitialized()) {
+          readResponse();
 
 /// Recover:
 //					Base.logger.warning("No connection; trying to pulse RTS to reset device.");
 //					serial.pulseRTSLow();
 
 
-					// record our current time
-					date = new Date();
-					long now = date.getTime();
+          // record our current time
+          date = new Date();
+          long now = date.getTime();
 
-					// only give them 10 seconds
-					if (now > end) {
-						Base.logger.warning("Serial link non-responsive.");
-						return;
-					}
-				}
-			} catch (Exception e) {
-				// todo: handle init exceptions here
-			}
-			Base.logger.info("Ready.");
-		}
+          // only give them 10 seconds
+          if (now > end) {
+            Base.logger.warning("Serial link non-responsive.");
+            return;
+          }
+        }
+      } catch (Exception e) {
+        // todo: handle init exceptions here
+      }
+      Base.logger.info("Ready.");
+    }
 
-		// default us to absolute positioning
-		sendCommand("G90");
-	}
+    // default us to absolute positioning
+    sendCommand("G90");
+  }
 
-	public boolean isPassthroughDriver() {
-		return true;
-	}
-	
-	/**
-	 * Actually execute the GCode we just parsed.
-	 */
-	public void executeGCodeLine(String code) {
-		// we *DONT* want to use the parents one,
-		// as that will call all sorts of misc functions.
-		// we'll simply pass it along.
-		// super.execute();
-		sendCommand(code);
-	}
+  public boolean isPassthroughDriver() {
+    return true;
+  }
 
-	/**
-	 * Actually sends command over serial. If the Arduino buffer is full, this
-	 * method will block until the command has been sent.
-	 */
-	protected void sendCommand(String next) {
-		assert (isInitialized());
-		assert (serial != null);
-		// System.out.println("sending: " + next);
+  /**
+   * Actually execute the GCode we just parsed.
+   */
+  public void executeGCodeLine(String code) {
+    // we *DONT* want to use the parents one,
+    // as that will call all sorts of misc functions.
+    // we'll simply pass it along.
+    // super.execute();
+    sendCommand(code);
+  }
 
-		next = clean(next);
-		next = fix(next); // make it compatible with older versions of the GCode interpeter
+  /**
+   * Actually sends command over serial. If the Arduino buffer is full, this
+   * method will block until the command has been sent.
+   */
+  protected void sendCommand(String next) {
+    assert (isInitialized());
+    assert (serial != null);
+    // System.out.println("sending: " + next);
 
-		// skip empty commands.
-		if (next.length() == 0)
-			return;
+    next = clean(next);
+    next = fix(next); // make it compatible with older versions of the GCode interpeter
 
-		// Block until we can fit the command on the Arduino
-		while (bufferSize + next.length() + 1 > maxBufferSize) {
-			readResponse();
-		}
+    // skip empty commands.
+    if (next.length() == 0)
+      return;
 
-		synchronized (serial) {
-			// do the actual send.
-			serial.write(next + "\n");
-		}
+    // Block until we can fit the command on the Arduino
+    while (bufferSize + next.length() + 1 > maxBufferSize) {
+      readResponse();
+    }
 
-		// record it in our buffer tracker.
-		int cmdlen = next.length() + 1;
-		commands.add(cmdlen);
-		bufferSize += cmdlen;
+    synchronized (serial) {
+      // do the actual send.
+      serial.write(next + "\n");
+    }
 
-		// debug... let us know whts up!
-		System.out.println("Sent: " + next);
-		// System.out.println("Buffer: " + bufferSize + " (" + bufferLength + "
-		// commands)");
-	}
+    // record it in our buffer tracker.
+    int cmdlen = next.length() + 1;
+    commands.add(cmdlen);
+    bufferSize += cmdlen;
 
-	public String clean(String str) {
-		String clean = str;
+    // debug... let us know whts up!
+    System.out.println("Sent: " + next);
+    // System.out.println("Buffer: " + bufferSize + " (" + bufferLength + "
+    // commands)");
+  }
 
-		// trim whitespace
-		clean = clean.trim();
+  public String clean(String str) {
+    String clean = str;
 
-		// remove spaces
-		//clean = clean.replaceAll(" ", "");
+    // trim whitespace
+    clean = clean.trim();
 
-		return clean;
-	}
-	public String fix(String str) {
-		String fixed = str;
-		// The 5D firmware expects E codes for extrusion control instead of M101, M102, M103
-		
-	    // Remove M10[123] codes
-	    // This piece of code causes problems?!? Restarts?
-		Pattern r = Pattern.compile("M10[123](.*)");
-		Matcher m = r.matcher(fixed);
-	    if (m.find( )) {
+    // remove spaces
+    //clean = clean.replaceAll(" ", "");
+
+    return clean;
+  }
+  public String fix(String str) {
+    String fixed = str;
+    // The 5D firmware expects E codes for extrusion control instead of M101, M102, M103
+
+    // Remove M10[123] codes
+    // This piece of code causes problems?!? Restarts?
+    Pattern r = Pattern.compile("M10[123](.*)");
+    Matcher m = r.matcher(fixed);
+    if (m.find( )) {
 //	    	System.out.println("Didn't find pattern in: " + str );
 //	    	fixed = m.group(1)+m.group(3)+";";
-	    	return "";
-	    }
-		
-		// Reorder E and F codes? F-codes need to go LAST!
-		//requires: import java.util.regex.Matcher; and import java.util.regex.Pattern;
-		r = Pattern.compile("^(.*)(F[0-9\\.]*)\\s?E([0-9\\.]*)$");
-	    m = r.matcher(fixed);
-	    if (m.find( )) {
-			fixed = m.group(1)+" E"+m.group(3)+" "+m.group(2);
-	    }
+      return "";
+    }
 
-	    // Rescale E value
+    // Reorder E and F codes? F-codes need to go LAST!
+    //requires: import java.util.regex.Matcher; and import java.util.regex.Pattern;
+    r = Pattern.compile("^(.*)(F[0-9\\.]*)\\s?E([0-9\\.]*)$");
+    m = r.matcher(fixed);
+    if (m.find( )) {
+      fixed = m.group(1)+" E"+m.group(3)+" "+m.group(2);
+    }
+
+    // Rescale E value
 //		r = Pattern.compile("(.*)E([0-9\\.]*)(.*)");//E317.52// Z-moves slower! Extrude 10% less? More and more rapid reversing
 //	    m = r.matcher(fixed);
 //	    if (m.find( )) {
@@ -231,348 +231,347 @@ public class SimpleRepRap5DDriver extends SerialDriver {
 //	    	fixed = m.group(1)+" E"+formatter.format(newEvalue)+" "+m.group(3);
 //	    }
 
-	    
-	    return fixed; // no change!
-	}
-	
-	public void readResponse() {
-		assert (serial != null);
-		synchronized (serial) {
-			try {
-				int numread = serial.read(responsebuffer);
-				// 0 is now an acceptable value; it merely means that we timed out
-				// waiting for input
-				if (numread < 0) {
-					// This signifies EOF. FIXME: How do we handle this?
-					Base.logger.severe("SerialPassthroughDriver.readResponse(): EOF occured");
-					return;
-				} else {
-					result += new String(responsebuffer, 0, numread, "US-ASCII");
-
-					// System.out.println("got: " + c);
-					// System.out.println("current: " + result);
-					int index;
-					while ((index = result.indexOf('\n')) >= 0) {
-						String line = result.substring(0, index).trim(); // trim
-																			// to
-																			// remove
-																			// any
-																			// trailing
-						Base.logger.info(line);											// \r
-						result = result.substring(index + 1);
-						if (line.length() == 0)
-							continue;
-						if (line.startsWith("ok")) {
-							bufferSize -= commands.remove();
-							Base.logger.info(line);
-							if (line.startsWith("ok T:")) {
-								Pattern r = Pattern.compile("^ok T:([0-9\\.]+)[^0-9]");
-							    Matcher m = r.matcher(line);
-							    if (m.find( )) {
-							    	String temp = m.group(1);
-									
-									machine.currentTool().setCurrentTemperature(
-											Double.parseDouble(temp));
-							    }
-								r = Pattern.compile("^ok.*B:([0-9\\.]+)$");
-							    m = r.matcher(line);
-							    if (m.find( )) {
-							    	String bedTemp = m.group(1);
-									machine.currentTool().setPlatformCurrentTemperature(
-											Double.parseDouble(bedTemp));
-							    }
-							}
-
-						}
-						// old arduino firmware sends "start"
-						else if (line.startsWith("start")) {
-							// todo: set version
-							// TODO: check if this was supposed to happen, otherwise report unexpected reset! 
-							setInitialized(true);
-							Base.logger.info(line);
-						} else if (line.startsWith("Extruder Fail")) {
-							setError("Extruder failed:  cannot extrude as this rate.");
-							Base.logger.severe(line);
-						} else {
-							Base.logger.severe("Unknown: " + line);
-						}
-					}
-				}
-			} catch (IOException e) {
-				Base.logger.severe("inputstream.read() failed: " + e.toString());
-				// FIXME: Shut down communication somehow.
-			}
-		}
-	}
-
-	public boolean isFinished() {
-		return isBufferEmpty();
-	}
-
-	/**
-	 * Is our buffer empty? If don't have a buffer, its always true.
-	 */
-	public boolean isBufferEmpty() {
-		try {
-			readResponse();
-		} catch (Exception e) {
-		}
-		return (bufferSize == 0);
-	}
-
-	public void dispose() {
-		super.dispose();
-		commands = null;
-	}
-
-	/***************************************************************************
-	 * commands for interfacing with the driver directly
-	 * @throws RetryException 
-	 **************************************************************************/
-
-	public void queuePoint(Point5d p) throws RetryException {
-		String cmd = "G1 F" + df.format(getCurrentFeedrate());
-		
-		sendCommand(cmd);
 
-		cmd = "G1 X" + df.format(p.x()) + " Y" + df.format(p.y()) + " Z"
-				+ df.format(p.z()) + " F" + df.format(getCurrentFeedrate());
+    return fixed; // no change!
+  }
+
+  public void readResponse() {
+    assert (serial != null);
+    synchronized (serial) {
+      try {
+        int numread = serial.read(responsebuffer);
+        // 0 is now an acceptable value; it merely means that we timed out
+        // waiting for input
+        if (numread < 0) {
+          // This signifies EOF. FIXME: How do we handle this?
+          Base.logger.severe("SerialPassthroughDriver.readResponse(): EOF occured");
+          return;
+        } else {
+          result += new String(responsebuffer, 0, numread, "US-ASCII");
+
+          // System.out.println("got: " + c);
+          // System.out.println("current: " + result);
+          int index;
+          while ((index = result.indexOf('\n')) >= 0) {
+            String line = result.substring(0, index).trim(); // trim
+            // to
+            // remove
+            // any
+            // trailing
+            Base.logger.info(line);											// \r
+            result = result.substring(index + 1);
+            if (line.length() == 0)
+              continue;
+            if (line.startsWith("ok")) {
+              bufferSize -= commands.remove();
+              Base.logger.info(line);
+              if (line.startsWith("ok T:")) {
+                Pattern r = Pattern.compile("^ok T:([0-9\\.]+)[^0-9]");
+                Matcher m = r.matcher(line);
+                if (m.find( )) {
+                  String temp = m.group(1);
+
+                  machine.currentTool().setCurrentTemperature(
+                    Double.parseDouble(temp));
+                }
+                r = Pattern.compile("^ok.*B:([0-9\\.]+)$");
+                m = r.matcher(line);
+                if (m.find( )) {
+                  String bedTemp = m.group(1);
+                  machine.currentTool().setPlatformCurrentTemperature(
+                    Double.parseDouble(bedTemp));
+                }
+              }
+
+            }
+            // old arduino firmware sends "start"
+            else if (line.startsWith("start")) {
+              // todo: set version
+              // TODO: check if this was supposed to happen, otherwise report unexpected reset!
+              setInitialized(true);
+              Base.logger.info(line);
+            } else if (line.startsWith("Extruder Fail")) {
+              setError("Extruder failed:  cannot extrude as this rate.");
+              Base.logger.severe(line);
+            } else {
+              Base.logger.severe("Unknown: " + line);
+            }
+          }
+        }
+      } catch (IOException e) {
+        Base.logger.severe("inputstream.read() failed: " + e.toString());
+        // FIXME: Shut down communication somehow.
+      }
+    }
+  }
+
+  public boolean isFinished() {
+    return isBufferEmpty();
+  }
+
+  /**
+   * Is our buffer empty? If don't have a buffer, its always true.
+   */
+  public boolean isBufferEmpty() {
+    try {
+      readResponse();
+    } catch (Exception e) {
+    }
+    return (bufferSize == 0);
+  }
+
+  public void dispose() {
+    super.dispose();
+    commands = null;
+  }
+
+  /***************************************************************************
+   * commands for interfacing with the driver directly
+   * @throws RetryException
+   **************************************************************************/
+
+  public void queuePoint(Point5d p) throws RetryException {
+    String cmd = "G1 F" + df.format(getCurrentFeedrate());
 
-		sendCommand(cmd);
+    sendCommand(cmd);
 
-		super.queuePoint(p);
-	}
+    cmd = "G1 X" + df.format(p.x()) + " Y" + df.format(p.y()) + " Z"
+          + df.format(p.z()) + " F" + df.format(getCurrentFeedrate());
 
-	public void setCurrentPosition(Point5d p) throws RetryException {
-		sendCommand("G92 X" + df.format(p.x()) + " Y" + df.format(p.y()) + " Z"
-				+ df.format(p.z()));
+    sendCommand(cmd);
 
-		super.setCurrentPosition(p);
-	}
+    super.queuePoint(p);
+  }
 
-	@Override
-	public void homeAxes(EnumSet<AxisId> axes, boolean positive, double feedrate) throws RetryException {
-		Base.logger.info("homing "+axes.toString());
-		StringBuffer buf = new StringBuffer("G28");
-		for (AxisId axis : axes)
-		{
-			buf.append(" "+axis);
-		}
-		sendCommand(buf.toString());
+  public void setCurrentPosition(Point5d p) throws RetryException {
+    sendCommand("G92 X" + df.format(p.x()) + " Y" + df.format(p.y()) + " Z"
+                + df.format(p.z()));
 
-		super.homeAxes(axes,false,0);
-	}
+    super.setCurrentPosition(p);
+  }
 
-	public void delay(long millis) {
-		int seconds = Math.round(millis / 1000);
+  @Override
+  public void homeAxes(EnumSet<AxisId> axes, boolean positive, double feedrate) throws RetryException {
+    Base.logger.info("homing "+axes.toString());
+    StringBuffer buf = new StringBuffer("G28");
+    for (AxisId axis : axes) {
+      buf.append(" "+axis);
+    }
+    sendCommand(buf.toString());
 
-		sendCommand("G4 P" + seconds);
+    super.homeAxes(axes,false,0);
+  }
 
-		// no super call requried.
-	}
+  public void delay(long millis) {
+    int seconds = Math.round(millis / 1000);
 
-	public void openClamp(int clampIndex) {
-		sendCommand("M11 Q" + clampIndex);
+    sendCommand("G4 P" + seconds);
 
-		super.openClamp(clampIndex);
-	}
+    // no super call requried.
+  }
 
-	public void closeClamp(int clampIndex) {
-		sendCommand("M10 Q" + clampIndex);
+  public void openClamp(int clampIndex) {
+    sendCommand("M11 Q" + clampIndex);
 
-		super.closeClamp(clampIndex);
-	}
+    super.openClamp(clampIndex);
+  }
 
-	public void enableDrives() throws RetryException {
-		sendCommand("M17");
+  public void closeClamp(int clampIndex) {
+    sendCommand("M10 Q" + clampIndex);
 
-		super.enableDrives();
-	}
+    super.closeClamp(clampIndex);
+  }
 
-	public void disableDrives() throws RetryException {
-		sendCommand("M18");
+  public void enableDrives() throws RetryException {
+    sendCommand("M17");
 
-		super.disableDrives();
-	}
+    super.enableDrives();
+  }
 
-	public void changeGearRatio(int ratioIndex) {
-		// gear ratio codes are M40-M46
-		int code = 40 + ratioIndex;
-		code = Math.max(40, code);
-		code = Math.min(46, code);
+  public void disableDrives() throws RetryException {
+    sendCommand("M18");
 
-		sendCommand("M" + code);
+    super.disableDrives();
+  }
 
-		super.changeGearRatio(ratioIndex);
-	}
+  public void changeGearRatio(int ratioIndex) {
+    // gear ratio codes are M40-M46
+    int code = 40 + ratioIndex;
+    code = Math.max(40, code);
+    code = Math.min(46, code);
 
-	protected String _getToolCode() {
-		return "T" + machine.currentTool().getIndex() + " ";
-	}
+    sendCommand("M" + code);
 
-	/***************************************************************************
-	 * Motor interface functions
-	 **************************************************************************/
-	public void setMotorRPM(double rpm, int toolhead) throws RetryException {
-		sendCommand(_getToolCode() + "M108 R" + df.format(rpm));
+    super.changeGearRatio(ratioIndex);
+  }
 
-		super.setMotorRPM(rpm, toolhead);
-	}
+  protected String _getToolCode() {
+    return "T" + machine.currentTool().getIndex() + " ";
+  }
 
-	public void setMotorSpeedPWM(int pwm) throws RetryException {
-		sendCommand(_getToolCode() + "M108 S" + df.format(pwm));
+  /***************************************************************************
+   * Motor interface functions
+   **************************************************************************/
+  public void setMotorRPM(double rpm, int toolhead) throws RetryException {
+    sendCommand(_getToolCode() + "M108 R" + df.format(rpm));
 
-		super.setMotorSpeedPWM(pwm);
-	}
+    super.setMotorRPM(rpm, toolhead);
+  }
 
-	public void enableMotor() throws RetryException {
-		String command = _getToolCode();
+  public void setMotorSpeedPWM(int pwm) throws RetryException {
+    sendCommand(_getToolCode() + "M108 S" + df.format(pwm));
 
-		if (machine.currentTool().getMotorDirection() == ToolModel.MOTOR_CLOCKWISE)
-			command += "M101";
-		else
-			command += "M102";
+    super.setMotorSpeedPWM(pwm);
+  }
 
-		sendCommand(command);
+  public void enableMotor() throws RetryException {
+    String command = _getToolCode();
 
-		super.enableMotor();
-	}
+    if (machine.currentTool().getMotorDirection() == ToolModel.MOTOR_CLOCKWISE)
+      command += "M101";
+    else
+      command += "M102";
 
-	public void disableMotor() throws RetryException {
-		sendCommand(_getToolCode() + "M103");
+    sendCommand(command);
 
-		super.disableMotor();
-	}
+    super.enableMotor();
+  }
 
-	/***************************************************************************
-	 * Spindle interface functions
-	 **************************************************************************/
-	public void setSpindleRPM(double rpm) throws RetryException {
-		sendCommand(_getToolCode() + "S" + df.format(rpm));
+  public void disableMotor() throws RetryException {
+    sendCommand(_getToolCode() + "M103");
 
-		super.setSpindleRPM(rpm);
-	}
+    super.disableMotor();
+  }
 
-	public void enableSpindle() throws RetryException {
-		String command = _getToolCode();
+  /***************************************************************************
+   * Spindle interface functions
+   **************************************************************************/
+  public void setSpindleRPM(double rpm) throws RetryException {
+    sendCommand(_getToolCode() + "S" + df.format(rpm));
 
-		if (machine.currentTool().getSpindleDirection() == ToolModel.MOTOR_CLOCKWISE)
-			command += "M3";
-		else
-			command += "M4";
+    super.setSpindleRPM(rpm);
+  }
 
-		sendCommand(command);
+  public void enableSpindle() throws RetryException {
+    String command = _getToolCode();
 
-		super.enableSpindle();
-	}
+    if (machine.currentTool().getSpindleDirection() == ToolModel.MOTOR_CLOCKWISE)
+      command += "M3";
+    else
+      command += "M4";
 
-	public void disableSpindle() throws RetryException {
-		sendCommand(_getToolCode() + "M5");
+    sendCommand(command);
 
-		super.disableSpindle();
-	}
+    super.enableSpindle();
+  }
 
-	/***************************************************************************
-	 * Temperature interface functions
-	 **************************************************************************/
-	public void setTemperature(double temperature) throws RetryException {
-		sendCommand(_getToolCode() + "M104 S" + df.format(temperature));
+  public void disableSpindle() throws RetryException {
+    sendCommand(_getToolCode() + "M5");
 
-		super.setTemperature(temperature);
-	}
+    super.disableSpindle();
+  }
 
-	public void readTemperature() {
-		sendCommand(_getToolCode() + "M105");
+  /***************************************************************************
+   * Temperature interface functions
+   **************************************************************************/
+  public void setTemperature(double temperature) throws RetryException {
+    sendCommand(_getToolCode() + "M104 S" + df.format(temperature));
 
-		super.readTemperature();
-	}
+    super.setTemperature(temperature);
+  }
 
-	public double getPlatformTemperature(){
-		return machine.currentTool().getPlatformCurrentTemperature();
-	}
-	/***************************************************************************
-	 * Flood Coolant interface functions
-	 **************************************************************************/
-	public void enableFloodCoolant() {
-		sendCommand(_getToolCode() + "M7");
+  public void readTemperature() {
+    sendCommand(_getToolCode() + "M105");
 
-		super.enableFloodCoolant();
-	}
+    super.readTemperature();
+  }
 
-	public void disableFloodCoolant() {
-		sendCommand(_getToolCode() + "M9");
+  public double getPlatformTemperature() {
+    return machine.currentTool().getPlatformCurrentTemperature();
+  }
+  /***************************************************************************
+   * Flood Coolant interface functions
+   **************************************************************************/
+  public void enableFloodCoolant() {
+    sendCommand(_getToolCode() + "M7");
 
-		super.disableFloodCoolant();
-	}
+    super.enableFloodCoolant();
+  }
 
-	/***************************************************************************
-	 * Mist Coolant interface functions
-	 **************************************************************************/
-	public void enableMistCoolant() {
-		sendCommand(_getToolCode() + "M8");
+  public void disableFloodCoolant() {
+    sendCommand(_getToolCode() + "M9");
 
-		super.enableMistCoolant();
-	}
+    super.disableFloodCoolant();
+  }
 
-	public void disableMistCoolant() {
-		sendCommand(_getToolCode() + "M9");
+  /***************************************************************************
+   * Mist Coolant interface functions
+   **************************************************************************/
+  public void enableMistCoolant() {
+    sendCommand(_getToolCode() + "M8");
 
-		super.disableMistCoolant();
-	}
+    super.enableMistCoolant();
+  }
 
-	/***************************************************************************
-	 * Fan interface functions
-	 **************************************************************************/
-	public void enableFan() throws RetryException {
-		sendCommand(_getToolCode() + "M106");
+  public void disableMistCoolant() {
+    sendCommand(_getToolCode() + "M9");
 
-		super.enableFan();
-	}
+    super.disableMistCoolant();
+  }
 
-	public void disableFan() throws RetryException {
-		sendCommand(_getToolCode() + "M107");
+  /***************************************************************************
+   * Fan interface functions
+   **************************************************************************/
+  public void enableFan() throws RetryException {
+    sendCommand(_getToolCode() + "M106");
 
-		super.disableFan();
-	}
+    super.enableFan();
+  }
 
-	/***************************************************************************
-	 * Valve interface functions
-	 **************************************************************************/
-	public void openValve() throws RetryException {
-		sendCommand(_getToolCode() + "M126");
+  public void disableFan() throws RetryException {
+    sendCommand(_getToolCode() + "M107");
 
-		super.openValve();
-	}
+    super.disableFan();
+  }
 
-	public void closeValve() throws RetryException {
-		sendCommand(_getToolCode() + "M127");
+  /***************************************************************************
+   * Valve interface functions
+   **************************************************************************/
+  public void openValve() throws RetryException {
+    sendCommand(_getToolCode() + "M126");
 
-		super.closeValve();
-	}
+    super.openValve();
+  }
 
-	/***************************************************************************
-	 * Collet interface functions
-	 **************************************************************************/
-	public void openCollet() {
-		sendCommand(_getToolCode() + "M21");
+  public void closeValve() throws RetryException {
+    sendCommand(_getToolCode() + "M127");
 
-		super.openCollet();
-	}
+    super.closeValve();
+  }
 
-	public void closeCollet() {
-		sendCommand(_getToolCode() + "M22");
+  /***************************************************************************
+   * Collet interface functions
+   **************************************************************************/
+  public void openCollet() {
+    sendCommand(_getToolCode() + "M21");
 
-		super.closeCollet();
-	}
+    super.openCollet();
+  }
 
-	public void reset() {
-		Base.logger.info("Reset.");
-		setInitialized(false);
-		initialize();
-	}
+  public void closeCollet() {
+    sendCommand(_getToolCode() + "M22");
 
-	protected Point5d reconcilePosition() {
-		return new Point5d();
-	}
+    super.closeCollet();
+  }
+
+  public void reset() {
+    Base.logger.info("Reset.");
+    setInitialized(false);
+    initialize();
+  }
+
+  protected Point5d reconcilePosition() {
+    return new Point5d();
+  }
 }
 

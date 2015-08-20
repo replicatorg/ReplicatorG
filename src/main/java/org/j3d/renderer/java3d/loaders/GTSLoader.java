@@ -21,36 +21,31 @@ import com.sun.j3d.loaders.Scene;
 
 public class GTSLoader extends LoaderBase {
 
-	public Scene load(String filename) throws FileNotFoundException,
-			IncorrectFormatException, ParsingErrorException {
-		File file = new File(filename);
-		return load(new BufferedReader(new FileReader(file)));
-	}
+  public Scene load(String filename) throws FileNotFoundException,
+    IncorrectFormatException, ParsingErrorException {
+    File file = new File(filename);
+    return load(new BufferedReader(new FileReader(file)));
+  }
 
-	public Scene load(URL url) throws FileNotFoundException,
-			IncorrectFormatException, ParsingErrorException {
-		assert(url != null);
-        try
-        {
-			InputStream is = url.openStream();
-			return load(new BufferedReader(new InputStreamReader(is)));
-        }
-        catch( InterruptedIOException ie )
-        {
-            // user cancelled loading
-            return null;
-        }
-        catch( IOException e )
-        {
-        	Base.logger.log(Level.SEVERE,"Could not open URL "+url.toString(),e);
-        	return null;
-        }
+  public Scene load(URL url) throws FileNotFoundException,
+    IncorrectFormatException, ParsingErrorException {
+    assert(url != null);
+    try {
+      InputStream is = url.openStream();
+      return load(new BufferedReader(new InputStreamReader(is)));
+    } catch( InterruptedIOException ie ) {
+      // user cancelled loading
+      return null;
+    } catch( IOException e ) {
+      Base.logger.log(Level.SEVERE,"Could not open URL "+url.toString(),e);
+      return null;
     }
+  }
 
-	public Scene load(Reader reader) throws FileNotFoundException,
-			IncorrectFormatException, ParsingErrorException {
-		// TODO
-		return null;
-	}
+  public Scene load(Reader reader) throws FileNotFoundException,
+    IncorrectFormatException, ParsingErrorException {
+    // TODO
+    return null;
+  }
 
 }

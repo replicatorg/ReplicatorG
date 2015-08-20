@@ -2,7 +2,7 @@
   GCodeException.java
 
   Error handling gcode.
-  
+
   Part of the ReplicatorG project - http://www.replicat.org
   Copyright (c) 2008 Zach Smith
 
@@ -23,10 +23,8 @@
 
 package replicatorg.app.exceptions;
 
-public class GCodeException extends Exception
-{
-	public GCodeException(String message)
-	{
-		super(message);
-	}
+public class GCodeException extends Exception {
+  public GCodeException(String message) {
+    super(message);
+  }
 }

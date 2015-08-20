@@ -11,20 +11,20 @@ import replicatorg.drivers.StopException;
  */
 public class DataCaptureNote implements DriverCommand {
 
-	String message;
+  String message;
 
-	/// Constructs a DataCaptureNote with a messsage	
-	public DataCaptureNote( String message ) {
-		this.message = message;
-	}
+  /// Constructs a DataCaptureNote with a messsage
+  public DataCaptureNote( String message ) {
+    this.message = message;
+  }
 
-	/// Writes the constructed note to teh Base.logger as info	
-	@Override
-	public void run(Driver driver) throws RetryException, StopException {
-		Base.logger.info("writing message to data capture: " + message);
-		if(Base.capture != null)
-			Base.capture.WriteMessage(message);
-		else 
-			Base.logger.severe("trying to write a log message to nonexistant log file");
-	}
+  /// Writes the constructed note to teh Base.logger as info
+  @Override
+  public void run(Driver driver) throws RetryException, StopException {
+    Base.logger.info("writing message to data capture: " + message);
+    if(Base.capture != null)
+      Base.capture.WriteMessage(message);
+    else
+      Base.logger.severe("trying to write a log message to nonexistant log file");
+  }
 }

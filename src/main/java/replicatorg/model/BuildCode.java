@@ -33,87 +33,89 @@ import replicatorg.app.Base;
 import replicatorg.app.syntax.SyntaxDocument;
 
 public class BuildCode extends BuildElement implements Comparable<BuildCode> {
-	/** Pretty name (no extension), not the full file name */
-	public String name;
+  /** Pretty name (no extension), not the full file name */
+  public String name;
 
-	/** File object for where this code is located */
-	public File file;
+  /** File object for where this code is located */
+  public File file;
 
-	/** Text of the program text for this tab */
-	public String program;
+  /** Text of the program text for this tab */
+  public String program;
 
-	/** Document object for this tab; includes undo information, etc. */
-	public SyntaxDocument document;
+  /** Document object for this tab; includes undo information, etc. */
+  public SyntaxDocument document;
 
-	// saved positions from last time this tab was used
-	public int selectionStart;
+  // saved positions from last time this tab was used
+  public int selectionStart;
 
-	public int selectionStop;
+  public int selectionStop;
 
-	public int scrollPosition;
+  public int scrollPosition;
 
-	public BuildCode(String name, File file) {
-		this.name = name;
-		this.file = file;
-		try {
-			load();
-		} catch (IOException e) {
-			Base.logger.severe("error while loading code " + name);
-		}
-	}
+  public BuildCode(String name, File file) {
+    this.name = name;
+    this.file = file;
+    try {
+      load();
+    } catch (IOException e) {
+      Base.logger.severe("error while loading code " + name);
+    }
+  }
 
-	/**
-	 * Load this piece of code from a file.
-	 */
-	public void load() throws IOException {
-		if (file == null) {
-			program = "";
-			setModified(true);
-		} else {
-			program = Base.loadFile(file);
-			setModified(false);
-		}
-	}
+  /**
+   * Load this piece of code from a file.
+   */
+  public void load() throws IOException {
+    if (file == null) {
+      program = "";
+      setModified(true);
+    } else {
+      program = Base.loadFile(file);
+      setModified(false);
+    }
+  }
 
-	/**
-	 * Save this piece of code, regardless of whether the modified flag is set
-	 * or not.
-	 */
-	public void save() throws IOException {
-		// TODO re-enable history
-		// history.record(s, SketchHistory.SAVE);
+  /**
+   * Save this piece of code, regardless of whether the modified flag is set
+   * or not.
+   */
+  public void save() throws IOException {
+    // TODO re-enable history
+    // history.record(s, SketchHistory.SAVE);
 
-		Base.saveFile(program, file);
-		setModified(false);
-	}
+    Base.saveFile(program, file);
+    setModified(false);
+  }
 
-	/**
-	 * Save this file to another location, used by Sketch.saveAs()
-	 */
-	public void saveAs(File newFile) throws IOException {
-		Base.saveFile(program, newFile);
-		file = newFile;
-		name = file.getName();
-		// we're still truncating the suffix, for now.
-		int lastIdx = name.lastIndexOf('.');
-		if (lastIdx > 0) {
-			name = name.substring(0, lastIdx);
-		}
-		setModified(false);
-	}
+  /**
+   * Save this file to another location, used by Sketch.saveAs()
+   */
+  public void saveAs(File newFile) throws IOException {
+    Base.saveFile(program, newFile);
+    file = newFile;
+    name = file.getName();
+    // we're still truncating the suffix, for now.
+    int lastIdx = name.lastIndexOf('.');
+    if (lastIdx > 0) {
+      name = name.substring(0, lastIdx);
+    }
+    setModified(false);
+  }
 
-	public int compareTo(BuildCode other) {
-		if (name == null) { return (other.name == null)?0:-1; }
-		return name.compareTo(other.name);
-	}
+  public int compareTo(BuildCode other) {
+    if (name == null) {
+      return (other.name == null)?0:-1;
+    }
+    return name.compareTo(other.name);
+  }
 
-	public Type getType() {
-		return BuildElement.Type.GCODE;
-	}
+  public Type getType() {
+    return BuildElement.Type.GCODE;
+  }
 
-	@Override
-	void writeToStream(OutputStream ostream) {
-		// TODO Auto-generated method stub
-		
-	}
+  @Override
+  void writeToStream(OutputStream ostream) {
+    // TODO Auto-generated method stub
+
+  }
 }

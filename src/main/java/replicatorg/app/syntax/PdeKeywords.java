@@ -70,10 +70,10 @@ public class PdeKeywords extends CTokenMarker {
           //System.out.println("line is " + line);
           // in case there's any garbage on the line
           //if (line.trim().length() == 0) continue;
-          
+
           // don't bother if line begins with hash
-          if(0 < line.length()){
-            if('#' == line.charAt(0)){
+          if(0 < line.length()) {
+            if('#' == line.charAt(0)) {
               continue;
             }
           }
@@ -99,7 +99,7 @@ public class PdeKeywords extends CTokenMarker {
               // KEYWORD1 -> 0, KEYWORD2 -> 1, etc
               int num = coloring.charAt(coloring.length() - 1) - '1';
               byte id = (byte)
-                ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
+                        ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
               //System.out.println("got " + (isKey ? "keyword" : "literal") +
               //                 (num+1) + " for " + keyword);
               keywordColoring.add(keyword, id);
@@ -115,7 +115,7 @@ public class PdeKeywords extends CTokenMarker {
         reader.close();
 
       } catch (Exception e) {
-    	  // Ignore.  We don't use the keyword mechanism anyway.
+        // Ignore.  We don't use the keyword mechanism anyway.
         //Base.showError("Problem loading keywords",
         //                  "Could not load keywords.txt,\n" +
         //                  "please re-install Arduino.", e);

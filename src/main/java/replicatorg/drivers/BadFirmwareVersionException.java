@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package replicatorg.drivers;
 
@@ -13,20 +13,22 @@ import replicatorg.app.Base;
  *
  */
 public class BadFirmwareVersionException extends VersionException {
-	private static final long serialVersionUID = 6973397918493070849L;
-	/** The firmware version that is needed */
-	Version needs;
-	
-	public BadFirmwareVersionException(Version has, Version needs) {
-		super(has);
-		this.needs = needs;
-		Base.logger.warning(getMessage());
-	}
-	
-	public Version getNeeds() { return needs; }
+  private static final long serialVersionUID = 6973397918493070849L;
+  /** The firmware version that is needed */
+  Version needs;
 
-	public String getMessage() {
-		return "Firmware version "+getDetected()+" detected; firmware version "+needs+" required.";
-	}
-	
+  public BadFirmwareVersionException(Version has, Version needs) {
+    super(has);
+    this.needs = needs;
+    Base.logger.warning(getMessage());
+  }
+
+  public Version getNeeds() {
+    return needs;
+  }
+
+  public String getMessage() {
+    return "Firmware version "+getDetected()+" detected; firmware version "+needs+" required.";
+  }
+
 }

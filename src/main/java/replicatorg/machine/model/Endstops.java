@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package replicatorg.machine.model;
 
@@ -8,16 +8,15 @@ package replicatorg.machine.model;
  *
  */
 public enum Endstops {
-	NONE(false, false),
-	MIN(true, false),
-	MAX(false, true),
-	BOTH(true, true);
-	
-	public final boolean hasMin, hasMax;
-	
-	private Endstops(boolean hasMin, boolean hasMax)
-	{
-		this.hasMin = hasMin;
-		this.hasMax = hasMax;
-	}
+  NONE(false, false),
+  MIN(true, false),
+  MAX(false, true),
+  BOTH(true, true);
+
+  public final boolean hasMin, hasMax;
+
+  private Endstops(boolean hasMin, boolean hasMax) {
+    this.hasMin = hasMin;
+    this.hasMax = hasMax;
+  }
 }

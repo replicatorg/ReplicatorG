@@ -5,10 +5,10 @@ import replicatorg.drivers.RetryException;
 
 public class EnableSpindle implements DriverCommand {
 
-	public EnableSpindle() {}
-	
-	@Override
-	public void run(Driver driver) throws RetryException {
-		driver.enableSpindle();
-	}
+  public EnableSpindle() {}
+
+  @Override
+  public void run(Driver driver) throws RetryException {
+    driver.enableSpindle();
+  }
 }

@@ -20,131 +20,133 @@ import replicatorg.app.Base;
  * windows or use System Tray notifications. Configured by config property
  * "ReplicatorG.preferSystemTrayNotifications". If system tray is requested but
  * not available falls back to JOptionPane.
- * 
+ *
  * Note - Errors <em>always</em> use a popup, since user probably doesn't want a
  * fleeting notification
- * 
+ *
  * @author sw1nn
- * 
+ *
  */
 public interface NotificationHandler {
 
-	void showMessage(String title, String message);
-	
-	void showWarning(String title, String message, Throwable e);
-	
-	void showError(String title, String message, Throwable e);
-	
-	public static class Factory {
-		private Factory() { throw new AssertionError(); }
-		
-		public static NotificationHandler getHandler(MainWindow editor, boolean preferSystray) {
-			if (preferSystray && SystemTray.isSupported()) {
-				return new SystemTrayNotifactionHandler(editor);
-			} else {
-				return new JOptionPaneNotificationHandler();
-			}
-		}
-	}
+  void showMessage(String title, String message);
 
-	static abstract class BaseNotificationHandler implements
-			NotificationHandler {
+  void showWarning(String title, String message, Throwable e);
 
-		private BaseNotificationHandler() {
-		}
+  void showError(String title, String message, Throwable e);
 
-		@Override
-		public void showMessage(String title, String message) {
-			if (title == null)
-				title = "Message";
+  public static class Factory {
+    private Factory() {
+      throw new AssertionError();
+    }
 
-			showMessage0(title, message);
-		}
+    public static NotificationHandler getHandler(MainWindow editor, boolean preferSystray) {
+      if (preferSystray && SystemTray.isSupported()) {
+        return new SystemTrayNotifactionHandler(editor);
+      } else {
+        return new JOptionPaneNotificationHandler();
+      }
+    }
+  }
 
-		@Override
-		public void showWarning(String title, String message, Throwable e) {
-			if (title == null)
-				title = "Warning";
-			
-			showWarning0(title, message, e);
-		}
+  static abstract class BaseNotificationHandler implements
+    NotificationHandler {
 
-		@Override
-		public void showError(String title, String message, Throwable t) {
-			if (title == null)
-				title = "Error";
+    private BaseNotificationHandler() {
+    }
 
-			JOptionPane.showMessageDialog(new Frame(), message, title,
-					JOptionPane.ERROR_MESSAGE);
+    @Override
+    public void showMessage(String title, String message) {
+      if (title == null)
+        title = "Message";
 
-			if (t != null)
-				t.printStackTrace();
+      showMessage0(title, message);
+    }
 
-		}
+    @Override
+    public void showWarning(String title, String message, Throwable e) {
+      if (title == null)
+        title = "Warning";
 
-		protected abstract void showMessage0(String title, String message);
+      showWarning0(title, message, e);
+    }
 
-		protected abstract void showWarning0(String title, String message,
-				Throwable e);
+    @Override
+    public void showError(String title, String message, Throwable t) {
+      if (title == null)
+        title = "Error";
 
-	}
+      JOptionPane.showMessageDialog(new Frame(), message, title,
+                                    JOptionPane.ERROR_MESSAGE);
 
-	static class JOptionPaneNotificationHandler extends BaseNotificationHandler {
+      if (t != null)
+        t.printStackTrace();
 
-		private JOptionPaneNotificationHandler() {
-		}
+    }
 
-		@Override
-		protected void showMessage0(String title, String message) {
-			JOptionPane.showMessageDialog(new Frame(), message, title,
-					JOptionPane.INFORMATION_MESSAGE);
-		}
+    protected abstract void showMessage0(String title, String message);
 
-		@Override
-		protected void showWarning0(String title, String message, Throwable t) {
-			JOptionPane.showMessageDialog(new Frame(), message, title,
-					JOptionPane.WARNING_MESSAGE);
-		}
+    protected abstract void showWarning0(String title, String message,
+                                         Throwable e);
 
-	}
+  }
 
-	static class SystemTrayNotifactionHandler extends BaseNotificationHandler {
+  static class JOptionPaneNotificationHandler extends BaseNotificationHandler {
 
-		private TrayIcon trayIcon;
+    private JOptionPaneNotificationHandler() {
+    }
 
-		private SystemTrayNotifactionHandler(final MainWindow editor) {
-			SystemTray systemTray = SystemTray.getSystemTray();
+    @Override
+    protected void showMessage0(String title, String message) {
+      JOptionPane.showMessageDialog(new Frame(), message, title,
+                                    JOptionPane.INFORMATION_MESSAGE);
+    }
 
-			PopupMenu popup = new PopupMenu();
-			MenuItem defaultItem = new MenuItem("Exit");
-			defaultItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					editor.handleQuit();
-				}
-			});
+    @Override
+    protected void showWarning0(String title, String message, Throwable t) {
+      JOptionPane.showMessageDialog(new Frame(), message, title,
+                                    JOptionPane.WARNING_MESSAGE);
+    }
 
-			popup.add(defaultItem);
-			// set the window icon
-			Image icon = Base.getImage("images/icon.gif", editor);
+  }
 
-			trayIcon = new TrayIcon(icon, editor.getTitle(), popup);
-			trayIcon.setImageAutoSize(true);
-			try {
-				systemTray.add(trayIcon);
-			} catch (AWTException e1) {
-				e1.printStackTrace();
-			}
-		}
+  static class SystemTrayNotifactionHandler extends BaseNotificationHandler {
 
-		@Override
-		protected void showMessage0(String title, String message) {
-			trayIcon.displayMessage(title, message, MessageType.INFO);
-		}
+    private TrayIcon trayIcon;
 
-		@Override
-		protected void showWarning0(String title, String message, Throwable e) {
-			trayIcon.displayMessage(title, message, MessageType.WARNING);
-		}
-	}
+    private SystemTrayNotifactionHandler(final MainWindow editor) {
+      SystemTray systemTray = SystemTray.getSystemTray();
+
+      PopupMenu popup = new PopupMenu();
+      MenuItem defaultItem = new MenuItem("Exit");
+      defaultItem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          editor.handleQuit();
+        }
+      });
+
+      popup.add(defaultItem);
+      // set the window icon
+      Image icon = Base.getImage("images/icon.gif", editor);
+
+      trayIcon = new TrayIcon(icon, editor.getTitle(), popup);
+      trayIcon.setImageAutoSize(true);
+      try {
+        systemTray.add(trayIcon);
+      } catch (AWTException e1) {
+        e1.printStackTrace();
+      }
+    }
+
+    @Override
+    protected void showMessage0(String title, String message) {
+      trayIcon.displayMessage(title, message, MessageType.INFO);
+    }
+
+    @Override
+    protected void showWarning0(String title, String message, Throwable e) {
+      trayIcon.displayMessage(title, message, MessageType.WARNING);
+    }
+  }
 }

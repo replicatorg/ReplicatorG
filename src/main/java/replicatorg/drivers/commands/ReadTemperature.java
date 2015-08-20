@@ -10,11 +10,11 @@ import replicatorg.drivers.RetryException;
  */
 public class ReadTemperature implements DriverCommand {
 
-	///Generic constructor auto-generated
-	
-	@Override
-	public void run(Driver driver) throws RetryException {
-		driver.readAllTemperatures();
-		driver.readAllPlatformTemperatures();
-	}
+  ///Generic constructor auto-generated
+
+  @Override
+  public void run(Driver driver) throws RetryException {
+    driver.readAllTemperatures();
+    driver.readAllPlatformTemperatures();
+  }
 }

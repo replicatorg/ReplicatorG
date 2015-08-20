@@ -30,82 +30,82 @@ import replicatorg.app.ui.SimulationWindow2D;
 import replicatorg.util.Point5d;
 
 public class SimulationDriver extends DriverBaseImplementation {
-	private SimulationWindow simulation;
+  private SimulationWindow simulation;
 
-	public SimulationDriver() {
-		super();
-	}
+  public SimulationDriver() {
+    super();
+  }
 
-	public void setSimulationBounds(Rectangle2D.Double bounds) {
-		if (isSimulating()) {
-			simulation.setSimulationBounds(bounds);
-		}
-	}
-	
-	public boolean isSimulating() {
-		return simulation != null;
-	}
-	
-	public void createWindow() {
-		simulation = new SimulationWindow2D();
-		simulation.setVisible(true);
-	}
+  public void setSimulationBounds(Rectangle2D.Double bounds) {
+    if (isSimulating()) {
+      simulation.setSimulationBounds(bounds);
+    }
+  }
 
-	public void destroyWindow() {
-		if (simulation != null) {
-			simulation.setVisible(false);
-			simulation.dispose();
-		}
-		simulation = null;
-	}
+  public boolean isSimulating() {
+    return simulation != null;
+  }
 
-	public void dispose() {
-		destroyWindow();
-		super.dispose();
-	}
+  public void createWindow() {
+    simulation = new SimulationWindow2D();
+    simulation.setVisible(true);
+  }
 
-	public void queuePoint(Point5d p) throws RetryException {
-		simulation.queuePoint(p);
+  public void destroyWindow() {
+    if (simulation != null) {
+      simulation.setVisible(false);
+      simulation.dispose();
+    }
+    simulation = null;
+  }
 
-		super.queuePoint(p);
-	}
+  public void dispose() {
+    destroyWindow();
+    super.dispose();
+  }
 
-	public void homeXYZ() throws RetryException {
-		queuePoint(new Point5d());
-	}
+  public void queuePoint(Point5d p) throws RetryException {
+    simulation.queuePoint(p);
 
-	public void homeXY() throws RetryException {
-		Point5d pos = getCurrentPosition(false);
-		pos.setX(0);
-		pos.setY(0);
+    super.queuePoint(p);
+  }
 
-		queuePoint(pos);
-	}
+  public void homeXYZ() throws RetryException {
+    queuePoint(new Point5d());
+  }
 
-	public void homeX() throws RetryException {
-		Point5d pos = getCurrentPosition(false);
-		pos.setX(0);
+  public void homeXY() throws RetryException {
+    Point5d pos = getCurrentPosition(false);
+    pos.setX(0);
+    pos.setY(0);
 
-		queuePoint(pos);
-	}
+    queuePoint(pos);
+  }
 
-	public void homeY() throws RetryException {
-		Point5d pos = getCurrentPosition(false);
-		pos.setY(0);
+  public void homeX() throws RetryException {
+    Point5d pos = getCurrentPosition(false);
+    pos.setX(0);
 
-		queuePoint(pos);
-	}
+    queuePoint(pos);
+  }
 
-	public void homeZ() throws RetryException {
-		Point5d pos = getCurrentPosition(false);
-		pos.setZ(0);
+  public void homeY() throws RetryException {
+    Point5d pos = getCurrentPosition(false);
+    pos.setY(0);
 
-		queuePoint(pos);
-	}
+    queuePoint(pos);
+  }
 
-	protected Point5d reconcilePosition() {
-		// Initial position irrelevant for this driver; it's all relative to the start pos
-		return new Point5d();
-	}
+  public void homeZ() throws RetryException {
+    Point5d pos = getCurrentPosition(false);
+    pos.setZ(0);
+
+    queuePoint(pos);
+  }
+
+  protected Point5d reconcilePosition() {
+    // Initial position irrelevant for this driver; it's all relative to the start pos
+    return new Point5d();
+  }
 
 }

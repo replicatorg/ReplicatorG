@@ -5,14 +5,14 @@ import replicatorg.drivers.RetryException;
 
 public class SetAccelerationToggle implements DriverCommand {
 
-	boolean on;
+  boolean on;
 
-	public SetAccelerationToggle(boolean on) {
-		this.on = on;
-	}
+  public SetAccelerationToggle(boolean on) {
+    this.on = on;
+  }
 
-	@Override
-	public void run(Driver driver) throws RetryException {
-		driver.setAccelerationToggle(on);
-	}
+  @Override
+  public void run(Driver driver) throws RetryException {
+    driver.setAccelerationToggle(on);
+  }
 }

@@ -30,148 +30,149 @@ import org.w3c.dom.NodeList;
 import replicatorg.app.Base;
 
 public class DriverFactory {
-	// private constructor: static access only!!!
-	private DriverFactory() {
-		// this prevents even the native class from
-		// calling this ctor as well :
-		throw new AssertionError();
-	}
+  // private constructor: static access only!!!
+  private DriverFactory() {
+    // this prevents even the native class from
+    // calling this ctor as well :
+    throw new AssertionError();
+  }
 
-	/**
-	 * Create and instantiate the driver class for our particular machine
-	 * 
-	 * @param String
-	 *            name the name of the driver to instantiate
-	 * @return Driver a driver object ready for parsing / running gcode
-	 */
-	public static Driver factory(Node xml) {
-		if (xml == null) {
-			// create a null driver
-			return factory("NullDriver",null);
-		}
-		// find the "name" attribute first
-		if (xml.hasAttributes()) {
-			NamedNodeMap map = xml.getAttributes();
-			Node attribute = map.getNamedItem("name");
-			if (attribute != null) {
-				String driverName = attribute.getNodeValue().trim();
+  /**
+   * Create and instantiate the driver class for our particular machine
+   *
+   * @param String
+   *            name the name of the driver to instantiate
+   * @return Driver a driver object ready for parsing / running gcode
+   */
+  public static Driver factory(Node xml) {
+    if (xml == null) {
+      // create a null driver
+      return factory("NullDriver",null);
+    }
+    // find the "name" attribute first
+    if (xml.hasAttributes()) {
+      NamedNodeMap map = xml.getAttributes();
+      Node attribute = map.getNamedItem("name");
+      if (attribute != null) {
+        String driverName = attribute.getNodeValue().trim();
 
-				// use our common factory
-				return factory(driverName, xml);
-			}
-		}
+        // use our common factory
+        return factory(driverName, xml);
+      }
+    }
 
-		// fail over to "name" element
-		if (xml.hasChildNodes()) {
-			NodeList kids = xml.getChildNodes();
-			for (int j = 0; j < kids.getLength(); j++) {
-				Node kid = kids.item(j);
+    // fail over to "name" element
+    if (xml.hasChildNodes()) {
+      NodeList kids = xml.getChildNodes();
+      for (int j = 0; j < kids.getLength(); j++) {
+        Node kid = kids.item(j);
 
-				if (kid.getNodeName().equals("name")) {
-					String driverName = kid.getFirstChild().getNodeValue()
-							.trim();
+        if (kid.getNodeName().equals("name")) {
+          String driverName = kid.getFirstChild().getNodeValue()
+                              .trim();
 
-					// use our common factory
-					return factory(driverName, xml);
-				}
-			}
-		}
+          // use our common factory
+          return factory(driverName, xml);
+        }
+      }
+    }
 
-		Base.logger.severe("Failing over to null driver.");
+    Base.logger.severe("Failing over to null driver.");
 
-		// bail with a fake driver.
-		return loadClass("NullDriver");
-	}
+    // bail with a fake driver.
+    return loadClass("NullDriver");
+  }
 
-	/**
-	 * Build and return a driver object from driver info
-	 * @param driverName name of the driver we want to construct
-	 * @param xml 
-	 * @return a Driver object of the type specified by name.	
-	 */
-	public static Driver factory(String driverName, Node xml) {
-	
-		if (driverName.equals("replicator2"))
-			return loadClass("replicatorg.drivers.gen3.Replicator2", xml);
-		else if (driverName.equals("mightyboard"))
-			return loadClass("replicatorg.drivers.gen3.MightyBoard", xml);
-		else if (driverName.equals("serialpassthrough"))
-			return loadClass("replicatorg.drivers.SerialPassthroughDriver", xml);
-		else if (driverName.equals("sanguino3g"))
-			return loadClass("replicatorg.drivers.gen3.Sanguino3GDriver", xml);
-		else if (driverName.equals("makerbot4g"))
-			return loadClass("replicatorg.drivers.gen3.Makerbot4GDriver", xml);
-		else if (driverName.equals("makerbot4ga"))
-			return loadClass("replicatorg.drivers.gen3.Makerbot4GAlternateDriver", xml);
-		else if (driverName.equals("makerbot4gsailfish"))
-			return loadClass("replicatorg.drivers.gen3.Makerbot4GSailfish", xml);
-		else if (driverName.equals("reprap5d"))
-			return loadClass("replicatorg.drivers.reprap.RepRap5DDriver", xml);
-		else if (driverName.equals("simpleReprap5d"))
-			return loadClass("replicatorg.drivers.reprap.SimpleRepRap5DDriver", xml);
-		else if (driverName.equals("null"))
-			return loadClass("replicatorg.drivers.NullDriver", xml);
-		else if (driverName.equals("virtualprinter"))
-			return loadClass("replicatorg.drivers.VirtualPrinter", xml);
-		else {
-			// Load driver class 
-			Driver driver = loadClass(driverName, xml);
-			if (driver == null) {
-				Base.logger.severe("Driver not found, failing over to 'null'.");
-				return loadClass("replicatorg.drivers.NullDriver", xml);
-			} else {
-				return driver;
-			}
-		}
-	}
+  /**
+   * Build and return a driver object from driver info
+   * @param driverName name of the driver we want to construct
+   * @param xml
+   * @return a Driver object of the type specified by name.
+   */
+  public static Driver factory(String driverName, Node xml) {
 
-	/**
-	 * shortcut class to make it easy to load drivers with their XML configs
-	 */
-	private static Driver loadClass(String className, Node xml) {
-		Driver d = loadClass(className);
-		if (xml != null) 
-			{ d.loadXML(xml); }
-		return d;
-	}
+    if (driverName.equals("replicator2"))
+      return loadClass("replicatorg.drivers.gen3.Replicator2", xml);
+    else if (driverName.equals("mightyboard"))
+      return loadClass("replicatorg.drivers.gen3.MightyBoard", xml);
+    else if (driverName.equals("serialpassthrough"))
+      return loadClass("replicatorg.drivers.SerialPassthroughDriver", xml);
+    else if (driverName.equals("sanguino3g"))
+      return loadClass("replicatorg.drivers.gen3.Sanguino3GDriver", xml);
+    else if (driverName.equals("makerbot4g"))
+      return loadClass("replicatorg.drivers.gen3.Makerbot4GDriver", xml);
+    else if (driverName.equals("makerbot4ga"))
+      return loadClass("replicatorg.drivers.gen3.Makerbot4GAlternateDriver", xml);
+    else if (driverName.equals("makerbot4gsailfish"))
+      return loadClass("replicatorg.drivers.gen3.Makerbot4GSailfish", xml);
+    else if (driverName.equals("reprap5d"))
+      return loadClass("replicatorg.drivers.reprap.RepRap5DDriver", xml);
+    else if (driverName.equals("simpleReprap5d"))
+      return loadClass("replicatorg.drivers.reprap.SimpleRepRap5DDriver", xml);
+    else if (driverName.equals("null"))
+      return loadClass("replicatorg.drivers.NullDriver", xml);
+    else if (driverName.equals("virtualprinter"))
+      return loadClass("replicatorg.drivers.VirtualPrinter", xml);
+    else {
+      // Load driver class
+      Driver driver = loadClass(driverName, xml);
+      if (driver == null) {
+        Base.logger.severe("Driver not found, failing over to 'null'.");
+        return loadClass("replicatorg.drivers.NullDriver", xml);
+      } else {
+        return driver;
+      }
+    }
+  }
 
-	/**
-	 * this class handles creation of the actual class objects.
-	 */
-	private static Driver loadClass(String driverName) {
-		Base.logger.info("Loading driver: " + driverName);
+  /**
+   * shortcut class to make it easy to load drivers with their XML configs
+   */
+  private static Driver loadClass(String className, Node xml) {
+    Driver d = loadClass(className);
+    if (xml != null) {
+      d.loadXML(xml);
+    }
+    return d;
+  }
 
-		String className = driverName;
+  /**
+   * this class handles creation of the actual class objects.
+   */
+  private static Driver loadClass(String driverName) {
+    Base.logger.info("Loading driver: " + driverName);
 
-		// thanks to Peter Edworthy for his help with reflection.
-		// lets try to load the class in a nice, dynamic fashion!
-		try {
-			ClassLoader loader = Thread.currentThread().getContextClassLoader();
-			Class<?> driverClass = loader.loadClass(className);
-			if (Driver.class.isAssignableFrom(driverClass)) {
-				return (Driver) driverClass.newInstance();
-			}
-		} catch (ClassNotFoundException e) {
-			// the class being loaded cannot be found
-			Base.logger.severe("The class " + className + " cannot be found.");
-		} catch (IllegalAccessException e) {
-			// The class or its nullary constructor is not accessible.
-			Base.logger.severe("The null constructor for " + className
-					+ " is not accessible.");
-		} catch (InstantiationException e) {
-			// The class being created represents an abstract class,
-			// an interface, an array class, a primitive type, or void;
-			// or if the class has no nullary constructor;
-			// or if the instantiation fails for some other reason.
-			Base.logger.severe("Initialization of " + className + " failed.");
-		} catch (ExceptionInInitializerError e) {
-			// The static initialization of the class failed.
-			Base.logger.severe("Initialization of " + className + " failed.");
-		} catch (SecurityException e) {
-			// if there is no permission to create a new instance.
-			Base.logger.severe("Permission to create " + className + " denied.");
-		}
+    String className = driverName;
 
-		return null;
-	}
+    // thanks to Peter Edworthy for his help with reflection.
+    // lets try to load the class in a nice, dynamic fashion!
+    try {
+      ClassLoader loader = Thread.currentThread().getContextClassLoader();
+      Class<?> driverClass = loader.loadClass(className);
+      if (Driver.class.isAssignableFrom(driverClass)) {
+        return (Driver) driverClass.newInstance();
+      }
+    } catch (ClassNotFoundException e) {
+      // the class being loaded cannot be found
+      Base.logger.severe("The class " + className + " cannot be found.");
+    } catch (IllegalAccessException e) {
+      // The class or its nullary constructor is not accessible.
+      Base.logger.severe("The null constructor for " + className
+                         + " is not accessible.");
+    } catch (InstantiationException e) {
+      // The class being created represents an abstract class,
+      // an interface, an array class, a primitive type, or void;
+      // or if the class has no nullary constructor;
+      // or if the instantiation fails for some other reason.
+      Base.logger.severe("Initialization of " + className + " failed.");
+    } catch (ExceptionInInitializerError e) {
+      // The static initialization of the class failed.
+      Base.logger.severe("Initialization of " + className + " failed.");
+    } catch (SecurityException e) {
+      // if there is no permission to create a new instance.
+      Base.logger.severe("Permission to create " + className + " denied.");
+    }
+
+    return null;
+  }
 }

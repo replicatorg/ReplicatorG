@@ -28,86 +28,73 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class XML
-{
-	//private constructor:  static access only!!!
-	private XML()
-	{
-		//this prevents even the native class from 
-		//calling this ctor as well :
-		throw new AssertionError();
-	}
-	
-	static public boolean hasChildNode(Node node, String name)
-	{
-		//look through the kids
-		NodeList kids = node.getChildNodes();
-		for (int j=0; j<kids.getLength(); j++)
-		{
-			Node kid = kids.item(j);
+public class XML {
+  //private constructor:  static access only!!!
+  private XML() {
+    //this prevents even the native class from
+    //calling this ctor as well :
+    throw new AssertionError();
+  }
 
-			//did we find it?
-			if (kid.getNodeName().equals(name))
-				return true;
-		}
+  static public boolean hasChildNode(Node node, String name) {
+    //look through the kids
+    NodeList kids = node.getChildNodes();
+    for (int j=0; j<kids.getLength(); j++) {
+      Node kid = kids.item(j);
 
-		return false;
-	}
+      //did we find it?
+      if (kid.getNodeName().equals(name))
+        return true;
+    }
 
-	static public String getChildNodeValue(Node node, String name)
-	{
-		//return null if we have nothing.
-		if (hasChildNode(node, name))
-		{
-			//look through the kids.
-			NodeList kids = node.getChildNodes();
-			for (int j=0; j<kids.getLength(); j++)
-			{
-				Node kid = kids.item(j);
-			
-				//did we find it?
-				if (kid.getNodeName().equals(name))
-					return kid.getFirstChild().getNodeValue().trim();
-			}
+    return false;
+  }
 
-			return new String();
-		}
-		else
-			return null;
-	}
-	
-	static public Node getChildNodeByName(Node node, String name)
-	{
-		//return null if we have nothing.
-		if (hasChildNode(node, name))
-		{
-			//look through the kids.
-			NodeList kids = node.getChildNodes();
-			for (int j=0; j<kids.getLength(); j++)
-			{
-				Node kid = kids.item(j);
-			
-				//did we find it?
-				if (kid.getNodeName().equals(name))
-					return kid;
-			}
-		}
+  static public String getChildNodeValue(Node node, String name) {
+    //return null if we have nothing.
+    if (hasChildNode(node, name)) {
+      //look through the kids.
+      NodeList kids = node.getChildNodes();
+      for (int j=0; j<kids.getLength(); j++) {
+        Node kid = kids.item(j);
 
-		//fail.
-		return null;
-	}
-	
-	static public String getAttributeValue(Node node, String name)
-	{
-		if (node.hasAttributes())
-		{
-			NamedNodeMap map = node.getAttributes();
-			Node attribute = map.getNamedItem(name);
+        //did we find it?
+        if (kid.getNodeName().equals(name))
+          return kid.getFirstChild().getNodeValue().trim();
+      }
 
-			if (attribute != null)
-				return attribute.getNodeValue().trim();
-		}
+      return new String();
+    } else
+      return null;
+  }
 
-		return null;
-	}
+  static public Node getChildNodeByName(Node node, String name) {
+    //return null if we have nothing.
+    if (hasChildNode(node, name)) {
+      //look through the kids.
+      NodeList kids = node.getChildNodes();
+      for (int j=0; j<kids.getLength(); j++) {
+        Node kid = kids.item(j);
+
+        //did we find it?
+        if (kid.getNodeName().equals(name))
+          return kid;
+      }
+    }
+
+    //fail.
+    return null;
+  }
+
+  static public String getAttributeValue(Node node, String name) {
+    if (node.hasAttributes()) {
+      NamedNodeMap map = node.getAttributes();
+      Node attribute = map.getNamedItem(name);
+
+      if (attribute != null)
+        return attribute.getNodeValue().trim();
+    }
+
+    return null;
+  }
 }

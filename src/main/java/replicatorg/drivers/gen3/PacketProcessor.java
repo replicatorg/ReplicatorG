@@ -10,118 +10,122 @@ import replicatorg.app.tools.IButtonCrc;
  * its payload.
  */
 public class PacketProcessor implements PacketConstants {
-	
-	public static class CRCException extends Exception {
-		private int expected;
-		private int actual;
-		
-		public CRCException(int expected, int actual) {
-			this.expected = expected;
-			this.actual = actual;
-		}
-		
-		public int getActual() { return actual; }
-		public int getExpected() { return expected; }
-	}
-	
-	enum PacketState {
-		START, LEN, PAYLOAD, CRC, LAST
-	}
 
-	PacketState packetState = PacketState.START;
+  public static class CRCException extends Exception {
+    private int expected;
+    private int actual;
 
-	int payloadLength = -1;
+    public CRCException(int expected, int actual) {
+      this.expected = expected;
+      this.actual = actual;
+    }
 
-	int payloadIdx = 0;
+    public int getActual() {
+      return actual;
+    }
+    public int getExpected() {
+      return expected;
+    }
+  }
 
-	byte[] payload;
+  enum PacketState {
+    START, LEN, PAYLOAD, CRC, LAST
+  }
 
-	byte targetCrc = 0;
+  PacketState packetState = PacketState.START;
 
-	IButtonCrc crc;
+  int payloadLength = -1;
 
-	/**
-	 * Reset the packet's state. (The crc is (re-)generated on the length byte
-	 * and thus doesn't need to be reset.(
-	 */
-	public void reset() {
-		packetState = PacketState.START;
-	}
+  int payloadIdx = 0;
 
-	/**
-	 * Create a PacketResponse object that contains this packet's payload.
-	 * 
-	 * @return A valid PacketResponse object
-	 */
-	public PacketResponse getResponse() {
-		PacketResponse pr = new PacketResponse(payload);
-		return pr;
-	}
+  byte[] payload;
 
-	/**
-	 * Process the next byte in an incoming packet.
-	 * 
-	 * @return true if the packet is complete and valid; false otherwise.
-	 * @throws CRCException 
-	 */
-	public boolean processByte(byte b) throws CRCException {
+  byte targetCrc = 0;
 
-		if (Base.logger.isLoggable(Level.FINER)) {
-			if (b >= 32 && b <= 127)
-				Base.logger.log(Level.FINER,"IN: Processing byte "
-						+ Integer.toHexString((int) b & 0xff) + " (" + (char) b
-						+ ")");
-			else
-				Base.logger.log(Level.FINER,"IN: Processing byte "
-						+ Integer.toHexString((int) b & 0xff));
-		}
+  IButtonCrc crc;
 
-		switch (packetState) {
-		case START:
-			if (b == START_BYTE) {
-				packetState = PacketState.LEN;
-			} else {
-				// throw exception?
-			}
-			break;
+  /**
+   * Reset the packet's state. (The crc is (re-)generated on the length byte
+   * and thus doesn't need to be reset.(
+   */
+  public void reset() {
+    packetState = PacketState.START;
+  }
 
-		case LEN:
-			if (Base.logger.isLoggable(Level.FINER)) {
-				Base.logger.log(Level.FINER,"Length: " + (int) b);
-			}
+  /**
+   * Create a PacketResponse object that contains this packet's payload.
+   *
+   * @return A valid PacketResponse object
+   */
+  public PacketResponse getResponse() {
+    PacketResponse pr = new PacketResponse(payload);
+    return pr;
+  }
 
-			payloadLength = ((int) b) & 0xFF;
-			payload = new byte[payloadLength];
-			crc = new IButtonCrc();
-			packetState = (payloadLength > 0) ? PacketState.PAYLOAD : PacketState.CRC;
-			break;
+  /**
+   * Process the next byte in an incoming packet.
+   *
+   * @return true if the packet is complete and valid; false otherwise.
+   * @throws CRCException
+   */
+  public boolean processByte(byte b) throws CRCException {
 
-		case PAYLOAD:
-			// sanity check
-			if (payloadIdx < payloadLength) {
-				payload[payloadIdx++] = b;
-				crc.update(b);
-			}
-			if (payloadIdx >= payloadLength) {
-				packetState = PacketState.CRC;
-			}
-			break;
+    if (Base.logger.isLoggable(Level.FINER)) {
+      if (b >= 32 && b <= 127)
+        Base.logger.log(Level.FINER,"IN: Processing byte "
+                        + Integer.toHexString((int) b & 0xff) + " (" + (char) b
+                        + ")");
+      else
+        Base.logger.log(Level.FINER,"IN: Processing byte "
+                        + Integer.toHexString((int) b & 0xff));
+    }
 
-		case CRC:
-			targetCrc = b;
+    switch (packetState) {
+    case START:
+      if (b == START_BYTE) {
+        packetState = PacketState.LEN;
+      } else {
+        // throw exception?
+      }
+      break;
 
-			if (Base.logger.isLoggable(Level.FINER)) {
-				Base.logger.log(Level.FINER,"Target CRC: "
-						+ Integer.toHexString((int) targetCrc & 0xff)
-						+ " - expected CRC: "
-						+ Integer.toHexString((int) crc.getCrc() & 0xff));
-			}
-			if (crc.getCrc() != targetCrc) {
-				throw new CRCException(crc.getCrc(), targetCrc);
-			}
-			return true;
-		}
-		return false;
-	}
+    case LEN:
+      if (Base.logger.isLoggable(Level.FINER)) {
+        Base.logger.log(Level.FINER,"Length: " + (int) b);
+      }
+
+      payloadLength = ((int) b) & 0xFF;
+      payload = new byte[payloadLength];
+      crc = new IButtonCrc();
+      packetState = (payloadLength > 0) ? PacketState.PAYLOAD : PacketState.CRC;
+      break;
+
+    case PAYLOAD:
+      // sanity check
+      if (payloadIdx < payloadLength) {
+        payload[payloadIdx++] = b;
+        crc.update(b);
+      }
+      if (payloadIdx >= payloadLength) {
+        packetState = PacketState.CRC;
+      }
+      break;
+
+    case CRC:
+      targetCrc = b;
+
+      if (Base.logger.isLoggable(Level.FINER)) {
+        Base.logger.log(Level.FINER,"Target CRC: "
+                        + Integer.toHexString((int) targetCrc & 0xff)
+                        + " - expected CRC: "
+                        + Integer.toHexString((int) crc.getCrc() & 0xff));
+      }
+      if (crc.getCrc() != targetCrc) {
+        throw new CRCException(crc.getCrc(), targetCrc);
+      }
+      return true;
+    }
+    return false;
+  }
 }
 

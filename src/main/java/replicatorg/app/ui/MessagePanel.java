@@ -59,169 +59,173 @@ import replicatorg.app.Base;
  * println() or whatever directly to systemOut or systemErr.
  */
 public class MessagePanel extends JScrollPane {
-	MainWindow editor;
+  MainWindow editor;
 
-	JTextPane consoleTextPane;
+  JTextPane consoleTextPane;
 
-	BufferedStyledDocument consoleDoc;
+  BufferedStyledDocument consoleDoc;
 
-	MutableAttributeSet timestampStyle;
-	MutableAttributeSet infoStyle;
-	MutableAttributeSet warnStyle;
-	MutableAttributeSet errStyle;
+  MutableAttributeSet timestampStyle;
+  MutableAttributeSet infoStyle;
+  MutableAttributeSet warnStyle;
+  MutableAttributeSet errStyle;
 
-	boolean cerror;
+  boolean cerror;
 
-	// int maxCharCount;
-	int maxLineCount;
+  // int maxCharCount;
+  int maxLineCount;
 
-	static File tempFolder;
+  static File tempFolder;
 
-	public MessagePanel(MainWindow editor) {
-		this.editor = editor;
+  public MessagePanel(MainWindow editor) {
+    this.editor = editor;
 
-		maxLineCount = Base.preferences.getInt("console.length",100);
+    maxLineCount = Base.preferences.getInt("console.length",100);
 
-		consoleDoc = new BufferedStyledDocument(1000, maxLineCount);
-		consoleTextPane = new JTextPane(consoleDoc);
-		consoleTextPane.setEditable(false);
+    consoleDoc = new BufferedStyledDocument(1000, maxLineCount);
+    consoleTextPane = new JTextPane(consoleDoc);
+    consoleTextPane.setEditable(false);
 
 
-		// build styles for different types of console output
-		Color bgColor = Base.getColorPref("console.color","#000000");
-		Color infoColor= Base.getColorPref("console.info.color","#88dd88");
-		Color warnColor = Base.getColorPref("console.warning.color","#dddd88");
-		Color timestampColor = Base.getColorPref("console.timestamp.color","#8888dd");
-		Color errColor = Base.getColorPref("console.error.color","#ff3000");
-		Font font = Base.getFontPref("console.font","Monospaced,plain,11");
+    // build styles for different types of console output
+    Color bgColor = Base.getColorPref("console.color","#000000");
+    Color infoColor= Base.getColorPref("console.info.color","#88dd88");
+    Color warnColor = Base.getColorPref("console.warning.color","#dddd88");
+    Color timestampColor = Base.getColorPref("console.timestamp.color","#8888dd");
+    Color errColor = Base.getColorPref("console.error.color","#ff3000");
+    Font font = Base.getFontPref("console.font","Monospaced,plain,11");
 
-		// necessary?
-		MutableAttributeSet standard = new SimpleAttributeSet();
-		StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
-		StyleConstants.setBackground(standard, bgColor);
-		StyleConstants.setFontSize(standard, font.getSize());
-		StyleConstants.setFontFamily(standard, font.getFamily());
-		StyleConstants.setBold(standard, font.isBold());
-		StyleConstants.setItalic(standard, font.isItalic());
-		consoleDoc.setParagraphAttributes(0, 0, standard, true);
+    // necessary?
+    MutableAttributeSet standard = new SimpleAttributeSet();
+    StyleConstants.setAlignment(standard, StyleConstants.ALIGN_LEFT);
+    StyleConstants.setBackground(standard, bgColor);
+    StyleConstants.setFontSize(standard, font.getSize());
+    StyleConstants.setFontFamily(standard, font.getFamily());
+    StyleConstants.setBold(standard, font.isBold());
+    StyleConstants.setItalic(standard, font.isItalic());
+    consoleDoc.setParagraphAttributes(0, 0, standard, true);
 
-		infoStyle = new SimpleAttributeSet(standard);
-		StyleConstants.setForeground(infoStyle, infoColor);
-		timestampStyle = new SimpleAttributeSet(standard);
-		StyleConstants.setForeground(timestampStyle, timestampColor);
-		errStyle = new SimpleAttributeSet(standard);
-		StyleConstants.setForeground(errStyle, errColor);
-		warnStyle = new SimpleAttributeSet(standard);
-		StyleConstants.setForeground(warnStyle, warnColor);
+    infoStyle = new SimpleAttributeSet(standard);
+    StyleConstants.setForeground(infoStyle, infoColor);
+    timestampStyle = new SimpleAttributeSet(standard);
+    StyleConstants.setForeground(timestampStyle, timestampColor);
+    errStyle = new SimpleAttributeSet(standard);
+    StyleConstants.setForeground(errStyle, errColor);
+    warnStyle = new SimpleAttributeSet(standard);
+    StyleConstants.setForeground(warnStyle, warnColor);
 
-		consoleTextPane.setBackground(bgColor);
+    consoleTextPane.setBackground(bgColor);
 
-		// add the jtextpane to this scrollpane
-		this.setViewportView(consoleTextPane);
+    // add the jtextpane to this scrollpane
+    this.setViewportView(consoleTextPane);
 
-		// calculate height of a line of text in pixels
-		// and size window accordingly
-		FontMetrics metrics = this.getFontMetrics(font);
-		int height = metrics.getAscent() + metrics.getDescent();
-		// Set a preferred width of 80 columns, based on an n-space.
-		int width = metrics.charWidth('n') * 80;
-		// Set a minimum width of 40 columns, based on an n-space.
-		int minWidth = metrics.charWidth('n') * 40; 
-		int lines = Base.preferences.getInt("console.lines",8);
-		setPreferredSize(new Dimension(width, (height * lines)));
-		setMinimumSize(new Dimension(minWidth, (height * 5)));
+    // calculate height of a line of text in pixels
+    // and size window accordingly
+    FontMetrics metrics = this.getFontMetrics(font);
+    int height = metrics.getAscent() + metrics.getDescent();
+    // Set a preferred width of 80 columns, based on an n-space.
+    int width = metrics.charWidth('n') * 80;
+    // Set a minimum width of 40 columns, based on an n-space.
+    int minWidth = metrics.charWidth('n') * 40;
+    int lines = Base.preferences.getInt("console.lines",8);
+    setPreferredSize(new Dimension(width, (height * lines)));
+    setMinimumSize(new Dimension(minWidth, (height * 5)));
 
-		Base.logger.addHandler(new Handler() {
-			SimpleDateFormat formatter = new SimpleDateFormat("'['HH:mm:ss'] '");
-			public void publish(LogRecord record) {
-				String timestamp = formatter.format(new Date(record.getMillis()));
-				message(timestamp, timestampStyle, false);
-				AttributeSet attrs = infoStyle;
-				if (record.getLevel() == Level.WARNING) { attrs = warnStyle; }
-				if (record.getLevel() == Level.SEVERE) { attrs = errStyle; }
-				if (null != record.getMessage()) {
-					message(record.getMessage(), attrs, true);
-				} else if (null != record.getThrown()) {
-					Throwable t = record.getThrown();
-					if (null != t.getLocalizedMessage()) {
-						message(t.getLocalizedMessage(), attrs, true);
-					} else {
-						message(t.toString(), attrs, true);
-					}
-				} else {
-					message("<empty log message>", attrs, true);
-				}
-			}
-			public void flush() {
-			}
-			public void close() throws SecurityException {
-			}
-		});
+    Base.logger.addHandler(new Handler() {
+      SimpleDateFormat formatter = new SimpleDateFormat("'['HH:mm:ss'] '");
+      public void publish(LogRecord record) {
+        String timestamp = formatter.format(new Date(record.getMillis()));
+        message(timestamp, timestampStyle, false);
+        AttributeSet attrs = infoStyle;
+        if (record.getLevel() == Level.WARNING) {
+          attrs = warnStyle;
+        }
+        if (record.getLevel() == Level.SEVERE) {
+          attrs = errStyle;
+        }
+        if (null != record.getMessage()) {
+          message(record.getMessage(), attrs, true);
+        } else if (null != record.getThrown()) {
+          Throwable t = record.getThrown();
+          if (null != t.getLocalizedMessage()) {
+            message(t.getLocalizedMessage(), attrs, true);
+          } else {
+            message(t.toString(), attrs, true);
+          }
+        } else {
+          message("<empty log message>", attrs, true);
+        }
+      }
+      public void flush() {
+      }
+      public void close() throws SecurityException {
+      }
+    });
 
-		// to fix ugliness.. normally macosx java 1.3 puts an
-		// ugly white border around this object, so turn it off.
-		if (Base.isMacOS()) {
-			setBorder(null);
-		}
+    // to fix ugliness.. normally macosx java 1.3 puts an
+    // ugly white border around this object, so turn it off.
+    if (Base.isMacOS()) {
+      setBorder(null);
+    }
 
-		// periodically post buffered messages to the console
-		// should the interval come from the preferences file?
-		new javax.swing.Timer(250, new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				// only if new text has been added
-				if (consoleDoc.hasAppendage) {
-					// insert the text that's been added in the meantime
-					consoleDoc.insertAll();
-					// always move to the end of the text as it's added
-					consoleTextPane.setCaretPosition(consoleDoc.getLength());
-				}
-			}
-		}).start();
-	}
+    // periodically post buffered messages to the console
+    // should the interval come from the preferences file?
+    new javax.swing.Timer(250, new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        // only if new text has been added
+        if (consoleDoc.hasAppendage) {
+          // insert the text that's been added in the meantime
+          consoleDoc.insertAll();
+          // always move to the end of the text as it's added
+          consoleTextPane.setCaretPosition(consoleDoc.getLength());
+        }
+      }
+    }).start();
+  }
 
-	/**
-	 * Close the streams so that the temporary files can be deleted. <p/>
-	 * File.deleteOnExit() cannot be used because the stdout and stderr files
-	 * are inside a folder, and have to be deleted before the folder itself is
-	 * deleted, which can't be guaranteed when using the deleteOnExit() method.
-	 */
-	public void handleQuit() {
-	}
+  /**
+   * Close the streams so that the temporary files can be deleted. <p/>
+   * File.deleteOnExit() cannot be used because the stdout and stderr files
+   * are inside a folder, and have to be deleted before the folder itself is
+   * deleted, which can't be guaranteed when using the deleteOnExit() method.
+   */
+  public void handleQuit() {
+  }
 
-	// added sync for 0091.. not sure if it helps or hinders
-	// synchronized public void message(String what, boolean err, boolean
-	// advance) {
-	public void message(String what, AttributeSet attrs, boolean advance) {
-		appendText(what, attrs);
-		if (advance) {
-			appendText("\n", attrs);
-		}
-	}
+  // added sync for 0091.. not sure if it helps or hinders
+  // synchronized public void message(String what, boolean err, boolean
+  // advance) {
+  public void message(String what, AttributeSet attrs, boolean advance) {
+    appendText(what, attrs);
+    if (advance) {
+      appendText("\n", attrs);
+    }
+  }
 
-	/**
-	 * append a piece of text to the console.
-	 * <P>
-	 * Swing components are NOT thread-safe, and since the MessageSiphon
-	 * instantiates new threads, and in those callbacks, they often print output
-	 * to stdout and stderr, which are wrapped by EditorConsoleStream and
-	 * eventually leads to MessagePanel.appendText(), which directly updates
-	 * the Swing text components, causing deadlock.
-	 * <P>
-	 * Updates are buffered to the console and displayed at regular intervals on
-	 * Swing's event-dispatching thread. (patch by David Mellis)
-	 */
-	synchronized private void appendText(String txt, AttributeSet attrs) {
-		consoleDoc.appendString(txt, attrs);
-	}
+  /**
+   * append a piece of text to the console.
+   * <P>
+   * Swing components are NOT thread-safe, and since the MessageSiphon
+   * instantiates new threads, and in those callbacks, they often print output
+   * to stdout and stderr, which are wrapped by EditorConsoleStream and
+   * eventually leads to MessagePanel.appendText(), which directly updates
+   * the Swing text components, causing deadlock.
+   * <P>
+   * Updates are buffered to the console and displayed at regular intervals on
+   * Swing's event-dispatching thread. (patch by David Mellis)
+   */
+  synchronized private void appendText(String txt, AttributeSet attrs) {
+    consoleDoc.appendString(txt, attrs);
+  }
 
-	public void clear() {
-		try {
-			consoleDoc.remove(0, consoleDoc.getLength());
-		} catch (BadLocationException e) {
-			// ignore the error otherwise this will cause an infinite loop
-			// maybe not a good idea in the long run?
-		}
-	}
+  public void clear() {
+    try {
+      consoleDoc.remove(0, consoleDoc.getLength());
+    } catch (BadLocationException e) {
+      // ignore the error otherwise this will cause an infinite loop
+      // maybe not a good idea in the long run?
+    }
+  }
 }
 
 

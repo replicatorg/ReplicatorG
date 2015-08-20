@@ -39,435 +39,435 @@ import replicatorg.util.Point5d;
 // import org.xml.sax.helpers.XMLReaderFactory;
 
 public interface Driver {
-	
-	/**
-	 * High level functions
-	 */
 
-	/**
-	 * parse and load configuration data from XML
-	 */
-	public void loadXML(Node xml);
-	
-	/**
-	 * Should we bypass the parser?
-	 * @return true if this driver executes GCodes directly, false if the parser should be used to exercise it's interface. 
-	 */
-	public boolean isPassthroughDriver();
-	
-	/**
-	 * Execute a line of GCode directly (ie, don't use the parser)
-	 * @param code The line of GCode that we should execute
-	 */
-	public void executeGCodeLine(String code);
+  /**
+   * High level functions
+   */
 
-	/**
-	 * are we finished with the last command?
-	 */
-	public boolean isFinished();
+  /**
+   * parse and load configuration data from XML
+   */
+  public void loadXML(Node xml);
 
-	/**
-	 * Is our buffer empty? If don't have a buffer, its always true.
-	 */
-	public boolean isBufferEmpty();
-	
-	
-	/**
-	 * Check that the communication line is still up, the machine is still connected,
-	 * and that the machine state is still good.
-	 * TODO: Rename this? 
-	 */
-	public void assessState();
-	
-	/**
-	 * Check if the device has reported an error
-	 * @return True if there is an error waiting.
-	 */
-	public boolean hasError();
+  /**
+   * Should we bypass the parser?
+   * @return true if this driver executes GCodes directly, false if the parser should be used to exercise it's interface.
+   */
+  public boolean isPassthroughDriver();
 
-	/**
-	 * Get a string message for the first driver error.
-	 * @return
-	 */
-	public DriverError getError();
-	
-	/**
-	 * do we have any errors? this method handles them.
-	 */
-	public void checkErrors() throws BuildFailureException;
+  /**
+   * Execute a line of GCode directly (ie, don't use the parser)
+   * @param code The line of GCode that we should execute
+   */
+  public void executeGCodeLine(String code);
 
-	/**
-	 * setup our driver for use.
-	 */
-	public void initialize() throws VersionException;
-		
-	/**
-	 * uninitializes driver (disconnects from machine)
-	 */
-	public void uninitialize();
+  /**
+   * are we finished with the last command?
+   */
+  public boolean isFinished();
 
-	/**
-	 * See if the driver has been successfully initialized.
-	 * 
-	 * @return true if the driver is initialized
-	 */
-	public boolean isInitialized();
+  /**
+   * Is our buffer empty? If don't have a buffer, its always true.
+   */
+  public boolean isBufferEmpty();
 
-	/**
-	 * clean up the driver
-	 */
-	public void dispose();
 
-	/***************************************************************************
-	 * Machine interface functions
-	 **************************************************************************/
-	public MachineModel getMachine();
+  /**
+   * Check that the communication line is still up, the machine is still connected,
+   * and that the machine state is still good.
+   * TODO: Rename this?
+   */
+  public void assessState();
 
-	public void setMachine(MachineModel m);
+  /**
+   * Check if the device has reported an error
+   * @return True if there is an error waiting.
+   */
+  public boolean hasError();
 
-	/**
-	 * get version information from the driver
-	 */
-	public String getDriverName(); // A human-readable name for the machine
-									// type
+  /**
+   * Get a string message for the first driver error.
+   * @return
+   */
+  public DriverError getError();
 
-	public String getFirmwareInfo();
+  /**
+   * do we have any errors? this method handles them.
+   */
+  public void checkErrors() throws BuildFailureException;
 
-	public Version getVersion();
-	
-	/** Called at regular intervals when under manual control. Allows insertion of 
-	 * machine-specific logic into each manual control panel update. 
-	 * @throws InterruptedException */
-	public void updateManualControl();
+  /**
+   * setup our driver for use.
+   */
+  public void initialize() throws VersionException;
 
-	public Version getMinimumVersion();
-        
+  /**
+   * uninitializes driver (disconnects from machine)
+   */
+  public void uninitialize();
+
+  /**
+   * See if the driver has been successfully initialized.
+   *
+   * @return true if the driver is initialized
+   */
+  public boolean isInitialized();
+
+  /**
+   * clean up the driver
+   */
+  public void dispose();
+
+  /***************************************************************************
+   * Machine interface functions
+   **************************************************************************/
+  public MachineModel getMachine();
+
+  public void setMachine(MachineModel m);
+
+  /**
+   * get version information from the driver
+   */
+  public String getDriverName(); // A human-readable name for the machine
+  // type
+
+  public String getFirmwareInfo();
+
+  public Version getVersion();
+
+  /** Called at regular intervals when under manual control. Allows insertion of
+   * machine-specific logic into each manual control panel update.
+   * @throws InterruptedException */
+  public void updateManualControl();
+
+  public Version getMinimumVersion();
+
   public Version getMinimumAccelerationVersion();
 
   public Version getMinimumJettyAccelerationVersion();
 
   public Version getMinimumAdvancedFeatureVersion();
-	public Version getPreferredVersion();
+  public Version getPreferredVersion();
 
-	public void setBuildToFileVersion(int version);
-	public int getBuildToFileVersion();
-	
-	/**
-	 * Positioning Methods
-	 */
-	/**
-	 * Tell the machine to consider its current position as being at p. Should
-	 * not move the machine position.
-	 * 
-	 * @param p
-	 *            the point to map the current position to
-	 * @throws RetryException 
-	 */
-	public void setCurrentPosition(Point5d p) throws RetryException;
+  public void setBuildToFileVersion(int version);
+  public int getBuildToFileVersion();
 
-	/** 
-	 * Tell the machine to record it's current position into storage 
-	 */
-	public void storeHomePositions(EnumSet<AxisId> axes) throws RetryException;
-	
-	/** 
-	 * Tell the machine to restore it's current position from storage 
-	 */
-	public void recallHomePositions(EnumSet<AxisId> axes) throws RetryException;
-	
-	/**
-	 * @return true if the machine position is unknown
-	 */
-	public boolean positionLost();
-	
-	/**
-	 * Get the current machine position
-	 * @param update True if the driver should be forced to query the machine
-	 * for its position, instead of using the cached value.
-	 * @return
-	 */
-	public Point5d getCurrentPosition(boolean update);
+  /**
+   * Positioning Methods
+   */
+  /**
+   * Tell the machine to consider its current position as being at p. Should
+   * not move the machine position.
+   *
+   * @param p
+   *            the point to map the current position to
+   * @throws RetryException
+   */
+  public void setCurrentPosition(Point5d p) throws RetryException;
 
-	/**
-	 * Indicate that the currently maintained position may no longer be the machine's position,
-	 * and that the machine should be queried for its actual location.
-	 */
-	void invalidatePosition();
+  /**
+   * Tell the machine to record it's current position into storage
+   */
+  public void storeHomePositions(EnumSet<AxisId> axes) throws RetryException;
 
-	/**
-	 * Queue the next point to move to.
-	 * @param p The location to move to, in mm.
-	 * @throws RetryException 
-	 */
-	public void queuePoint(Point5d p) throws RetryException;
+  /**
+   * Tell the machine to restore it's current position from storage
+   */
+  public void recallHomePositions(EnumSet<AxisId> axes) throws RetryException;
 
-	public Point3d getOffset(int i);
+  /**
+   * @return true if the machine position is unknown
+   */
+  public boolean positionLost();
 
-	public void setOffsetX(int i, double j);
+  /**
+   * Get the current machine position
+   * @param update True if the driver should be forced to query the machine
+   * for its position, instead of using the cached value.
+   * @return
+   */
+  public Point5d getCurrentPosition(boolean update);
 
-	public void setOffsetY(int i, double j);
+  /**
+   * Indicate that the currently maintained position may no longer be the machine's position,
+   * and that the machine should be queried for its actual location.
+   */
+  void invalidatePosition();
 
-	public void setOffsetZ(int i, double j);
+  /**
+   * Queue the next point to move to.
+   * @param p The location to move to, in mm.
+   * @throws RetryException
+   */
+  public void queuePoint(Point5d p) throws RetryException;
 
-	public Point5d getPosition();
+  public Point3d getOffset(int i);
 
-	/**
-	 * Tool methods
-	 * @throws RetryException 
-	 */
-	public void requestToolChange(int toolIndex, int timeout) throws RetryException;
+  public void setOffsetX(int i, double j);
 
-	public void selectTool(int toolIndex) throws RetryException;
+  public void setOffsetY(int i, double j);
 
-	/**
-	 * sets the feedrate in mm/minute
-	 */
-	public void setFeedrateMM(double feed);
+  public void setOffsetZ(int i, double j);
 
-	/**
-	 * sets the feedrate in mm/minute
-	 */
-	public double getCurrentFeedrate();
+  public Point5d getPosition();
 
-	/**
-	 * sets acceleration on or off for subsequent commands
-	 */
-	public void setAccelerationToggle(boolean on) throws RetryException;
+  /**
+   * Tool methods
+   * @throws RetryException
+   */
+  public void requestToolChange(int toolIndex, int timeout) throws RetryException;
 
-	/**
-	 * Home the given set of axes at the given feedrate.  If the feedrate is <=0, run at
-	 * maximum feedrate for the appropriate axes.
-	 * @throws RetryException 
-	 */
-	public void homeAxes(EnumSet<AxisId> axes, boolean positive, double feedrate) throws RetryException;
+  public void selectTool(int toolIndex) throws RetryException;
 
-	/**
-	 * delay / pause function
-	 * @throws RetryException 
-	 */
-	public void delay(long millis) throws RetryException;
+  /**
+   * sets the feedrate in mm/minute
+   */
+  public void setFeedrateMM(double feed);
 
-	/**
-	 * functions for dealing with clamps
-	 */
-	public void openClamp(int clampIndex);
+  /**
+   * sets the feedrate in mm/minute
+   */
+  public double getCurrentFeedrate();
 
-	public void closeClamp(int clampIndex);
+  /**
+   * sets acceleration on or off for subsequent commands
+   */
+  public void setAccelerationToggle(boolean on) throws RetryException;
 
-	/**
-	 * enabling/disabling our drivers (steppers, servos, etc.)
-	 * @throws RetryException 
-	 */
-	public void enableDrives() throws RetryException;
+  /**
+   * Home the given set of axes at the given feedrate.  If the feedrate is <=0, run at
+   * maximum feedrate for the appropriate axes.
+   * @throws RetryException
+   */
+  public void homeAxes(EnumSet<AxisId> axes, boolean positive, double feedrate) throws RetryException;
 
-	public void disableDrives() throws RetryException;
+  /**
+   * delay / pause function
+   * @throws RetryException
+   */
+  public void delay(long millis) throws RetryException;
 
-	/**
-	 * enabling/disabling our drivers for individual axes. A disabled axis is
-	 * generally able to move freely, while an enabled axis is clamped.
-	 * @throws RetryException
-	 */
-	public void enableAxes(EnumSet<AxisId> axes) throws RetryException;
-	
-	public void disableAxes(EnumSet<AxisId> axes) throws RetryException;
-	
-	/**
-	 * change our gear ratio
-	 */
-	public void changeGearRatio(int ratioIndex);
-	
-	public void readToolStatus();
-	
-	public int getToolStatus();
+  /**
+   * functions for dealing with clamps
+   */
+  public void openClamp(int clampIndex);
 
-	/***************************************************************************
-	 * Motor interface functions
-	 **************************************************************************/
-	public void setMotorDirection(int dir);
-	public void setMotorDirection(int dir, int toolhead);
+  public void closeClamp(int clampIndex);
 
-	public void setMotorRPM(double rpm, int toolhead) throws RetryException;
+  /**
+   * enabling/disabling our drivers (steppers, servos, etc.)
+   * @throws RetryException
+   */
+  public void enableDrives() throws RetryException;
 
-	public void setMotorSpeedPWM(int pwm) throws RetryException;
-	public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException;
+  public void disableDrives() throws RetryException;
 
-	public double getMotorRPM();
+  /**
+   * enabling/disabling our drivers for individual axes. A disabled axis is
+   * generally able to move freely, while an enabled axis is clamped.
+   * @throws RetryException
+   */
+  public void enableAxes(EnumSet<AxisId> axes) throws RetryException;
 
-	public int getMotorSpeedPWM();
+  public void disableAxes(EnumSet<AxisId> axes) throws RetryException;
 
-	/**
-	 * Enable motor until stopped by disableMotor
-	 * @throws RetryException 
-	 */
-	public void enableMotor() throws RetryException;
-	public void enableMotor(int toolhead) throws RetryException;
+  /**
+   * change our gear ratio
+   */
+  public void changeGearRatio(int ratioIndex);
 
-	/**
-	 * Enable motor for a fixed duration, then disable
-	 * @throws RetryException 
-	 */
-	public void enableMotor(long millis) throws RetryException;
-	public void enableMotor(long millis, int toolhead) throws RetryException;
+  public void readToolStatus();
 
-	public void disableMotor() throws RetryException;
-	public void disableMotor(int toolhead) throws RetryException;
+  public int getToolStatus();
 
-	/***************************************************************************
-	 * Spindle interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void setSpindleRPM(double rpm) throws RetryException;
+  /***************************************************************************
+   * Motor interface functions
+   **************************************************************************/
+  public void setMotorDirection(int dir);
+  public void setMotorDirection(int dir, int toolhead);
 
-	public void setSpindleSpeedPWM(int pwm) throws RetryException;
+  public void setMotorRPM(double rpm, int toolhead) throws RetryException;
 
-	public void setSpindleDirection(int dir);
+  public void setMotorSpeedPWM(int pwm) throws RetryException;
+  public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException;
 
-	public double getSpindleRPM();
+  public double getMotorRPM();
 
-	public int getSpindleSpeedPWM();
+  public int getMotorSpeedPWM();
 
-	public void enableSpindle() throws RetryException;
+  /**
+   * Enable motor until stopped by disableMotor
+   * @throws RetryException
+   */
+  public void enableMotor() throws RetryException;
+  public void enableMotor(int toolhead) throws RetryException;
 
-	public void disableSpindle() throws RetryException;
+  /**
+   * Enable motor for a fixed duration, then disable
+   * @throws RetryException
+   */
+  public void enableMotor(long millis) throws RetryException;
+  public void enableMotor(long millis, int toolhead) throws RetryException;
 
-	/***************************************************************************
-	 * Temperature interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void setTemperature(double temperature) throws RetryException;
-	public void setTemperature(double temperature, int toolIndex) throws RetryException;
-	public void readTemperature();
-	
-	public double getTemperature();
-	
-	public double getTemperatureSetting();
-	
-	/***************************************************************************
-	 * Platform Temperature interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void setPlatformTemperature(double temperature) throws RetryException;
-	public void setPlatformTemperature(double temperature, int toolIndex) throws RetryException;
-	
-	public void readPlatformTemperature();
-	
-	public double getPlatformTemperature();
+  public void disableMotor() throws RetryException;
+  public void disableMotor(int toolhead) throws RetryException;
 
-	public double getPlatformTemperatureSetting();
+  /***************************************************************************
+   * Spindle interface functions
+   * @throws RetryException
+   **************************************************************************/
+  public void setSpindleRPM(double rpm) throws RetryException;
 
-	/***************************************************************************
-	 * Build chamber interface functions
-	 **************************************************************************/
-	public void setChamberTemperature(double temperature);
-	
-	public void readChamberTemperature();
-	
-	public double getChamberTemperature();
+  public void setSpindleSpeedPWM(int pwm) throws RetryException;
 
-	/***************************************************************************
-	 * Flood Coolant interface functions
-	 **************************************************************************/
-	public void enableFloodCoolant();
+  public void setSpindleDirection(int dir);
 
-	public void disableFloodCoolant();
+  public double getSpindleRPM();
 
-	/***************************************************************************
-	 * Mist Coolant interface functions
-	 **************************************************************************/
-	public void enableMistCoolant();
+  public int getSpindleSpeedPWM();
 
-	public void disableMistCoolant();
+  public void enableSpindle() throws RetryException;
 
-	/***************************************************************************
-	 * Fan interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void enableFan() throws RetryException;
-	public void enableFan(int toolhead) throws RetryException;
+  public void disableSpindle() throws RetryException;
 
-	public void disableFan() throws RetryException;
-	public void disableFan(int toolhead) throws RetryException;
+  /***************************************************************************
+   * Temperature interface functions
+   * @throws RetryException
+   **************************************************************************/
+  public void setTemperature(double temperature) throws RetryException;
+  public void setTemperature(double temperature, int toolIndex) throws RetryException;
+  public void readTemperature();
 
-	
-	/***************************************************************************
-	 * abp interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException;
-	public void setAutomatedBuildPlatformRunning(boolean state, int toolhead) throws RetryException;
-	
-	/***************************************************************************
-	 * Valve interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void openValve() throws RetryException;
+  public double getTemperature();
 
-	public void closeValve() throws RetryException;
+  public double getTemperatureSetting();
 
-	/*************************************************************************
-	 * Potentiometer interface
-	 **************************************************************************/
-	public void setStepperVoltage(int stepperId, int referenceValue) throws RetryException;
+  /***************************************************************************
+   * Platform Temperature interface functions
+   * @throws RetryException
+   **************************************************************************/
+  public void setPlatformTemperature(double temperature) throws RetryException;
+  public void setPlatformTemperature(double temperature, int toolIndex) throws RetryException;
+
+  public void readPlatformTemperature();
+
+  public double getPlatformTemperature();
+
+  public double getPlatformTemperatureSetting();
+
+  /***************************************************************************
+   * Build chamber interface functions
+   **************************************************************************/
+  public void setChamberTemperature(double temperature);
+
+  public void readChamberTemperature();
+
+  public double getChamberTemperature();
+
+  /***************************************************************************
+   * Flood Coolant interface functions
+   **************************************************************************/
+  public void enableFloodCoolant();
+
+  public void disableFloodCoolant();
+
+  /***************************************************************************
+   * Mist Coolant interface functions
+   **************************************************************************/
+  public void enableMistCoolant();
+
+  public void disableMistCoolant();
+
+  /***************************************************************************
+   * Fan interface functions
+   * @throws RetryException
+   **************************************************************************/
+  public void enableFan() throws RetryException;
+  public void enableFan(int toolhead) throws RetryException;
+
+  public void disableFan() throws RetryException;
+  public void disableFan(int toolhead) throws RetryException;
+
+
+  /***************************************************************************
+   * abp interface functions
+   * @throws RetryException
+   **************************************************************************/
+  public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException;
+  public void setAutomatedBuildPlatformRunning(boolean state, int toolhead) throws RetryException;
+
+  /***************************************************************************
+   * Valve interface functions
+   * @throws RetryException
+   **************************************************************************/
+  public void openValve() throws RetryException;
+
+  public void closeValve() throws RetryException;
+
+  /*************************************************************************
+   * Potentiometer interface
+   **************************************************************************/
+  public void setStepperVoltage(int stepperId, int referenceValue) throws RetryException;
 //	public void storeStepperVoltage(int stepperId, int referenceValue) throws RetryException;
-	public int getStepperVoltage(int stepperId ); 
-	
-	/*************************************************************************
-	 * LED Strip interface
-	 **************************************************************************/
-	public void setLedStrip(Color color, int effectId) throws RetryException;
-	//public Color getLedColors(int effectId);
+  public int getStepperVoltage(int stepperId );
+
+  /*************************************************************************
+   * LED Strip interface
+   **************************************************************************/
+  public void setLedStrip(Color color, int effectId) throws RetryException;
+  //public Color getLedColors(int effectId);
 
 
-	/*************************************************************************
-	 * Beep Interface
-	 **************************************************************************/
-	public void sendBeep(int frequencyHz, int durationMs, int effect) throws RetryException;
+  /*************************************************************************
+   * Beep Interface
+   **************************************************************************/
+  public void sendBeep(int frequencyHz, int durationMs, int effect) throws RetryException;
 
-	
-	/***************************************************************************
-	 * Collet interface functions
-	 **************************************************************************/
-	public void openCollet();
 
-	public void closeCollet();
+  /***************************************************************************
+   * Collet interface functions
+   **************************************************************************/
+  public void openCollet();
 
-	/***************************************************************************
-	 * Pause/unpause functionality for asynchronous devices
-	 **************************************************************************/
-	public void pause();
+  public void closeCollet();
 
-	public void unpause();
+  /***************************************************************************
+   * Pause/unpause functionality for asynchronous devices
+   **************************************************************************/
+  public void pause();
 
-	/***************************************************************************
-	 * Stop and system state reset
-	 **************************************************************************/
-	/** Stop the motion of the machine. A normal stop will merely halt all steppers.
-	 * An abort (a stop with the abort bit set true) will also instruct the machine
-	 * to stop all subsystems and toolhead.
-	 */
-	public void stop(boolean abort);
+  public void unpause();
 
-	public boolean hasSoftStop();
+  /***************************************************************************
+   * Stop and system state reset
+   **************************************************************************/
+  /** Stop the motion of the machine. A normal stop will merely halt all steppers.
+   * An abort (a stop with the abort bit set true) will also instruct the machine
+   * to stop all subsystems and toolhead.
+   */
+  public void stop(boolean abort);
 
-	public boolean hasEmergencyStop();
-	
-	public void reset();
+  public boolean hasSoftStop();
 
-	/***************************************************************************
-	 * Heartbeat
-	 **************************************************************************/
-	public boolean heartbeat();
+  public boolean hasEmergencyStop();
 
-	/**
-	 * Reads temperatures from all extruders
-	 */
-	public void readAllTemperatures();
+  public void reset();
 
-	/**
-	 * reads temperature from all heated build platforms
-	 */
-	public void readAllPlatformTemperatures();
-	
+  /***************************************************************************
+   * Heartbeat
+   **************************************************************************/
+  public boolean heartbeat();
+
+  /**
+   * Reads temperatures from all extruders
+   */
+  public void readAllTemperatures();
+
+  /**
+   * reads temperature from all heated build platforms
+   */
+  public void readAllPlatformTemperatures();
+
 
 
 }

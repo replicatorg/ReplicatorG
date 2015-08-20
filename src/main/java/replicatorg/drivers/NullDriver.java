@@ -31,11 +31,11 @@ import replicatorg.app.tools.XML;
 //TODO: why do we have this?
 public class NullDriver extends DriverBaseImplementation {
 
-	public NullDriver() {
-		super();
-	}
+  public NullDriver() {
+    super();
+  }
 
-	public void loadXML(Node xml) {
-		super.loadXML(xml);
-	}
+  public void loadXML(Node xml) {
+    super.loadXML(xml);
+  }
 }

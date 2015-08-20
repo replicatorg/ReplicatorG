@@ -29,176 +29,178 @@ import javax.vecmath.Point3d;
 
 import replicatorg.util.Point5d;
 
-public class EstimationDriver extends DriverBaseImplementation implements InteractiveDisplay{
-	// build time in milliseconds
-	private double buildTime = 0.0;
+public class EstimationDriver extends DriverBaseImplementation implements InteractiveDisplay {
+  // build time in milliseconds
+  private double buildTime = 0.0;
 
-	// the length of our last move.
-	private double moveLength = 0.0;
-	
-	private Rectangle2D.Double bounds = new Rectangle2D.Double();
-	
-	public EstimationDriver() {
-		super();
+  // the length of our last move.
+  private double moveLength = 0.0;
 
-		buildTime = 0.0;
-	}
+  private Rectangle2D.Double bounds = new Rectangle2D.Double();
 
-	public Rectangle2D.Double getBounds() { return bounds; }
-	
-	public void delay(long millis) {
-		buildTime += (double) millis / 1000;
-	}
+  public EstimationDriver() {
+    super();
 
-	protected Point5d reconcilePosition() {
-		// The estimation driver doesn't even care where it is.
-		return new Point5d();
-	}
+    buildTime = 0.0;
+  }
 
-	/**
-	 * Queue the given point.
-	 * @param p The point, in mm.
-	 * @throws RetryException 
-	 */
-	public void queuePoint(Point5d p) throws RetryException {
-		Point5d delta = getDelta(p);
+  public Rectangle2D.Double getBounds() {
+    return bounds;
+  }
 
-		// add to the total length
-		moveLength = delta.get3D().distance(new Point3d());
+  public void delay(long millis) {
+    buildTime += (double) millis / 1000;
+  }
 
-		// Calculate the feedrate. This is the speed that the toolhead will
-		// be traveling at.
-		double feedrate = getSafeFeedrate(delta);
+  protected Point5d reconcilePosition() {
+    // The estimation driver doesn't even care where it is.
+    return new Point5d();
+  }
 
-		// mostly for estimation driver.
-		
-		double millis = moveLength / feedrate * 60000.0;
+  /**
+   * Queue the given point.
+   * @param p The point, in mm.
+   * @throws RetryException
+   */
+  public void queuePoint(Point5d p) throws RetryException {
+    Point5d delta = getDelta(p);
 
-		bounds.add(p.x(),p.y());
-		
-		// add it in!
-		if (millis > 0) {
-			//Take into account the time it takes to send a command!
-			millis = millis + 12;
-			
-			buildTime = buildTime + millis;
+    // add to the total length
+    moveLength = delta.get3D().distance(new Point3d());
+
+    // Calculate the feedrate. This is the speed that the toolhead will
+    // be traveling at.
+    double feedrate = getSafeFeedrate(delta);
+
+    // mostly for estimation driver.
+
+    double millis = moveLength / feedrate * 60000.0;
+
+    bounds.add(p.x(),p.y());
+
+    // add it in!
+    if (millis > 0) {
+      //Take into account the time it takes to send a command!
+      millis = millis + 12;
+
+      buildTime = buildTime + millis;
 //			System.out.println(moveLength + "mm at " + feedrate + " takes " + Math.round(millis) + " millis (" + buildTime + "	total).");
-		}
-		
-		setInternalPosition(p);
-	}
+    }
 
-	public double getBuildTime() {
-		return buildTime;
-	}
+    setInternalPosition(p);
+  }
 
-	static public String getBuildTimeString(double tempTime) {
-		return getBuildTimeString(tempTime, false);
-	}
+  public double getBuildTime() {
+    return buildTime;
+  }
 
-	static public String getBuildTimeString(double tempTime, boolean useSeconds) {
+  static public String getBuildTimeString(double tempTime) {
+    return getBuildTimeString(tempTime, false);
+  }
 
-		String val = new String();
+  static public String getBuildTimeString(double tempTime, boolean useSeconds) {
 
-		if (!useSeconds)
-			tempTime = tempTime + 59999; // round to nearest minutes
+    String val = new String();
 
-		// figure out days
-		int days = (int) Math.floor(tempTime / 86400000.0);
-		if (days > 0) {
-			tempTime = tempTime - (days * 86400000);
+    if (!useSeconds)
+      tempTime = tempTime + 59999; // round to nearest minutes
 
-			// string formatting
-			val += days + " day";
-			if (days > 1)
-				val += "s";
-		}
+    // figure out days
+    int days = (int) Math.floor(tempTime / 86400000.0);
+    if (days > 0) {
+      tempTime = tempTime - (days * 86400000);
 
-		// figure out hours
-		int hours = (int) Math.floor(tempTime / 3600000.0);
-		if (hours > 0) {
-			tempTime = tempTime - (hours * 3600000);
+      // string formatting
+      val += days + " day";
+      if (days > 1)
+        val += "s";
+    }
 
-			// string formatting
-			if (days > 0)
-				val += ", ";
-			val += hours + " hr";
-			if (hours > 1)
-				val += "s";
-		}
+    // figure out hours
+    int hours = (int) Math.floor(tempTime / 3600000.0);
+    if (hours > 0) {
+      tempTime = tempTime - (hours * 3600000);
 
-		// figure out minutes
-		int minutes = (int) Math.floor(tempTime / 60000.0);
-		if (minutes > 0) {
-			tempTime = tempTime - (minutes * 60000);
+      // string formatting
+      if (days > 0)
+        val += ", ";
+      val += hours + " hr";
+      if (hours > 1)
+        val += "s";
+    }
 
-			// string formatting
-			if (days > 0 || hours > 0)
-				val += ", ";
-			val += minutes + " min";
-			if (minutes > 1)
-				val += "s";
-		}
+    // figure out minutes
+    int minutes = (int) Math.floor(tempTime / 60000.0);
+    if (minutes > 0) {
+      tempTime = tempTime - (minutes * 60000);
 
-		// figure out minutes
-		if (useSeconds) {
-			int seconds = (int) Math.floor(tempTime / 1000.0);
-			if (seconds > 0) {
-				tempTime = tempTime - (seconds * 1000);
+      // string formatting
+      if (days > 0 || hours > 0)
+        val += ", ";
+      val += minutes + " min";
+      if (minutes > 1)
+        val += "s";
+    }
 
-				// string formatting
-				if (days > 0 || hours > 0 || minutes > 0)
-					val += ", ";
-				val += seconds + " sec";
-				if (seconds > 1)
-					val += "s";
-			}
-		}
+    // figure out minutes
+    if (useSeconds) {
+      int seconds = (int) Math.floor(tempTime / 1000.0);
+      if (seconds > 0) {
+        tempTime = tempTime - (seconds * 1000);
 
-		return val;
-	}
+        // string formatting
+        if (days > 0 || hours > 0 || minutes > 0)
+          val += ", ";
+        val += seconds + " sec";
+        if (seconds > 1)
+          val += "s";
+      }
+    }
 
-	
-	/*
-	 * From InteractiveDisplay:
-	 * prevents annoying error messages, allows us to account for these pauses in estimation
-	 */
-	@Override
-	public void displayMessage(double seconds, String message,
-			boolean ButtonWait) throws RetryException {
-		// TODO Auto-generated method stub
-		
-	}
+    return val;
+  }
 
-	@Override
-	public void userPause(double seconds, boolean resetOnTimeout, int buttonMask)
-			throws RetryException {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void playSong(int songId) throws RetryException {
-		// TODO Auto-generated method stub
-		
-	}
+  /*
+   * From InteractiveDisplay:
+   * prevents annoying error messages, allows us to account for these pauses in estimation
+   */
+  @Override
+  public void displayMessage(double seconds, String message,
+                             boolean ButtonWait) throws RetryException {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void updateBuildPercent(int percentDone) throws RetryException {
-		// TODO Auto-generated method stub
-		
-	}
+  }
 
-	@Override
-	public void sendBuildStartNotification(String string, int i)
-			throws RetryException {
-		// TODO Auto-generated method stub
-		
-	}
+  @Override
+  public void userPause(double seconds, boolean resetOnTimeout, int buttonMask)
+  throws RetryException {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void sendBuildEndNotification(int endCode) throws RetryException {
-		// TODO Auto-generated method stub
-		
-	}
+  }
+
+  @Override
+  public void playSong(int songId) throws RetryException {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void updateBuildPercent(int percentDone) throws RetryException {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void sendBuildStartNotification(String string, int i)
+  throws RetryException {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void sendBuildEndNotification(int endCode) throws RetryException {
+    // TODO Auto-generated method stub
+
+  }
 }

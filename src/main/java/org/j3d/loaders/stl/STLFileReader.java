@@ -32,175 +32,156 @@ import java.net.URL;
  *          University of Vienna, Dept. of Medical Computer Sciences
  * @version $Revision: 1.2 $
  */
-public class STLFileReader
-{
-    private STLParser itsParser;
+public class STLFileReader {
+  private STLParser itsParser;
 
-    /**
-     * Creates a <code>STLFileReader</code> object to read a STL file from a
-     * file. The data may be in ASCII or binary format.
-     * @param file <code>File</code> object of STL file to read.
-     */
-    public STLFileReader( final File file ) throws InterruptedIOException,
-    IOException, FileNotFoundException
-    {
-        this( file.toURI().toURL() );
-    }
+  /**
+   * Creates a <code>STLFileReader</code> object to read a STL file from a
+   * file. The data may be in ASCII or binary format.
+   * @param file <code>File</code> object of STL file to read.
+   */
+  public STLFileReader( final File file ) throws InterruptedIOException,
+    IOException, FileNotFoundException {
+    this( file.toURI().toURL() );
+  }
 
-    /**
-     * Creates a <code>STLFileReader</code> object to read a STL file from a
-     * file. The data may be in ASCII or binary format.
-     * @param fileName Name of STL file to read.
-     */
-    public STLFileReader( final String fileName ) throws InterruptedIOException,
-    IOException, FileNotFoundException
-    {
-        this( new URL( fileName ) );
-    }
+  /**
+   * Creates a <code>STLFileReader</code> object to read a STL file from a
+   * file. The data may be in ASCII or binary format.
+   * @param fileName Name of STL file to read.
+   */
+  public STLFileReader( final String fileName ) throws InterruptedIOException,
+    IOException, FileNotFoundException {
+    this( new URL( fileName ) );
+  }
 
-    /**
-     * Creates a <code>STLFileReader</code> object to read a STL file from an
-     * URL. The data may be in ASCII or binary format.
-     * @param url URL of STL file to read.
-     */
-    public STLFileReader( final URL url )
-    throws IOException, FileNotFoundException
-    {
-        final STLASCIIParser2 asciiParser = new STLASCIIParser2( );
-        if( asciiParser.parse( url ) )
-        {
-            itsParser = asciiParser;
-        }
-        else
-        {
-            final STLBinaryParser binParser = new STLBinaryParser( );
-            binParser.parse( url );
-            itsParser = binParser;
-        }
+  /**
+   * Creates a <code>STLFileReader</code> object to read a STL file from an
+   * URL. The data may be in ASCII or binary format.
+   * @param url URL of STL file to read.
+   */
+  public STLFileReader( final URL url )
+  throws IOException, FileNotFoundException {
+    final STLASCIIParser2 asciiParser = new STLASCIIParser2( );
+    if( asciiParser.parse( url ) ) {
+      itsParser = asciiParser;
+    } else {
+      final STLBinaryParser binParser = new STLBinaryParser( );
+      binParser.parse( url );
+      itsParser = binParser;
     }
+  }
 
-    /**
-     * Creates a <code>STLFileReader</code> object to read a STL file from an
-     * URL. The data may be in ASCII or binary format. A progress monitor will
-     * show the progress during reading.
-     * @param url URL of STL file to read.
-     * @param parentComponent Parent <code>Component</code> of progress monitor.
-     *      Use <code>null</code> if there is no parent.
-     */
-    public STLFileReader( final URL url, final Component parentComponent )
-    throws InterruptedIOException, IOException, FileNotFoundException
-    {
-        final STLASCIIParser2 asciiParser = new STLASCIIParser2( );
-        if( asciiParser.parse( url, parentComponent ) )
-        {
-            itsParser = asciiParser;
-        }
-        else
-        {
-            final STLBinaryParser binParser = new STLBinaryParser( );
-            binParser.parse( url, parentComponent );
-            itsParser = binParser;
-        }
+  /**
+   * Creates a <code>STLFileReader</code> object to read a STL file from an
+   * URL. The data may be in ASCII or binary format. A progress monitor will
+   * show the progress during reading.
+   * @param url URL of STL file to read.
+   * @param parentComponent Parent <code>Component</code> of progress monitor.
+   *      Use <code>null</code> if there is no parent.
+   */
+  public STLFileReader( final URL url, final Component parentComponent )
+  throws InterruptedIOException, IOException, FileNotFoundException {
+    final STLASCIIParser2 asciiParser = new STLASCIIParser2( );
+    if( asciiParser.parse( url, parentComponent ) ) {
+      itsParser = asciiParser;
+    } else {
+      final STLBinaryParser binParser = new STLBinaryParser( );
+      binParser.parse( url, parentComponent );
+      itsParser = binParser;
     }
+  }
 
-    /**
-     * Creates a <code>STLFileReader</code> object to read a STL file from a
-     * file. The data may be in ASCII or binary format. A progress monitor will
-     * show the progress during reading.
-     * @param file <code>File</code> object of STL file to read.
-     * @param parentComponent Parent <code>Component</code> of progress monitor.
-     *      Use <code>null</code> if there is no parent.
-     */
-    public STLFileReader( final File file, final Component parentComponent )
-    throws InterruptedIOException, IOException, FileNotFoundException
-    {
-        this( file.toURI().toURL(), parentComponent );
-    }
+  /**
+   * Creates a <code>STLFileReader</code> object to read a STL file from a
+   * file. The data may be in ASCII or binary format. A progress monitor will
+   * show the progress during reading.
+   * @param file <code>File</code> object of STL file to read.
+   * @param parentComponent Parent <code>Component</code> of progress monitor.
+   *      Use <code>null</code> if there is no parent.
+   */
+  public STLFileReader( final File file, final Component parentComponent )
+  throws InterruptedIOException, IOException, FileNotFoundException {
+    this( file.toURI().toURL(), parentComponent );
+  }
 
-    /**
-     * Creates a <code>STLFileReader</code> object to read a STL file from a
-     * file. The data may be in ASCII or binary format. A progress monitor will
-     * show the progress during reading.
-     * @param fileName Name of STL file to read.
-     * @param parentComponent Parent <code>Component</code> of progress monitor.
-     *      Use <code>null</code> if there is no parent.
-     */
-    public STLFileReader
-    (
-        final String    fileName,
-        final Component parentComponent
-    )
-    throws InterruptedIOException, IOException, FileNotFoundException
-    {
-        this( new URL( fileName ), parentComponent );
-    }
+  /**
+   * Creates a <code>STLFileReader</code> object to read a STL file from a
+   * file. The data may be in ASCII or binary format. A progress monitor will
+   * show the progress during reading.
+   * @param fileName Name of STL file to read.
+   * @param parentComponent Parent <code>Component</code> of progress monitor.
+   *      Use <code>null</code> if there is no parent.
+   */
+  public STLFileReader
+  (
+    final String    fileName,
+    final Component parentComponent
+  )
+  throws InterruptedIOException, IOException, FileNotFoundException {
+    this( new URL( fileName ), parentComponent );
+  }
 
-    /**
-     * Returns the data for a facet. The orientation of the facets (which way
-     * is out and which way is in) is specified redundantly. First, the
-     * direction of the normal is outward. Second, the vertices are listed in
-     * counterclockwise order when looking at the object from the outside
-     * (right-hand rule).<p>
-     * Call consecutively until all data is read.
-     * @param normal array of size 3 to store the normal vector.
-     * @param vertices array of size 3x3 to store the vertex data.
-     *      <UL type=disk>
-     *          <LI>first index: vertex
-     *          <LI>second index:
-     *          <UL>
-     *              <LI>0: x coordinate
-     *              <LI>1: y coordinate
-     *              <LI>2: z coordinate
-     *          </UL>
-     *      </UL>
-     * @return <code>True</code> if facet data is contained in
-     *      <code>normal</code> and <code>vertices</code>. <code>False</code>
-     *      if end of file is reached. Further calls of this method after
-     *      the end of file is reached will lead to an IOException.
-     */
-    public boolean getNextFacet( final double[ ] normal, double[ ][ ] vertices )
-    throws InterruptedIOException, IOException
-    {
-        return itsParser.getNextFacet( normal, vertices );
-    }
+  /**
+   * Returns the data for a facet. The orientation of the facets (which way
+   * is out and which way is in) is specified redundantly. First, the
+   * direction of the normal is outward. Second, the vertices are listed in
+   * counterclockwise order when looking at the object from the outside
+   * (right-hand rule).<p>
+   * Call consecutively until all data is read.
+   * @param normal array of size 3 to store the normal vector.
+   * @param vertices array of size 3x3 to store the vertex data.
+   *      <UL type=disk>
+   *          <LI>first index: vertex
+   *          <LI>second index:
+   *          <UL>
+   *              <LI>0: x coordinate
+   *              <LI>1: y coordinate
+   *              <LI>2: z coordinate
+   *          </UL>
+   *      </UL>
+   * @return <code>True</code> if facet data is contained in
+   *      <code>normal</code> and <code>vertices</code>. <code>False</code>
+   *      if end of file is reached. Further calls of this method after
+   *      the end of file is reached will lead to an IOException.
+   */
+  public boolean getNextFacet( final double[ ] normal, double[ ][ ] vertices )
+  throws InterruptedIOException, IOException {
+    return itsParser.getNextFacet( normal, vertices );
+  }
 
-    /**
-     * Get array with object names.
-     * @return Array of strings with names of objects. Size of array = number
-     * of objects in file. If name is not contained then the appropriate
-     * string is <code>null</code>.
-     */
-    public String[ ] getObjectNames( )
-    {
-        return itsParser.getObjectNames( );
-    }
+  /**
+   * Get array with object names.
+   * @return Array of strings with names of objects. Size of array = number
+   * of objects in file. If name is not contained then the appropriate
+   * string is <code>null</code>.
+   */
+  public String[ ] getObjectNames( ) {
+    return itsParser.getObjectNames( );
+  }
 
-    /**
-     * Get number of facets per object.
-     * @return Array with the number of facets per object. Size of array =
-     *      number of objects in file.
-     */
-    public int[ ] getNumOfFacets( )
-    {
-        return itsParser.getNumOfFacets( );
-    }
+  /**
+   * Get number of facets per object.
+   * @return Array with the number of facets per object. Size of array =
+   *      number of objects in file.
+   */
+  public int[ ] getNumOfFacets( ) {
+    return itsParser.getNumOfFacets( );
+  }
 
-    /**
-     * Get number of objects in file.
-     */
-    public int getNumOfObjects( )
-    {
-        return itsParser.getNumOfObjects( );
-    }
+  /**
+   * Get number of objects in file.
+   */
+  public int getNumOfObjects( ) {
+    return itsParser.getNumOfObjects( );
+  }
 
-    /**
-     * Releases used resources. Must be called after finishing reading.
-     */
-    public void close( ) throws IOException
-    {
-        if( itsParser != null )
-        {
-            itsParser.close( );
-        }
+  /**
+   * Releases used resources. Must be called after finishing reading.
+   */
+  public void close( ) throws IOException {
+    if( itsParser != null ) {
+      itsParser.close( );
     }
+  }
 }

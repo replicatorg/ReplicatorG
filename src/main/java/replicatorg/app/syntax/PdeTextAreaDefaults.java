@@ -28,7 +28,7 @@ import replicatorg.app.Base;
 
 
 public class PdeTextAreaDefaults extends TextAreaDefaults {
-	
+
   public PdeTextAreaDefaults() {
 
     inputHandler = new DefaultInputHandler();
@@ -69,8 +69,8 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
       inputHandler.addKeyBinding("S+END", InputHandler.SELECT_DOC_END);
     } else {
       // for 0123 added the proper windows defaults
-    inputHandler.addKeyBinding("HOME", InputHandler.HOME);
-    inputHandler.addKeyBinding("END", InputHandler.END);
+      inputHandler.addKeyBinding("HOME", InputHandler.HOME);
+      inputHandler.addKeyBinding("END", InputHandler.END);
       inputHandler.addKeyBinding("S+HOME", InputHandler.SELECT_HOME);
       inputHandler.addKeyBinding("S+END", InputHandler.SELECT_END);
       inputHandler.addKeyBinding("C+HOME", InputHandler.DOCUMENT_HOME);
@@ -130,39 +130,39 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     // moved from SyntaxUtilities
     //DEFAULTS.styles = SyntaxUtilities.getDefaultSyntaxStyles();
 
-	styles = SyntaxUtilities.getDefaultSyntaxStyles();
+    styles = SyntaxUtilities.getDefaultSyntaxStyles();
 
-	/*
-    styles = new SyntaxStyle[Token.ID_COUNT];
+    /*
+      styles = new SyntaxStyle[Token.ID_COUNT];
 
-    // comments
-    styles[Token.COMMENT1] = Preferences.getStyle("comment1");
-    styles[Token.COMMENT2] = Preferences.getStyle("comment2");
+      // comments
+      styles[Token.COMMENT1] = Preferences.getStyle("comment1");
+      styles[Token.COMMENT2] = Preferences.getStyle("comment2");
 
-    // abstract, final, private
-    styles[Token.KEYWORD1] = Preferences.getStyle("keyword1");
+      // abstract, final, private
+      styles[Token.KEYWORD1] = Preferences.getStyle("keyword1");
 
-    // beginShape, point, line
-    styles[Token.KEYWORD2] = Preferences.getStyle("keyword2");
+      // beginShape, point, line
+      styles[Token.KEYWORD2] = Preferences.getStyle("keyword2");
 
-    // byte, char, short, color
-    styles[Token.KEYWORD3] = Preferences.getStyle("keyword3");
+      // byte, char, short, color
+      styles[Token.KEYWORD3] = Preferences.getStyle("keyword3");
 
-    // constants: null, true, this, RGB, TWO_PI
-    styles[Token.LITERAL1] = Preferences.getStyle("literal1");
+      // constants: null, true, this, RGB, TWO_PI
+      styles[Token.LITERAL1] = Preferences.getStyle("literal1");
 
-    // p5 built in variables: mouseX, width, pixels
-    styles[Token.LITERAL2] = Preferences.getStyle("literal2");
+      // p5 built in variables: mouseX, width, pixels
+      styles[Token.LITERAL2] = Preferences.getStyle("literal2");
 
-    // ??
-    styles[Token.LABEL] = Preferences.getStyle("label");
+      // ??
+      styles[Token.LABEL] = Preferences.getStyle("label");
 
-    // + - = /
-    styles[Token.OPERATOR] = Preferences.getStyle("operator");
+      // + - = /
+      styles[Token.OPERATOR] = Preferences.getStyle("operator");
 
-    // area that's not in use by the text (replaced with tildes)
-    styles[Token.INVALID] = Preferences.getStyle("invalid");
-	*/
+      // area that's not in use by the text (replaced with tildes)
+      styles[Token.INVALID] = Preferences.getStyle("invalid");
+    */
 
     // moved from TextAreaPainter
 
@@ -180,12 +180,12 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     lineHighlight =
       Base.preferences.getBoolean("editor.linehighlight",true);
     lineHighlightColor =
-    	Base.getColorPref("editor.linehighlight.color","#ddddbb");
+      Base.getColorPref("editor.linehighlight.color","#ddddbb");
 
     bracketHighlight =
       Base.preferences.getBoolean("editor.brackethighlight",true);
     bracketHighlightColor =
-    	Base.getColorPref("editor.brackethighlight.color","#000000");
+      Base.getColorPref("editor.brackethighlight.color","#000000");
 
     eolMarkers = Base.preferences.getBoolean("editor.eolmarkers",false);
     eolMarkerColor = Base.getColorPref("editor.eolmarkers.color","#99991A");

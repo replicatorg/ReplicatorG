@@ -21,7 +21,7 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software Foundation,
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- 
+
  $Id: MainWindow.java 370 2008-01-19 16:37:19Z mellis $
  */
 
@@ -36,37 +36,37 @@ import javax.swing.JFrame;
 import replicatorg.util.Point5d;
 
 public abstract class SimulationWindow extends JFrame {
-	protected Rectangle2D.Double simulationBounds;
-	
-	public SimulationWindow() {
-		super("Build Simulation");
+  protected Rectangle2D.Double simulationBounds;
 
-		// make it most of our screen.
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		int myWidth = screen.width - 40;
-		if (myWidth > 1024)
-			myWidth = 1024;
-		int myHeight = screen.height - 40;
-		if (myHeight > 768)
-			myHeight = 768;
+  public SimulationWindow() {
+    super("Build Simulation");
 
-		this.setBounds(20, 20, myWidth, myHeight);
+    // make it most of our screen.
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    int myWidth = screen.width - 40;
+    if (myWidth > 1024)
+      myWidth = 1024;
+    int myHeight = screen.height - 40;
+    if (myHeight > 768)
+      myHeight = 768;
 
-		// default behavior
-		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
+    this.setBounds(20, 20, myWidth, myHeight);
 
-		// no resizing... yet
-		// this.setResizable(false);
+    // default behavior
+    this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-		// no menu bar.
-		this.setMenuBar(null);
+    // no resizing... yet
+    // this.setResizable(false);
 
-		invalidate();
-	}
+    // no menu bar.
+    this.setMenuBar(null);
 
-	public void setSimulationBounds(Rectangle2D.Double bounds) {
-		this.simulationBounds = bounds;
-	}
-	
-	public abstract void queuePoint(Point5d p);
+    invalidate();
+  }
+
+  public void setSimulationBounds(Rectangle2D.Double bounds) {
+    this.simulationBounds = bounds;
+  }
+
+  public abstract void queuePoint(Point5d p);
 }

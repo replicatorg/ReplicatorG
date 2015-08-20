@@ -9,15 +9,15 @@ import replicatorg.machine.model.AxisId;
 
 public class DisableAxes implements DriverCommand {
 
-	EnumSet<AxisId> axes;
- 
-	public DisableAxes(EnumSet<AxisId> axes) {
-		this.axes = axes;
-	}
+  EnumSet<AxisId> axes;
 
-	@Override
-	public void run(Driver driver) throws RetryException, StopException {
-		driver.disableAxes(axes);
-	}
+  public DisableAxes(EnumSet<AxisId> axes) {
+    this.axes = axes;
+  }
+
+  @Override
+  public void run(Driver driver) throws RetryException, StopException {
+    driver.disableAxes(axes);
+  }
 
 }

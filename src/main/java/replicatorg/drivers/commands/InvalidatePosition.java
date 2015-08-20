@@ -4,8 +4,8 @@ import replicatorg.drivers.Driver;
 
 public class InvalidatePosition implements DriverCommand {
 
-	@Override
-	public void run(Driver driver) {
-		driver.invalidatePosition();
-	}
+  @Override
+  public void run(Driver driver) {
+    driver.invalidatePosition();
+  }
 }

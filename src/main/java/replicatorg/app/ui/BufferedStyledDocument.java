@@ -47,13 +47,13 @@ class BufferedStyledDocument extends DefaultStyledDocument {
 
       if (str.indexOf('\n') == -1) {
         elements.add(new ElementSpec(a, ElementSpec.ContentType, str
-          .toCharArray(), 0, str.length()));
+                                     .toCharArray(), 0, str.length()));
         currentLineLength += str.length();
         needLineBreak = false;
         str = str.substring(str.length()); // eat the string
       } else {
         elements.add(new ElementSpec(a, ElementSpec.ContentType, str
-          .toCharArray(), 0, str.indexOf('\n') + 1));
+                                     .toCharArray(), 0, str.indexOf('\n') + 1));
         needLineBreak = true;
         str = str.substring(str.indexOf('\n') + 1); // eat the line
       }

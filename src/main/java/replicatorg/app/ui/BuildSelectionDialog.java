@@ -18,56 +18,58 @@ import net.miginfocom.swing.MigLayout;
 
 public class BuildSelectionDialog extends JDialog {
 
-	private JButton okButton;
-	private JButton cancelButton;
-	private String selectedPath = null;
-	
-	/// Returns null if no path is selected or the cancel button was clicked.
-	public String getSelectedPath() { return selectedPath; }
+  private JButton okButton;
+  private JButton cancelButton;
+  private String selectedPath = null;
 
-	public BuildSelectionDialog(Frame parent, List<String> paths) {
-		super(parent,"Select a file to build",true);
-		Container c = getContentPane();
-		c.setLayout(new MigLayout("fill"));
-		c.add(new JLabel("Select the .s3g file to build:"),"wrap,spanx");
-		okButton = new JButton("OK");
-		okButton.setEnabled(false);
-		okButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				doOk();
-			}
-		});
-		cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				doCancel();
-			}
-		});
+  /// Returns null if no path is selected or the cancel button was clicked.
+  public String getSelectedPath() {
+    return selectedPath;
+  }
 
-		final JList list = new JList(paths.toArray());
-		final JScrollPane scrollPane = new JScrollPane(list);
-		
-		list.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent lse) {
-				if (list.getSelectedIndex() != -1) {
-					selectedPath = (String)list.getModel().getElementAt(list.getSelectedIndex());
-					okButton.setEnabled(selectedPath != null);
-				}
-			}
-		});
-		c.add(scrollPane,"wrap,growx,spanx");
-		c.add(cancelButton, "tag cancel");
-		c.add(okButton,"tag ok");
-		pack();
-		setLocationRelativeTo(parent);
-	}
-	
-	private void doOk() {
-		dispose();
-	}
-	
-	private void doCancel() {
-		selectedPath = null;
-		dispose();
-	}
+  public BuildSelectionDialog(Frame parent, List<String> paths) {
+    super(parent,"Select a file to build",true);
+    Container c = getContentPane();
+    c.setLayout(new MigLayout("fill"));
+    c.add(new JLabel("Select the .s3g file to build:"),"wrap,spanx");
+    okButton = new JButton("OK");
+    okButton.setEnabled(false);
+    okButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        doOk();
+      }
+    });
+    cancelButton = new JButton("Cancel");
+    cancelButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        doCancel();
+      }
+    });
+
+    final JList list = new JList(paths.toArray());
+    final JScrollPane scrollPane = new JScrollPane(list);
+
+    list.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent lse) {
+        if (list.getSelectedIndex() != -1) {
+          selectedPath = (String)list.getModel().getElementAt(list.getSelectedIndex());
+          okButton.setEnabled(selectedPath != null);
+        }
+      }
+    });
+    c.add(scrollPane,"wrap,growx,spanx");
+    c.add(cancelButton, "tag cancel");
+    c.add(okButton,"tag ok");
+    pack();
+    setLocationRelativeTo(parent);
+  }
+
+  private void doOk() {
+    dispose();
+  }
+
+  private void doCancel() {
+    selectedPath = null;
+    dispose();
+  }
 }

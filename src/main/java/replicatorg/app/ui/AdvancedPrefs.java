@@ -17,47 +17,44 @@ import replicatorg.app.Base;
 
 public class AdvancedPrefs extends JFrame {
 
-	public AdvancedPrefs()
-	{
-		Container content = getContentPane();
-		
-		Object[][] prefs = getPreferences();
-		
-		JTable prefsDisplay = new JTable(prefs, new Object[]{"Preference name", "value"});
-		prefsDisplay.setEnabled(false);
-		content.add(prefsDisplay);
+  public AdvancedPrefs() {
+    Container content = getContentPane();
 
-		content.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				KeyStroke wc = MainWindow.WINDOW_CLOSE_KEYSTROKE;
-				if ((e.getKeyCode() == KeyEvent.VK_ESCAPE)
-						|| (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
-					dispose();
-				}
-			}
-		});
-		this.setMinimumSize(new Dimension(300,300));
-		pack();
-	}
-	
-	private Object[][] getPreferences()
-	{
-		Object[][] result;
-		Preferences p = Base.preferences;
-		try {
-			String[] pNames = p.keys();
-			result = new Object[pNames.length][2];
-			for(int i = 0; i < pNames.length; i++)
-			{
-				result[i] = new String[]{pNames[i], p.get(pNames[i], "")};
-			}
-				
-		} catch (BackingStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		
-		return result;
-	}
+    Object[][] prefs = getPreferences();
+
+    JTable prefsDisplay = new JTable(prefs, new Object[] {"Preference name", "value"});
+    prefsDisplay.setEnabled(false);
+    content.add(prefsDisplay);
+
+    content.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        KeyStroke wc = MainWindow.WINDOW_CLOSE_KEYSTROKE;
+        if ((e.getKeyCode() == KeyEvent.VK_ESCAPE)
+            || (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
+          dispose();
+        }
+      }
+    });
+    this.setMinimumSize(new Dimension(300,300));
+    pack();
+  }
+
+  private Object[][] getPreferences() {
+    Object[][] result;
+    Preferences p = Base.preferences;
+    try {
+      String[] pNames = p.keys();
+      result = new Object[pNames.length][2];
+      for(int i = 0; i < pNames.length; i++) {
+        result[i] = new String[] {pNames[i], p.get(pNames[i], "")};
+      }
+
+    } catch (BackingStoreException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      return null;
+    }
+
+    return result;
+  }
 }

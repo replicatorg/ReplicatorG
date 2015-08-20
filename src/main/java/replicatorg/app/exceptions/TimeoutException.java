@@ -9,12 +9,11 @@ import replicatorg.app.util.serial.Serial;
  *
  */
 public class TimeoutException extends Exception {
-	private static final long serialVersionUID = 110136234567896299L;
+  private static final long serialVersionUID = 110136234567896299L;
 
-	public Serial serial;
-	
-	public TimeoutException(Serial serial)
-	{
-		this.serial = serial;
-	}
+  public Serial serial;
+
+  public TimeoutException(Serial serial) {
+    this.serial = serial;
+  }
 }

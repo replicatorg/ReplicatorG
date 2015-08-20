@@ -13,72 +13,72 @@ import java.util.Vector;
  */
 public class GCodeSourceCollection implements GCodeSource {
 
-	final Vector<GCodeSource> sources; 
-	final int lineCount;
-	
-	public class GCodeSourceCollectionIterator implements Iterator<String> {
-		Vector<Iterator<String>> iterators;
-		
-		public GCodeSourceCollectionIterator(Vector<GCodeSource> sources) {
-			iterators = new Vector<Iterator<String>>();
-			
-			for (GCodeSource source : sources) {
-				iterators.add(source.iterator());
-			}
-		}
-		
-		@Override
-		public boolean hasNext() {
-			return (!iterators.isEmpty());
-		}
+  final Vector<GCodeSource> sources;
+  final int lineCount;
 
-		@Override
-		public String next() {
-			String next = null;
-			
-			if (hasNext()) {
-				next = iterators.firstElement().next();
-				
-				if (!iterators.firstElement().hasNext()) {
-					iterators.remove(0);
-				}
-			}
-			return next;
-		}
+  public class GCodeSourceCollectionIterator implements Iterator<String> {
+    Vector<Iterator<String>> iterators;
 
-		@Override
-		public void remove() {
-			
-		}
-	}
-	
-	public GCodeSourceCollection(Vector<GCodeSource> sources) {
-		this.sources = sources;
-		
-		// Count the total number of lines
-		int lineCount = 0;
-		for(GCodeSource source: this.sources) {
-			lineCount += source.getLineCount();
-		}
-		this.lineCount = lineCount;
-	}
-	
-	@Override
-	public Iterator<String> iterator() {
-		return new GCodeSourceCollectionIterator(sources);
-	}
+    public GCodeSourceCollectionIterator(Vector<GCodeSource> sources) {
+      iterators = new Vector<Iterator<String>>();
 
-	@Override
-	public int getLineCount() {
-		return lineCount;
-	}
+      for (GCodeSource source : sources) {
+        iterators.add(source.iterator());
+      }
+    }
 
-	@Override
-	public List<String> asList() {
-		List<String> result = new ArrayList<String>();
-		for(Iterator<String> i = iterator(); i.hasNext();)
-			result.add(i.next());
-		return result;
-	}
+    @Override
+    public boolean hasNext() {
+      return (!iterators.isEmpty());
+    }
+
+    @Override
+    public String next() {
+      String next = null;
+
+      if (hasNext()) {
+        next = iterators.firstElement().next();
+
+        if (!iterators.firstElement().hasNext()) {
+          iterators.remove(0);
+        }
+      }
+      return next;
+    }
+
+    @Override
+    public void remove() {
+
+    }
+  }
+
+  public GCodeSourceCollection(Vector<GCodeSource> sources) {
+    this.sources = sources;
+
+    // Count the total number of lines
+    int lineCount = 0;
+    for(GCodeSource source: this.sources) {
+      lineCount += source.getLineCount();
+    }
+    this.lineCount = lineCount;
+  }
+
+  @Override
+  public Iterator<String> iterator() {
+    return new GCodeSourceCollectionIterator(sources);
+  }
+
+  @Override
+  public int getLineCount() {
+    return lineCount;
+  }
+
+  @Override
+  public List<String> asList() {
+    List<String> result = new ArrayList<String>();
+    for(Iterator<String> i = iterator(); i.hasNext();)
+      result.add(i.next());
+    return result;
+  }
 
 }

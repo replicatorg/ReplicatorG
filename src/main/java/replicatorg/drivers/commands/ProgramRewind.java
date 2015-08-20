@@ -6,14 +6,14 @@ import replicatorg.drivers.StopException;
 
 public class ProgramRewind implements DriverCommand {
 
-	String message;
-	
-	public ProgramRewind(String message) {
-		this.message = message;
-	}
-	
-	@Override
-	public void run(Driver driver) throws RetryException, StopException {
-		throw new StopException(message, StopException.StopType.PROGRAM_REWIND);
-	}
+  String message;
+
+  public ProgramRewind(String message) {
+    this.message = message;
+  }
+
+  @Override
+  public void run(Driver driver) throws RetryException, StopException {
+    throw new StopException(message, StopException.StopType.PROGRAM_REWIND);
+  }
 }

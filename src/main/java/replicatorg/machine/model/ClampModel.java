@@ -25,52 +25,45 @@ package replicatorg.machine.model;
 
 import org.w3c.dom.Node;
 
-public class ClampModel
-{
-	//our xml config info
-	protected Node xml;
-	
-	//static vars for state.
-	protected static boolean OPEN = true;
-	protected static boolean CLOSED = false;
-	
-	//our state
-	protected boolean state;
+public class ClampModel {
+  //our xml config info
+  protected Node xml;
 
-	/*************************************
-	*  Creates the model object.
-	*************************************/
-	public ClampModel(Node n)
-	{
-		state = OPEN;
-		
-		loadXML(n);
-	}
-	
-	//load data from xml config
-	public void loadXML(Node node)
-	{
-		xml = node;
-	}
+  //static vars for state.
+  protected static boolean OPEN = true;
+  protected static boolean CLOSED = false;
 
-	public boolean getState()
-	{
-		return state;
-	}
-	
-	public void open()
-	{
-		setState(OPEN);
-	}
-	
-	public void close()
-	{
-		setState(CLOSED);
-	}
-	
-	public void setState(boolean status)
-	{
-		state = status;
-	}
-	
+  //our state
+  protected boolean state;
+
+  /*************************************
+  *  Creates the model object.
+  *************************************/
+  public ClampModel(Node n) {
+    state = OPEN;
+
+    loadXML(n);
+  }
+
+  //load data from xml config
+  public void loadXML(Node node) {
+    xml = node;
+  }
+
+  public boolean getState() {
+    return state;
+  }
+
+  public void open() {
+    setState(OPEN);
+  }
+
+  public void close() {
+    setState(CLOSED);
+  }
+
+  public void setState(boolean status) {
+    state = status;
+  }
+
 }

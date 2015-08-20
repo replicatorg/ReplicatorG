@@ -4,8 +4,8 @@ import replicatorg.drivers.Driver;
 
 public class EnableMistCoolant implements DriverCommand {
 
-	@Override
-	public void run(Driver driver) {
-		driver.enableMistCoolant();
-	}
+  @Override
+  public void run(Driver driver) {
+    driver.enableMistCoolant();
+  }
 }

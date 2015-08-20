@@ -5,18 +5,17 @@ import replicatorg.drivers.RetryException;
 
 public class EnableFan implements DriverCommand {
 
-	int toolhead = -1; /// lazy lookup current tool
+  int toolhead = -1; /// lazy lookup current tool
 
-	public EnableFan() {} 
+  public EnableFan() {}
 
-	
-	public EnableFan(int toolhead)
-	{
-		this.toolhead = toolhead;
-	}
-	
-	@Override
-	public void run(Driver driver) throws RetryException {
-		driver.enableFan(toolhead);
-	}
+
+  public EnableFan(int toolhead) {
+    this.toolhead = toolhead;
+  }
+
+  @Override
+  public void run(Driver driver) throws RetryException {
+    driver.enableFan(toolhead);
+  }
 }

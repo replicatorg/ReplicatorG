@@ -5,8 +5,8 @@ import replicatorg.drivers.RetryException;
 
 public class OpenValve implements DriverCommand {
 
-	@Override
-	public void run(Driver driver) throws RetryException {
-		driver.openValve();
-	}
+  @Override
+  public void run(Driver driver) throws RetryException {
+    driver.openValve();
+  }
 }

@@ -21,16 +21,14 @@ import java.awt.Toolkit;
  * @author Slava Pestov
  * @version $Id: SyntaxStyle.java 85 2006-01-12 23:24:12Z mellis $
  */
-public class SyntaxStyle
-{
+public class SyntaxStyle {
   /**
    * Creates a new SyntaxStyle.
    * @param color The text color
    * @param italic True if the text should be italics
    * @param bold True if the text should be bold
    */
-  public SyntaxStyle(Color color, boolean italic, boolean bold)
-  {
+  public SyntaxStyle(Color color, boolean italic, boolean bold) {
     this.color = color;
     this.italic = italic;
     this.bold = bold;
@@ -39,32 +37,28 @@ public class SyntaxStyle
   /**
    * Returns the color specified in this style.
    */
-  public Color getColor()
-  {
+  public Color getColor() {
     return color;
   }
 
   /**
    * Returns true if no font styles are enabled.
    */
-  public boolean isPlain()
-  {
+  public boolean isPlain() {
     return !(bold || italic);
   }
 
   /**
    * Returns true if italics is enabled for this style.
    */
-  public boolean isItalic()
-  {
+  public boolean isItalic() {
     return italic;
   }
 
   /**
    * Returns true if boldface is enabled for this style.
    */
-  public boolean isBold()
-  {
+  public boolean isBold() {
     return bold;
   }
 
@@ -72,8 +66,7 @@ public class SyntaxStyle
    * Returns the specified font, but with the style's bold and
    * italic flags applied.
    */
-  public Font getStyledFont(Font font)
-  {
+  public Font getStyledFont(Font font) {
     if(font == null)
       throw new NullPointerException("font param must not"
                                      + " be null");
@@ -91,8 +84,7 @@ public class SyntaxStyle
    * Returns the font metrics for the styled font.
    */
   @SuppressWarnings("deprecation")
-public FontMetrics getFontMetrics(Font font)
-  {
+  public FontMetrics getFontMetrics(Font font) {
     if(font == null)
       throw new NullPointerException("font param must not"
                                      + " be null");
@@ -104,7 +96,7 @@ public FontMetrics getFontMetrics(Font font)
                               | (italic ? Font.ITALIC : 0),
                               font.getSize());
     fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(
-                                                             lastStyledFont);
+                    lastStyledFont);
     return fontMetrics;
   }
 
@@ -114,8 +106,7 @@ public FontMetrics getFontMetrics(Font font)
    * @param gfx The graphics context
    * @param font The font to add the styles to
    */
-  public void setGraphicsFlags(Graphics gfx, Font font)
-  {
+  public void setGraphicsFlags(Graphics gfx, Font font) {
     Font _font = getStyledFont(font);
     gfx.setFont(_font);
     gfx.setColor(color);
@@ -124,11 +115,10 @@ public FontMetrics getFontMetrics(Font font)
   /**
    * Returns a string representation of this object.
    */
-  public String toString()
-  {
+  public String toString() {
     return getClass().getName() + "[color=" + color +
-      (italic ? ",italic" : "") +
-      (bold ? ",bold" : "") + "]";
+           (italic ? ",italic" : "") +
+           (bold ? ",bold" : "") + "]";
   }
 
   // private members
