@@ -781,7 +781,7 @@ public class ExtruderPanel extends JPanel{
 				machine.runCommand(new replicatorg.drivers.commands.SetPlatformTemperature(newValue, toolhead));
 			}
 		}
-		if(newValue != Double.NaN) {
+		if(Double.isNaN(newValue)) {
 			if(source == t0TargetTemperatureField)
 				t0TargetTemperature = newValue;
 			else if(source == t1TargetTemperatureField)
