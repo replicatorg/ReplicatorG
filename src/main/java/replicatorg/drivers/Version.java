@@ -1,5 +1,7 @@
 package replicatorg.drivers;
 
+import java.util.Objects;
+
 public class Version implements Comparable<Version> {
 	private int minor;
 	private int major;
@@ -8,7 +10,8 @@ public class Version implements Comparable<Version> {
 		this.major = major;
 		this.minor = minor;
 	}
-	
+
+  @Override
 	public boolean equals(Object o) {
 		if (o instanceof Version) {
 			Version v = (Version)o;
@@ -16,6 +19,11 @@ public class Version implements Comparable<Version> {
 		}
 		return false;
 	}
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.major, this.minor);
+  }
 
 	public boolean atLeast(Version v) {
 		return compareTo(v) >= 0;
