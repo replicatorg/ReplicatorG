@@ -417,10 +417,8 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 
   @Override
   public int getStepperVoltage(int stepperId ) {
-    Integer key = new Integer(stepperId);
-    if( stepperValues.containsKey(key) ) {
-      Integer stepperVal = (Integer)stepperValues.get(key);
-      return (int)stepperVal;
+    if( stepperValues.containsKey(stepperId) ) {
+      return (int)stepperValues.get(stepperId);
     }
 
     Base.logger.severe("No known local stepperVoltage: " + stepperId);
