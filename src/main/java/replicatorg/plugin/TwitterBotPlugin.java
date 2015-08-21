@@ -1,8 +1,8 @@
 package replicatorg.plugin;
 
-import java.lang.reflect.Method;
-
 import replicatorg.app.gcode.GCodeCommand;
+
+import java.lang.reflect.Method;
 
 // Example plug-in that handles custom m-codes
 public class TwitterBotPlugin implements MCodePlugin {
@@ -15,7 +15,7 @@ public class TwitterBotPlugin implements MCodePlugin {
   public static final int TB_MESSAGE = 998;
   public static final int TB_CLEANUP = 999;
 
-  public static final int codes[] = {TB_INIT, TB_MESSAGE, TB_CLEANUP};
+  private static final int codes[] = {TB_INIT, TB_MESSAGE, TB_CLEANUP};
 
   @Override
   public int[] getAcceptedMCodes() {

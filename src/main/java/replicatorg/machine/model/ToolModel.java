@@ -54,8 +54,8 @@ enum ToolheadType {
 }
 
 public class ToolModel {
-  public static int MOTOR_CLOCKWISE = 1;
-  public static int MOTOR_COUNTER_CLOCKWISE = 2;
+  public static final int MOTOR_CLOCKWISE = 1;
+  public static final int MOTOR_COUNTER_CLOCKWISE = 2;
 
   // TODO: should this be a bitfield?
   protected int toolStatus;

@@ -53,7 +53,7 @@ class Sanguino3GEEPRPOM implements EEPROMClass {
   final public static int EEPROM_ESTOP_CONFIGURATION_OFFSET = 116;
 
   final static class ECThermistorOffsets {
-    final public static int[] TABLE_OFFSETS = { 0x00f0, 0x0170 };
+    private static final int[] TABLE_OFFSETS = { 0x00f0, 0x0170 };
 
     final public static int R0 = 0x00;
     final public static int T0 = 0x04;

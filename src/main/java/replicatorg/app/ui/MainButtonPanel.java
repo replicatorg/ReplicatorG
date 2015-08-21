@@ -25,34 +25,19 @@
 
 package replicatorg.app.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
+import net.miginfocom.swing.MigLayout;
+import replicatorg.app.Base;
+import replicatorg.drivers.SDCardCapture;
+import replicatorg.machine.*;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import net.miginfocom.swing.MigLayout;
-import replicatorg.app.Base;
-import replicatorg.drivers.SDCardCapture;
-import replicatorg.machine.Machine;
-import replicatorg.machine.MachineInterface;
-import replicatorg.machine.MachineListener;
-import replicatorg.machine.MachineProgressEvent;
-import replicatorg.machine.MachineState;
-import replicatorg.machine.MachineStateChangeEvent;
-import replicatorg.machine.MachineToolStatusEvent;
 
 /**
  * run/stop/etc buttons for the ide
@@ -125,12 +110,12 @@ public class MainButtonPanel extends BGPanel implements MachineListener, ActionL
   static final int BUTTON_WIDTH = 27;
   static final int BUTTON_HEIGHT = 32;
 
-  static final float disabledFactors[] = { 1.0f, 1.0f, 1.0f, 0.5f };
-  static final float disabledOffsets[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-  static private RescaleOp disabledOp = new RescaleOp(disabledFactors,disabledOffsets,null);
-  static final float activeFactors[] = { -1.0f, -1.0f, -1.0f, 1.0f };
-  static final float activeOffsets[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-  static private RescaleOp activeOp = new RescaleOp(activeFactors,activeOffsets,null);
+  private static final float disabledFactors[] = { 1.0f, 1.0f, 1.0f, 0.5f };
+  private static final float disabledOffsets[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+  private static RescaleOp disabledOp = new RescaleOp(disabledFactors,disabledOffsets,null);
+  private static final float activeFactors[] = { -1.0f, -1.0f, -1.0f, 1.0f };
+  private static final float activeOffsets[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+  private static RescaleOp activeOp = new RescaleOp(activeFactors,activeOffsets,null);
 
 
 

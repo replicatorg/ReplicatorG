@@ -158,8 +158,8 @@ public class GCodeParser {
   }
 
   // our curve section variables.
-  public static double curveSectionMM = Base.preferences.getDouble("replicatorg.parser.curve_segment_mm", 1.0);
-  public static double curveSectionInches = curveSectionMM / 25.4;
+  public static final double curveSectionMM = Base.preferences.getDouble("replicatorg.parser.curve_segment_mm", 1.0);
+  public static final double curveSectionInches = curveSectionMM / 25.4;
 
   protected double curveSection = 0.0;
 
@@ -179,9 +179,9 @@ public class GCodeParser {
   protected int tool = ToolheadAlias.SINGLE.number;
 
   // unit variables.
-  public static int UNITS_MM = 0;
+  public static final int UNITS_MM = 0;
 
-  public static int UNITS_INCHES = 1;
+  public static final int UNITS_INCHES = 1;
 
   protected int units;
 

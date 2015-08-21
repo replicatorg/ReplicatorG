@@ -75,9 +75,9 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface {
   // what is our mode of positioning?
   protected int positioningMode = 0;
 
-  static public int ABSOLUTE = 0;
+  public static final int ABSOLUTE = 0;
 
-  static public int INCREMENTAL = 1;
+  public static final int INCREMENTAL = 1;
 
   /**
    * Support for emergency stop is not assumed until it is detected. Detection of this feature should be in initialization.
