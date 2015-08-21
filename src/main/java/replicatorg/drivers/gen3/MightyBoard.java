@@ -914,7 +914,6 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 
   public void setMachineName(String machineName) {
     int maxLen = MightyBoard5XEEPROM.MAX_MACHINE_NAME_LEN;
-    machineName = new String(machineName);
     if (machineName.length() > maxLen) {
       machineName = machineName.substring(0,maxLen);
     }
