@@ -100,7 +100,7 @@ public class EstimationDriver extends DriverBaseImplementation implements Intera
 
   static public String getBuildTimeString(double tempTime, boolean useSeconds) {
 
-    String val = new String();
+    String val = "";
 
     if (!useSeconds)
       tempTime = tempTime + 59999; // round to nearest minutes

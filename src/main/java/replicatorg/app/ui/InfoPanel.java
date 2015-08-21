@@ -66,7 +66,7 @@ public class InfoPanel extends JFrame {
   public String getMachineInfo() {
     Driver driver = Base.getMachineLoader().getDriver();
 
-    String info = new String();
+    String info = "";
 
     info += "System Information" + "\n";
     info += " ReplicatorG version: " + Base.VERSION_NAME + "\n";

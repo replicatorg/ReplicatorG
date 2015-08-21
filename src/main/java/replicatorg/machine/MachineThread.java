@@ -1,36 +1,23 @@
 package replicatorg.machine;
 
-import java.util.Vector;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import replicatorg.app.Base;
 import replicatorg.app.tools.XML;
-import replicatorg.drivers.Driver;
-import replicatorg.drivers.DriverError;
-import replicatorg.drivers.DriverFactory;
-import replicatorg.drivers.OnboardParameters;
-import replicatorg.drivers.RetryException;
-import replicatorg.drivers.SDCardCapture;
-import replicatorg.drivers.SimulationDriver;
-import replicatorg.drivers.StopException;
-import replicatorg.drivers.UsesSerial;
+import replicatorg.drivers.*;
 import replicatorg.drivers.commands.AssessState;
 import replicatorg.drivers.commands.DriverCommand;
 import replicatorg.machine.Machine.JobTarget;
 import replicatorg.machine.Machine.RequestType;
-import replicatorg.machine.builder.Direct;
-import replicatorg.machine.builder.MachineBuilder;
-import replicatorg.machine.builder.ToLocalFile;
-import replicatorg.machine.builder.ToRemoteFile;
-import replicatorg.machine.builder.UsingRemoteFile;
+import replicatorg.machine.builder.*;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.machine.model.ToolModel;
 import replicatorg.model.GCodeSource;
 import replicatorg.model.GCodeSourceCollection;
 import replicatorg.model.StringListSource;
+
+import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The MachineThread is responsible for communicating with the machine.
@@ -174,7 +161,7 @@ class MachineThread extends Thread {
 
       for (int i = 0; i < commands.length; i++) {
         command = commands[i].trim();
-        warmupCommands.add(new String(command));
+        warmupCommands.add(command);
         // System.out.println("Added warmup: " + command);
       }
     }
@@ -186,7 +173,7 @@ class MachineThread extends Thread {
 
       for (int i = 0; i < commands.length; i++) {
         command = commands[i].trim();
-        cooldownCommands.add(new String(command));
+        cooldownCommands.add(command);
         // System.out.println("Added cooldown: " + command);
       }
     }

@@ -1,19 +1,15 @@
 package replicatorg.app.gcode;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import replicatorg.app.Base;
+import replicatorg.machine.model.ToolheadAlias;
+import replicatorg.model.GCodeSource;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-
-import replicatorg.app.Base;
-import replicatorg.machine.model.ToolheadAlias;
-import replicatorg.model.GCodeSource;
 
 /**
  * Class to encapsulate a GCode file, as well as all of the operations
@@ -274,7 +270,7 @@ public class MutableGCodeSource implements GCodeSource {
   public MutableGCodeSource copy() {
     MutableGCodeSource newSource = new MutableGCodeSource();
     for(String line : source)
-      newSource.add(new String(line));
+      newSource.add(line);
     return newSource;
   }
 }

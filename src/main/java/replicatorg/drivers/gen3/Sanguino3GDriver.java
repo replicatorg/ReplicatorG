@@ -2080,7 +2080,7 @@ public class Sanguino3GDriver extends SerialDriver implements
                     Sanguino3GEEPRPOM.EEPROM_MACHINE_NAME_OFFSET,
                     Sanguino3GEEPRPOM.MAX_MACHINE_NAME_LEN);
     if (data == null) {
-      return new String();
+      return "";
     }
     try {
       int len = 0;

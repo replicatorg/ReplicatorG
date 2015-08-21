@@ -1502,7 +1502,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
         //if new machine driver name have "Mk5" and the previous driver name does not
         if(containsIgnoreCase(name, "MK5" ) &&
             (containsIgnoreCase( Base.preferences.get("machine.name", null), "MK5") ==  false ) ) {
-          String msg = new String("MK6 or newer  downgrading to MK5 requires manual changes.\n Search 'Mk5 Extruder Downgrade' on http://wiki.makerbot.com for instructions.");
+          String msg = "MK6 or newer  downgrading to MK5 requires manual changes.\n Search 'Mk5 Extruder Downgrade' on http://wiki.makerbot.com for instructions.";
           JOptionPane.showMessageDialog(null, msg,  "Warning:Manual Downgrade to MK5 Needed", JOptionPane.WARNING_MESSAGE);
 
         }
@@ -2434,7 +2434,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
 
     if (Base.logger.isLoggable(Level.FINE)) {
       if (!showParams) {
-        String cause = new String();
+        String cause = "";
         if (evt.getState().isConfigurable()) {
           if (!machineLoader.isLoaded()) cause += "[no machine] ";
           else {
