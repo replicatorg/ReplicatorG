@@ -2,6 +2,8 @@ v1-alpha ReplicatorG
 * Removed Twitter functionality
 * Moved to Gradle for build platform
 * Enabled panning in the UI
+* Refactor a bunch of useless boxings for speed
+* Refactor various things, too many to list here
 
 0040 ReplicatorG
 * Replicator 2 profile now more robust
