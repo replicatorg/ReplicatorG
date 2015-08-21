@@ -15,6 +15,7 @@ dependencies {
   compile 'javax.vecmath:vecmath:1.5.2'
   compile 'com.miglayout:miglayout:3.7.4'
   compile 'org.devzendo:Quaqua:7.3.4'
+  compile 'org.apache.commons:commons-lang3:3.4'
 }
 
 tasks.withType(FindBugs) {
