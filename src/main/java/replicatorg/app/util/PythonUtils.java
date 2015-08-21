@@ -25,7 +25,7 @@ public class PythonUtils {
   /**
    * Preference name for preferred Python path.
    */
-  final static String PYTON_PATH_PREF = "python.default_path";
+  final static String PYTHON_PATH_PREF = "python.default_path";
 
   /**
    * Callback for Python selector method.
@@ -118,7 +118,7 @@ public class PythonUtils {
     // Assemble a list of candidate paths.
     // First, check if the user has explicitly set the Python path.
     {
-      String path = Base.preferences.get(PYTON_PATH_PREF, null);
+      String path = Base.preferences.get(PYTHON_PATH_PREF, null);
       if (path != null) {
         File candidate = new File(path);
         if (candidate.exists()) {
@@ -175,7 +175,7 @@ public class PythonUtils {
     if (selector != null && viableCandidates.size() > 1) {
       String path = selector.selectPythonPath(viableCandidates);
       if (path != null) {
-        Base.preferences.put(PYTON_PATH_PREF, path);
+        Base.preferences.put(PYTHON_PATH_PREF, path);
         pythonPath = path;
         pythonVersion = checkVersion(pythonPath);
       }
@@ -354,7 +354,7 @@ public class PythonUtils {
    * Sets the new preferred place to find python
    */
   public static void setPythonPath(String path) {
-    Base.preferences.put(PythonUtils.PYTON_PATH_PREF, path);
+    Base.preferences.put(PythonUtils.PYTHON_PATH_PREF, path);
     pythonPath = path;
   }
 }
