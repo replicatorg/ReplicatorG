@@ -2314,9 +2314,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
   }
 
   public void handleBuildToFile() {
-    if (building)
-      return;
-    if (simulating)
+    if (building || simulating)
       return;
     if (!machineLoader.isLoaded()) {
       String name = Base.preferences.get("machine.name", null);
