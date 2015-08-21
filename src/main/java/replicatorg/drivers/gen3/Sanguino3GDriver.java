@@ -23,36 +23,18 @@
 
 package replicatorg.drivers.gen3;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Vector;
-import java.util.logging.Level;
-
 import org.w3c.dom.Node;
-
 import replicatorg.app.Base;
-import replicatorg.drivers.DriverError;
-import replicatorg.drivers.MultiTool;
-import replicatorg.drivers.OnboardParameters;
-import replicatorg.drivers.PenPlotter;
-import replicatorg.drivers.RetryException;
-import replicatorg.drivers.SDCardCapture;
-import replicatorg.drivers.SerialDriver;
-import replicatorg.drivers.Version;
+import replicatorg.drivers.*;
 import replicatorg.drivers.gen3.PacketProcessor.CRCException;
 import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.ToolModel;
 import replicatorg.uploader.FirmwareUploader;
 import replicatorg.util.Point5d;
 
-import replicatorg.drivers.gen3.EEPROMClass;
+import java.io.*;
+import java.util.*;
+import java.util.logging.Level;
 
 class Sanguino3GEEPRPOM implements EEPROMClass {
 
