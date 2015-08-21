@@ -24,12 +24,10 @@
 
 package replicatorg.app.util.serial;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.RXTXVersion;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
+import gnu.io.*;
+import replicatorg.app.Base;
+import replicatorg.app.exceptions.SerialException;
+import replicatorg.app.exceptions.UnknownSerialPortException;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +41,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import replicatorg.app.Base;
-import replicatorg.app.exceptions.SerialException;
-import replicatorg.app.exceptions.UnknownSerialPortException;
 
 
 public class Serial implements SerialPortEventListener {
@@ -414,7 +408,7 @@ public class Serial implements SerialPortEventListener {
       try {
         while (input.available() > 0 && maxEats > 0) {
           input.read();
-          Thread.sleep(1);
+          wait(1);
           maxEats--;
         }
       } catch (IOException e) {

@@ -223,7 +223,7 @@ public class Sanguino3GDriver extends SerialDriver implements
       // of the
       // system to come up.
       try {
-        Thread.sleep(timeoutMillis);
+        wait(timeoutMillis);
       } catch (InterruptedException ie) {
         // Assume we're shutting down the app or aborting the
         // attempt. Reassert interrupted status and let
@@ -242,7 +242,7 @@ public class Sanguino3GDriver extends SerialDriver implements
       // of the
       // system to come up.
       try {
-        Thread.sleep(timeoutMillis);
+        wait(timeoutMillis);
       } catch (InterruptedException ie) {
         // Assume we're shutting down the app or aborting the
         // attempt. Reassert interrupted status and let
@@ -357,7 +357,7 @@ public class Sanguino3GDriver extends SerialDriver implements
         Thread.interrupted();
         // Wait for end of packet and clear (if forthcoming)
         try {
-          Thread.sleep(10);
+          wait(10);
           serial.clear();
         } catch (InterruptedException e) {
           // safe to ignore
