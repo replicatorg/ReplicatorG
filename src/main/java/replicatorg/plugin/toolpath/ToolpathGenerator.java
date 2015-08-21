@@ -1,13 +1,13 @@
 package replicatorg.plugin.toolpath;
 
 import replicatorg.app.Base;
-import java.awt.Frame;
-import java.util.EventObject;
-import java.util.LinkedList;
-
 import replicatorg.model.BuildCode;
 import replicatorg.model.BuildModel;
 import replicatorg.plugin.toolpath.ToolpathGenerator.GeneratorListener.Completion;
+
+import java.awt.*;
+import java.util.EventObject;
+import java.util.LinkedList;
 
 /**
  * This is the abstract base class which describes a toolpath plugin.
@@ -46,6 +46,7 @@ public abstract class ToolpathGenerator {
     }
 
   }
+
   public static String displayName = "A Toolpath Generator";
 
   protected BuildModel model;
