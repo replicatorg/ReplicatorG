@@ -196,7 +196,7 @@ class STLASCIIParser extends STLParser {
       }
       // watch order of if: solid contained also in endsolid
       else if( line.indexOf( "endsolid" ) >= 0 ) {
-        facetsPerObject.add( new Integer( numOfFacets ) );
+        facetsPerObject.add(numOfFacets);
         numOfFacets = 0;
         numOfObjects ++;
       } else if( line.indexOf( "solid" ) >= 0 ) {

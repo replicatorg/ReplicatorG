@@ -295,7 +295,7 @@ public class PreferencesWindow extends JFrame implements GuiConstants {
       content.add(sfTimeoutLabel,"split, gap unrelated");
       int value = Base.preferences.getInt("replicatorg.skeinforge.timeout", -1);
       JFormattedTextField sfTimeoutField = new JFormattedTextField(Base.getLocalFormat());
-      sfTimeoutField.setValue(new Integer(value));
+      sfTimeoutField.setValue(value);
       content.add(sfTimeoutField,"wrap 10px, growx");
       String sfTimeoutHelp = "<html><small><em>" +
                              "The Skeinforge timeout is the number of seconds that replicatorg will wait while the<br>" +

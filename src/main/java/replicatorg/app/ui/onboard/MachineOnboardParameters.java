@@ -602,7 +602,7 @@ public class MachineOnboardParameters extends JPanel {
     Object fmtr = textField.getFormatter();
     if (fmtr instanceof InternationalFormatter) {
       InternationalFormatter ifr = (InternationalFormatter)fmtr;
-      ifr.setMinimum(new Integer(0));
+      ifr.setMinimum(0);
     }
     if (tip != null) textField.setToolTipText(wrap2HTML(defaultToolTipWidth, tip));
     return textField;
@@ -615,8 +615,8 @@ public class MachineOnboardParameters extends JPanel {
     Object fmtr = textField.getFormatter();
     if (fmtr instanceof InternationalFormatter) {
       InternationalFormatter ifr = (InternationalFormatter)fmtr;
-      ifr.setMinimum(new Integer(0));
-      ifr.setMaximum(new Integer(max));
+      ifr.setMinimum(0);
+      ifr.setMaximum(max);
     }
     if (tip != null) textField.setToolTipText(wrap2HTML(defaultToolTipWidth, tip, max));
     return textField;

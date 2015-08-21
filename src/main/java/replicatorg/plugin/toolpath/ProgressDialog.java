@@ -474,7 +474,7 @@ class ProgressDialog extends JDialog implements ToolpathGenerator.GeneratorListe
             newMessage = doSkeinforge33Update(newMessage);
 
           if(showProgress) {
-            String j = new Integer(layerTotal).toString();
+            String j = Integer.toString(layerTotal);
             double completion =  ((double) layerIndex/layerTotal);
             if((layerIndex>0) && (processName == "")) {
               newMessage += " ("+j+" layers)";//

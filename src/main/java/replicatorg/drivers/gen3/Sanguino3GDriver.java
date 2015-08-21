@@ -297,7 +297,7 @@ public class Sanguino3GDriver extends SerialDriver implements
     Vector<ToolModel> tools = this.getMachine().getTools();
     Vector<Integer> toolsList = new Vector<Integer>();
     for( ToolModel t : tools ) {
-      toolsList.add(new Integer(t.getIndex()));
+      toolsList.add(t.getIndex());
     }
     return toolsList;
   }

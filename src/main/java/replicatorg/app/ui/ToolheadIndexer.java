@@ -37,7 +37,7 @@ public class ToolheadIndexer extends JDialog {
 
     final JFormattedTextField toolIndexField = new JFormattedTextField(NumberFormat.getIntegerInstance());
     toolIndexField.setColumns(4);
-    toolIndexField.setValue(new Integer(0));
+    toolIndexField.setValue(0);
     c.add(toolIndexField);
     JButton cancelButton = new JButton("Cancel");
     cancelButton.addActionListener(new ActionListener() {

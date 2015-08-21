@@ -382,7 +382,7 @@ public class MightyBoard extends Makerbot4GAlternateDriver
       int vRef = getStoredStepperVoltage(i);
       Base.logger.fine("Caching inital Stepper vRef from bot");
       Base.logger.finer("Stepper i = " + i + " vRef =" + vRef);
-      stepperValues.put(new Integer(i), new Integer(vRef) );
+      stepperValues.put(i, vRef);
     }
   }
 
@@ -411,7 +411,7 @@ public class MightyBoard extends Makerbot4GAlternateDriver
     PacketResponse pr = runCommand(pb.getPacket());
 
     if( pr.isOK() ) {
-      stepperValues.put(new Integer(stepperId), new Integer(referenceValue));
+      stepperValues.put(stepperId, referenceValue);
     }
   }
 

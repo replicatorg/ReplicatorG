@@ -64,13 +64,13 @@ public class RealtimePanel extends JFrame implements ChangeListener, WindowListe
     feedrateControl = new ControlSlider("Feedrate","%",5,800,100,speedPanel);
     //feedrateControl.getSlider().setMajorTickSpacing(10);
     Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-    labelTable.put( new Integer( 10 ), new JLabel("Slow") );
-    labelTable.put( new Integer( 100 ), new JLabel("") );
-    labelTable.put( new Integer( 300 ), new JLabel("Fast") );
-    labelTable.put( new Integer( 500 ), new JLabel("Insane!") );
+    labelTable.put(10, new JLabel("Slow") );
+    labelTable.put(100, new JLabel("") );
+    labelTable.put(300, new JLabel("Fast") );
+    labelTable.put(500, new JLabel("Insane!") );
     feedrateControl.slider.setLabelTable( labelTable );
 
-//		add(new JLabel("Travel feedrate (no extrusion"),"growx,wrap");
+    //		add(new JLabel("Travel feedrate (no extrusion"),"growx,wrap");
     travelFeedrateControl = new ControlSlider("Travel feedrate","%",5,800,100,speedPanel);
     travelFeedrateControl.slider.setLabelTable( labelTable );
 

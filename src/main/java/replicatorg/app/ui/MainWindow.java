@@ -2822,7 +2822,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
       // option
       // away from the others at the lefthand side
       pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
-                             new Integer(2));
+                             2);
 
       JDialog dialog = pane.createDialog(this, null);
       dialog.setVisible(true);
