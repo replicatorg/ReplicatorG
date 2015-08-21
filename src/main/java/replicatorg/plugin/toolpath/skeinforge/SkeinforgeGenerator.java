@@ -53,16 +53,16 @@ public abstract class SkeinforgeGenerator extends ToolpathGenerator {
   }
 
   public boolean runSanityChecks() {
-    String errors = "";
+    StringBuffer errors = new StringBuffer();
 
     for (SkeinforgePreference preference : getPreferences()) {
       String error = preference.valueSanityCheck();
       if( error != null) {
-        errors += error;
+        errors.append(error);
       }
     }
 
-    if (errors.equals("")) {
+    if (errors.toString().equals("")) {
       return true;
     }
 

@@ -53,16 +53,16 @@ public abstract class Slic3rGenerator extends ToolpathGenerator {
   }
 
   public boolean runSanityChecks() {
-    String errors = "";
+    StringBuffer errors = new StringBuffer();
 
     for (Slic3rPreference preference : getPreferences()) {
       String error = preference.valueSanityCheck();
       if( error != null) {
-        errors += error;
+        errors.append(error);
       }
     }
 
-    if (errors.equals("")) {
+    if (errors.toString().equals("")) {
       return true;
     }
 

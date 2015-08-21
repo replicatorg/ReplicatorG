@@ -61,10 +61,10 @@ public class Layer {
    */
   @Override
   public String toString() {
-    String result = "";
+    StringBuffer result = new StringBuffer();
     for(String c : commands)
-      result += c + '\n';
-    return result;
+      result.append(c);
+      result.append('\n');
+    return result.toString();
   }
-
 }

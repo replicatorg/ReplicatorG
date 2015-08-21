@@ -53,16 +53,16 @@ public abstract class MiracleGrueGenerator extends ToolpathGenerator {
   }
 
   public boolean runSanityChecks() {
-    String errors = "";
+    StringBuffer errors = new StringBuffer();
 
     for (MiracleGruePreference preference : getPreferences()) {
       String error = preference.valueSanityCheck();
       if( error != null) {
-        errors += error;
+        errors.append(error);
       }
     }
 
-    if (errors.equals("")) {
+    if (errors.toString().equals("")) {
       return true;
     }
 
