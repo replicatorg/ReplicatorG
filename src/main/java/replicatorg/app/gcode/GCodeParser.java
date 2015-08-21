@@ -48,13 +48,7 @@
 
 package replicatorg.app.gcode;
 
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.logging.Level;
-
-import javax.vecmath.Point3d;
-
+import org.apache.commons.lang3.math.NumberUtils;
 import replicatorg.app.Base;
 import replicatorg.app.exceptions.GCodeException;
 import replicatorg.drivers.DriverQueryInterface;
@@ -64,6 +58,12 @@ import replicatorg.drivers.commands.DriverCommand.LinearDirection;
 import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.ToolheadAlias;
 import replicatorg.util.Point5d;
+
+import javax.vecmath.Point3d;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.logging.Level;
 
 
 public class GCodeParser {
@@ -201,11 +201,12 @@ public class GCodeParser {
    * Get the maximum feed rate from the driver's model.
    */
   protected double getMaxFeedrate() {
-    // TODO: right now this is defaulting to the x feedrate. We should
-    // eventually check for z-axis motions and use that feedrate. We should
-    // also either alter the model, or post a warning when the x and y
-    // feedrates differ.
-    return driver.getMaximumFeedrates().x();
+    // Right now this is defaulting to the max of (x feedrate, y feedrate).
+    // TODO: we should eventually check for z-axis motions and use that feedrate.
+    if (driver.getMaximumFeedrates().x() != driver.getMaximumFeedrates().y()) {
+      Base.logger.warning("X maximum feedrate is _not_ equal to Y maximum feedrate!");
+    }
+    return NumberUtils.max(driver.getMaximumFeedrates().x(), driver.getMaximumFeedrates().y());
   }
 
   /**
