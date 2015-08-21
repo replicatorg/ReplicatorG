@@ -733,7 +733,7 @@ public class ToolModel {
     else if(nameLower.contains("mk6") || nameLower.contains("mk7") || nameLower.contains("mk8"))
       return false;
     //Mk1 to ? use thermistor
-    else if( nameLower.contains("mk5") || nameLower.contains("mk5") || nameLower.contains("mk3") ||nameLower.contains("mk2"))
+    else if( nameLower.contains("mk5") || nameLower.contains("mk4") || nameLower.contains("mk3") ||nameLower.contains("mk2"))
       return true;
     // default to false, sice we don't know
     return false;
