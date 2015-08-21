@@ -29,29 +29,23 @@
 
 package replicatorg.app;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Toolkit;
+import ch.randelshofer.quaqua.QuaquaManager;
+import com.apple.mrj.MRJApplicationUtils;
+import com.apple.mrj.MRJOpenDocumentHandler;
+import replicatorg.app.ui.MainWindow;
+import replicatorg.app.ui.NotificationHandler;
+import replicatorg.drivers.DriverQueryInterface;
+import replicatorg.machine.MachineInterface;
+import replicatorg.machine.MachineLoader;
+import replicatorg.uploader.FirmwareUploader;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -66,26 +60,6 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
-import javax.imageio.ImageIO;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import replicatorg.app.ui.MainWindow;
-import replicatorg.app.ui.NotificationHandler;
-import replicatorg.drivers.DriverQueryInterface;
-import replicatorg.machine.MachineLoader;
-import replicatorg.machine.MachineInterface;
-import replicatorg.machine.model.MachineType;
-import replicatorg.uploader.FirmwareUploader;
-import ch.randelshofer.quaqua.QuaquaManager;
-
-import com.apple.mrj.MRJApplicationUtils;
-import com.apple.mrj.MRJOpenDocumentHandler;
 
 /**
  * Primary role of this class is for platform identification and general
@@ -117,17 +91,17 @@ public class Base {
   /**
    * The user preferences store.
    */
-  static public Preferences preferences = getUserPreferences();
+  public static Preferences preferences = getUserPreferences();
 
   /**
   *  Simple base data capture logger. So simple, but useful.
   */
-  static public DataCapture capture;
+  public static DataCapture capture;
 
   /**
    * The general-purpose logging object.
    */
-  public static Logger logger = Logger.getLogger("replicatorg.log");
+  public static final Logger logger = Logger.getLogger("replicatorg.log");
   public static FileHandler logFileHandler = null;
   public static String logFilePath = null;
 
@@ -190,7 +164,7 @@ public class Base {
    * Path of filename opened on the command line, or via the MRJ open document
    * handler.
    */
-  static public String openedAtStartup;
+  public static String openedAtStartup;
 
   /**
    * This is the name of the alternate preferences set that this instance of
@@ -243,7 +217,7 @@ public class Base {
   /**
    * Reset the preferences for ReplicatorG to a clean state.
    */
-  static public void resetPreferences() {
+  public static void resetPreferences() {
     try {
       Base.preferences.removeNode();
       Base.preferences.flush();
@@ -267,7 +241,7 @@ public class Base {
    * @return
    */
 
-  static public String getToolsPath() {
+  public static String getToolsPath() {
     String toolsDir = System.getProperty("replicatorg.toolpath");
     if (toolsDir == null || (toolsDir.length() == 0)) {
       File appDir = Base.getApplicationDirectory();
@@ -281,7 +255,7 @@ public class Base {
    * ~/.replicatorg; if an alternate preferences set is selected, it will
    * instead be ~/.replicatorg/alternatePrefs/<i>alternate_prefs_name</i>.
    */
-  static public File getUserDirectory() {
+  public static File getUserDirectory() {
     String path = System.getProperty("user.home")+File.separator+".replicatorg";
     if (alternatePrefs != null) {
       path = path + File.separator + alternatePrefs;
@@ -303,7 +277,7 @@ public class Base {
    * Defaults to the current directory if no os specific settings exist,
    * @return File object pointing to the OS specific ApplicationsDirectory
    */
-  static public File getApplicationDirectory() {
+  public static File getApplicationDirectory() {
     if( isMacOS() ) {
       try {
         File x = new File(".");
@@ -323,15 +297,15 @@ public class Base {
     return new File(System.getProperty("user.dir"));
   }
 
-  static public File getApplicationFile(String path) {
+  public static File getApplicationFile(String path) {
     return new File(getApplicationDirectory(), path);
   }
 
-  static public File getUserFile(String path) {
+  public static File getUserFile(String path) {
     return getUserFile(path,true);
   }
 
-  static public File getUserDir(String path) {
+  public static File getUserDir(String path) {
     return getUserDir(path,true);
   }
 
@@ -340,7 +314,7 @@ public class Base {
    * localized format. Use for all non-GCode, numbers output and input.
    */
   static private NumberFormat localNF = NumberFormat.getInstance();
-  static public NumberFormat getLocalFormat() {
+  public static NumberFormat getLocalFormat() {
     return localNF;
   }
 
@@ -355,7 +329,7 @@ public class Base {
     dfs = ((DecimalFormat)gcodeNF).getDecimalFormatSymbols();
     dfs.setDecimalSeparator('.');
   }
-  static public NumberFormat getGcodeFormat() {
+  public static NumberFormat getGcodeFormat() {
     return gcodeNF;
   }
 
@@ -365,7 +339,7 @@ public class Base {
    * @param autoCopy If true, copy over the file of the same name in the application directory if none is found in the prefs directory.
    * @return
    */
-  static public File getUserFile(String path, boolean autoCopy) {
+  public static File getUserFile(String path, boolean autoCopy) {
     if (path.contains("..")) {
       Base.logger.info("Attempted to access parent directory in "+path+", skipping");
       return null;
@@ -392,7 +366,7 @@ public class Base {
     return f;
   }
 
-  static public File getUserDir(String path, boolean autoCopy) {
+  public static File getUserDir(String path, boolean autoCopy) {
     if (path.contains("..")) {
       Base.logger.info("Attempted to access parent directory in "+path+", skipping");
       return null;
@@ -420,7 +394,7 @@ public class Base {
   }
 
 
-  static public Font getFontPref(String name, String defaultValue) {
+  public static Font getFontPref(String name, String defaultValue) {
     String s = preferences.get(name,defaultValue);
     StringTokenizer st = new StringTokenizer(s, ",");
     String fontname = st.nextToken();
@@ -431,7 +405,7 @@ public class Base {
                        : 0), Integer.parseInt(st.nextToken()));
   }
 
-  static public Color getColorPref(String name,String defaultValue) {
+  public static Color getColorPref(String name,String defaultValue) {
     String s = preferences.get(name, defaultValue);
     Color parsed = null;
     if ((s != null) && (s.indexOf("#") == 0)) {
@@ -481,7 +455,7 @@ public class Base {
   }
 
 
-  static public void main(String args[]) {
+  public static void main(String args[]) {
 
     // make sure that this is running on java 1.5 or better.
     if (Base.javaVersion < 1.5f) {
@@ -723,16 +697,16 @@ public class Base {
   /**
    * Current platform in use
    */
-  static public Platform platform;
+  public static Platform platform;
 
-  static public Arch arch;
+  public static Arch arch;
 
   /**
    * Current platform in use.
    * <P>
    * Equivalent to System.getProperty("os.name"), just used internally.
    */
-  static public String platformName = System.getProperty("os.name");
+  public static String platformName = System.getProperty("os.name");
 
   static {
     // figure out which operating system
@@ -780,28 +754,28 @@ public class Base {
    * returns true if the ReplicatorG is running on a Mac OS machine,
    * specifically a Mac OS X machine because it doesn't run on OS 9 anymore.
    */
-  static public boolean isMacOS() {
+  public static boolean isMacOS() {
     return platform == Platform.MACOSX;
   }
 
   /**
    * returns true if running on windows.
    */
-  static public boolean isWindows() {
+  public static boolean isWindows() {
     return platform == Platform.WINDOWS;
   }
 
   /**
    * true if running on linux.
    */
-  static public boolean isLinux() {
+  public static boolean isLinux() {
     return platform == Platform.LINUX;
   }
 
-  static public boolean isx86_64() {
+  public static boolean isx86_64() {
     return arch == Arch.x86_64;
   }
-  static public boolean isx86() {
+  public static boolean isx86() {
     return arch == Arch.x86;
   }
 
@@ -809,7 +783,7 @@ public class Base {
    * Registers key events for a Ctrl-W and ESC with an ActionListener that
    * will take care of disposing the window.
    */
-  static public void registerWindowCloseKeys(JRootPane root, // Window
+  public static void registerWindowCloseKeys(JRootPane root, // Window
       // window,
       ActionListener disposer) {
     /*
@@ -835,7 +809,7 @@ public class Base {
    * (because it requires an AppletContext when used as an applet), so it's
    * mildly trickier than just removing this method.
    */
-  static public void openURL(String url) {
+  public static void openURL(String url) {
     // System.out.println("opening url " + url);
     try {
       if (Base.isWindows()) {
@@ -916,7 +890,7 @@ public class Base {
     }
   }
 
-  static public boolean openFolderAvailable() {
+  public static boolean openFolderAvailable() {
     if (Base.isWindows() || Base.isMacOS())
       return true;
 
@@ -955,7 +929,7 @@ public class Base {
    * Implements the other cross-platform headache of opening a folder in the
    * machine's native file browser.
    */
-  static public void openFolder(File file) {
+  public static void openFolder(File file) {
     try {
       String folder = file.getAbsolutePath();
 
@@ -989,7 +963,7 @@ public class Base {
    * "No cookie for you" type messages. Nothing fatal or all that much of a
    * bummer, but something to notify the user about.
    */
-  static public void showMessage(String title, String message) {
+  public static void showMessage(String title, String message) {
     if (notificationHandler == null) {
       notificationHandler = NotificationHandler.Factory.getHandler(null, false);
     }
@@ -999,7 +973,7 @@ public class Base {
   /**
    * Non-fatal error message with optional stack trace side dish.
    */
-  static public void showWarning(String title, String message, Exception e) {
+  public static void showWarning(String title, String message, Exception e) {
     if (notificationHandler == null) {
       notificationHandler = NotificationHandler.Factory.getHandler(null, false);
     }
@@ -1014,7 +988,7 @@ public class Base {
    * error that can't be recovered. Use showWarning() for errors that allow
    * ReplicatorG to continue running.
    */
-  static public void quitWithError(String title, String message, Throwable e) {
+  public static void quitWithError(String title, String message, Throwable e) {
 
     notificationHandler.showError(title, message, e);
 
@@ -1023,12 +997,12 @@ public class Base {
     System.exit(1);
   }
 
-  static public String getContents(String what) {
+  public static String getContents(String what) {
     File appBase = 	Base.getApplicationDirectory();
     return appBase.getAbsolutePath() + File.separator + what;
   }
 
-  static public String getLibContents(String what) {
+  public static String getLibContents(String what) {
     /*
      * On MacOSX, the replicatorg.app-resources property points to the
      * resources directory inside the app bundle. On other platforms it's
@@ -1049,7 +1023,7 @@ public class Base {
    * @param who The component that will use the image
    * @return the loaded image object
    */
-  static public Image getDirectImage(String name, Component who)  {
+  public static Image getDirectImage(String name, Component who)  {
     Image image = null;
 
     // try to get the URL as a system resource
@@ -1064,7 +1038,7 @@ public class Base {
     return image;
   }
 
-  static public BufferedImage getImage(String name, Component who) {
+  public static BufferedImage getImage(String name, Component who) {
     BufferedImage image = null;
 
     // try to get the URL as a system resource
@@ -1089,13 +1063,13 @@ public class Base {
     return image;
   }
 
-  static public InputStream getStream(String filename) throws IOException {
+  public static InputStream getStream(String filename) throws IOException {
     return new FileInputStream(getLibContents(filename));
   }
 
   // ...................................................................
 
-  static public void copyFile(File afile, File bfile) throws IOException {
+  public static void copyFile(File afile, File bfile) throws IOException {
     InputStream from = new BufferedInputStream(new FileInputStream(afile));
     OutputStream to = new BufferedOutputStream(new FileOutputStream(bfile));
     byte[] buffer = new byte[16 * 1024];
@@ -1118,7 +1092,7 @@ public class Base {
   /**
    * Grab the contents of a file as a string.
    */
-  static public String loadFile(File file) throws IOException {
+  public static String loadFile(File file) throws IOException {
     Base.logger.info("Load file : "+file.getAbsolutePath());
     // empty code file.. no worries, might be getting filled up later
     if (file.length() == 0)
@@ -1140,7 +1114,7 @@ public class Base {
   /**
    * Spew the contents of a String object out to a file.
    */
-  static public void saveFile(String str, File file) throws IOException {
+  public static void saveFile(String str, File file) throws IOException {
     Base.logger.info("Saving as "+file.getCanonicalPath());
 
     ByteArrayInputStream bis = new ByteArrayInputStream(str.getBytes());
@@ -1158,7 +1132,7 @@ public class Base {
     writer.close();
   }
 
-  static public void copyDir(File sourceDir, File targetDir)
+  public static void copyDir(File sourceDir, File targetDir)
   throws IOException {
     targetDir.mkdirs();
     String files[] = sourceDir.list();
@@ -1181,11 +1155,11 @@ public class Base {
    * Gets a list of all files within the specified folder, and returns a list
    * of their relative paths. Ignores any files/folders prefixed with a dot.
    */
-  static public String[] listFiles(String path, boolean relative) {
+  public static String[] listFiles(String path, boolean relative) {
     return listFiles(new File(path), relative);
   }
 
-  static public String[] listFiles(File folder, boolean relative) {
+  public static String[] listFiles(File folder, boolean relative) {
     String path = folder.getAbsolutePath();
     Vector<String> vector = new Vector<String>();
     addToFileList(relative ? (path + File.separator) : "", path, vector);
@@ -1218,7 +1192,7 @@ public class Base {
   }
 
   /** Get a reference to the currently selected machine **/
-  static public MachineLoader getMachineLoader() {
+  public static MachineLoader getMachineLoader() {
     if (machineLoader == null) {
       machineLoader = new MachineLoader();
     }
@@ -1230,7 +1204,7 @@ public class Base {
 
   /// Checks global stautus and bot settings to find out if there
   /// is a bot specific setting for this key
-  static public String findDefaultByGlobalStatus(String valueKey, String defaultValue) {
+  public static String findDefaultByGlobalStatus(String valueKey, String defaultValue) {
     MachineInterface mi = getMachineLoader().getMachineInterface();
     DriverQueryInterface qi = mi.getDriverQueryInterface();
 
