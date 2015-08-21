@@ -5,10 +5,6 @@ ReplicatorG
 [![Java Style: Google](https://img.shields.io/badge/java%20style-google-3369e8.svg?style=flat-square)](https://google.github.io/styleguide/javaguide.html)
 [![Issue Stats](http://issuestats.com/github/replicatorg/ReplicatorG/badge/issue?style=flat-square)](http://issuestats.com/github/replicatorg/ReplicatorG) [![Issue Stats](http://issuestats.com/github/replicatorg/ReplicatorG/badge/pr?style=flat-square)](http://issuestats.com/github/replicatorg/ReplicatorG)
 
-## WARNING: HERE BE LAUNDRY-EATING DEMONS!
-## I'm currently porting the old Ant build infrastructure to Gradle, and it *does not build* right now.
-## End of scheduled announcement.
-
 ReplicatorG is an open-source GCode based controller for RepRap / CNC machines.  It has 3 main goals:
 
 1. Be as simple to use, and as easy to install as possible.
