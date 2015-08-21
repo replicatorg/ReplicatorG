@@ -63,7 +63,7 @@ public class XML {
           return kid.getFirstChild().getNodeValue().trim();
       }
 
-      return new String();
+      return "";
     } else
       return null;
   }

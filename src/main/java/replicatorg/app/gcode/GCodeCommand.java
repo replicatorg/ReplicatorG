@@ -1,7 +1,6 @@
 package replicatorg.app.gcode;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +23,7 @@ public class GCodeCommand {
   private String command;
 
   // Parsed out comment
-  private String comment = new String();
+  private String comment = "";
 
   private class gCodeParameter {
     final public char code;
@@ -40,7 +39,7 @@ public class GCodeCommand {
 
   public GCodeCommand(String command) {
     // Copy over the command
-    this.command = new String(command);
+    this.command = command;
 
     // Initialize the present and value tables
     this.parameters = new ArrayList<gCodeParameter>();
@@ -96,11 +95,11 @@ public class GCodeCommand {
 
   public String getCommand() {
     // TODO: Note that this is the command minus any comments.
-    return new String(command);
+    return command;
   }
 
   public String getComment() {
-    return new String(comment);
+    return comment;
   }
 
   public boolean hasCode(char searchCode) {

@@ -577,9 +577,9 @@ public class Base {
     {
       File userDir = getUserDirectory();
       String header = null;
-      if (!userDir.exists()) header = new String("Unable to create user directory");
-      else if (!userDir.canWrite()) header = new String("Unable to write to user directory");
-      else if (!userDir.isDirectory()) header = new String("User directory must be a directory");
+      if (!userDir.exists()) header = "Unable to create user directory";
+      else if (!userDir.canWrite()) header = "Unable to write to user directory";
+      else if (!userDir.isDirectory()) header = "User directory must be a directory";
       if (header != null) {
         Base.showMessage(header,
                          "<html><body>ReplicatorG can not write to the directory "+userDir.getAbsolutePath()+".<br>" +

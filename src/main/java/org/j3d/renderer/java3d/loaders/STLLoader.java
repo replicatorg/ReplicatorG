@@ -183,7 +183,7 @@ public class STLLoader extends LoaderBase {
         bg.addChild( shape );
         String name = names[ i ];
         if( name == null ) {
-          name = new String( "Unknown_" + i );
+          name = "Unknown_" + i;
         }
         scene.addNamedObject( name, shape );
       }
