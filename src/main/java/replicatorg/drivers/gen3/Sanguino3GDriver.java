@@ -2095,7 +2095,6 @@ public class Sanguino3GDriver extends SerialDriver implements
   }
 
   public void setMachineName(String machineName) {
-    machineName = new String(machineName);
     if (machineName.length() > 16) {
       machineName = machineName.substring(0, 16);
     }
