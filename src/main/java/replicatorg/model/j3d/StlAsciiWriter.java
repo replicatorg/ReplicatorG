@@ -33,7 +33,7 @@ public class StlAsciiWriter extends ModelWriter {
     // if (name == null) { name = "Default"; }
     String name = "Default";
 
-    w.printf(l,"solid %s\n", name);
+    w.printf(l,"solid %s%n", name);
     int faces = g.getVertexCount()/3;
     float[] norm = new float[3];
     double[] coord = new double[3];
@@ -42,25 +42,25 @@ public class StlAsciiWriter extends ModelWriter {
       Vector3f norm3f = new Vector3f(norm);
       transform.transform(norm3f);
       norm3f.normalize();
-      w.printf(l,"  facet normal %e %e %e\n", norm3f.x,norm3f.y,norm3f.z);
-      w.printf(l,"    outer loop\n");
+      w.printf(l,"  facet normal %e %e %e%n", norm3f.x,norm3f.y,norm3f.z);
+      w.printf(l,"    outer loop%n");
       Point3d face3d;
       g.getCoordinate(faceIdx*3, coord);
       face3d = new Point3d(coord);
       transform.transform(face3d);
-      w.printf(l,"      vertex %e %e %e\n", face3d.x,face3d.y,face3d.z);
+      w.printf(l,"      vertex %e %e %e%n", face3d.x,face3d.y,face3d.z);
       g.getCoordinate((faceIdx*3)+1, coord);
       face3d = new Point3d(coord);
       transform.transform(face3d);
-      w.printf(l,"      vertex %e %e %e\n", face3d.x,face3d.y,face3d.z);
+      w.printf(l,"      vertex %e %e %e%n", face3d.x,face3d.y,face3d.z);
       g.getCoordinate((faceIdx*3)+2, coord);
       face3d = new Point3d(coord);
       transform.transform(face3d);
-      w.printf(l,"      vertex %e %e %e\n", face3d.x,face3d.y,face3d.z);
-      w.printf(l,"    endloop\n");
-      w.printf(l,"  endfacet\n");
+      w.printf(l,"      vertex %e %e %e%n", face3d.x,face3d.y,face3d.z);
+      w.printf(l,"    endloop%n");
+      w.printf(l,"  endfacet%n");
     }
-    w.printf(l,"endsolid %s\n", name);
+    w.printf(l,"endsolid %s%n", name);
     w.close();
   }
 
