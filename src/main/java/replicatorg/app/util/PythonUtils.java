@@ -223,10 +223,11 @@ public class PythonUtils {
    */
   public static Version checkVersion(String path) {
     ProcessBuilder pb = new ProcessBuilder(path,"-V");
+    BufferedReader reader = null;
     pb.redirectErrorStream(true);
     try {
       Process p = pb.start();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+      reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
       int returnCode = p.waitFor();
       if (returnCode != 0) {
         return null;
@@ -246,6 +247,12 @@ public class PythonUtils {
       }
     } catch (Exception e) {
       Base.logger.log(Level.SEVERE,"Error attempting to detect python",e);
+    } finally {
+      try {
+        reader.close();
+      } catch (IOException e) {
+        Base.logger.log(Level.SEVERE, "Error closing BufferedReader when attempting to detect Python", e);
+      }
     }
     return null;
   }
