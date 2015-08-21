@@ -23,22 +23,20 @@
 
 package replicatorg.drivers;
 
-import java.awt.Color;
-import java.util.EnumSet;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-
-import javax.vecmath.Point3d;
-
 import org.w3c.dom.Node;
-
 import replicatorg.app.Base;
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
+
+import javax.vecmath.Point3d;
+import java.awt.*;
+import java.util.EnumSet;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 
 public class DriverBaseImplementation implements Driver, DriverQueryInterface {
 //	// our gcode parser
@@ -173,7 +171,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface {
 
 
   public boolean hasError() {
-    return (errorList.size() > 0);
+    return (!errorList.isEmpty());
   }
 
   public DriverError getError() {
@@ -182,7 +180,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface {
 
   @Deprecated
   public void checkErrors() throws BuildFailureException {
-    if (errorList.size() > 0) {
+    if (!errorList.isEmpty()) {
       throw new BuildFailureException(getError().getMessage());
     }
   }
