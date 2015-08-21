@@ -1,8 +1,12 @@
 package replicatorg.app.util;
 
-import java.awt.Frame;
+import replicatorg.app.Base;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.TreeSet;
@@ -10,11 +14,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import replicatorg.app.Base;
 
 /**
  * Utilities for detecting python versions and running python apps or scripts from
