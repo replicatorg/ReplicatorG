@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -130,7 +131,7 @@ class ProgressDialog extends JDialog implements ToolpathGenerator.GeneratorListe
    */
   @Override
   public void setVisible(boolean b) {
-    if (b == false) {
+    if (!b) {
       // Alleviate memory leak.
       parentThread = null;
     }
@@ -476,7 +477,7 @@ class ProgressDialog extends JDialog implements ToolpathGenerator.GeneratorListe
           if(showProgress) {
             String j = Integer.toString(layerTotal);
             double completion =  ((double) layerIndex/layerTotal);
-            if((layerIndex>0) && (processName == "")) {
+            if((layerIndex>0) && processName.equals("")) {
               newMessage += " ("+j+" layers)";//
             }
             subProgressBar.setValue((int) (100*completion));
@@ -523,10 +524,10 @@ class ProgressDialog extends JDialog implements ToolpathGenerator.GeneratorListe
               subProgressBar.setIndeterminate(false);
             }
           }
-          if(logIt==true)
+          if(logIt)
             Base.logger.info(newMessage);
 
-          if (showIt ==true)
+          if (showIt)
             progressLabel.setText(newMessage);
 
 
