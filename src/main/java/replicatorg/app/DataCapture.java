@@ -1,12 +1,12 @@
 package replicatorg.app;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
 import replicatorg.machine.MachineListener;
 import replicatorg.machine.MachineProgressEvent;
 import replicatorg.machine.MachineStateChangeEvent;
 import replicatorg.machine.MachineToolStatusEvent;
+
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 /**
@@ -37,7 +37,7 @@ public class DataCapture implements MachineListener {
   *  apppends the string to our log file
   * @message logfile string, please pass JSON dicts only
   */
-  public void WriteMessage(String message) {
+  public void writeMessage(String message) {
     try {
       outFile.write(message + "\n");
       outFile.flush();
@@ -69,14 +69,14 @@ public class DataCapture implements MachineListener {
   */
   @Override
   public void toolStatusChanged(MachineToolStatusEvent event) {
-    WriteMessage(
+    writeMessage(
       "{"
-      + jsonString("time", event.getDateString())
-      + ", " + jsonString("tool_index", event.getTool().getIndex())
-      + ", " + jsonString("bed_temp", event.getTool().getPlatformCurrentTemperature())
-      + ", " + jsonString("ext_temp", event.getTool().getCurrentTemperature())
-      + "}"
-      + "\n"
+        + jsonString("time", event.getDateString())
+        + ", " + jsonString("tool_index", event.getTool().getIndex())
+        + ", " + jsonString("bed_temp", event.getTool().getPlatformCurrentTemperature())
+        + ", " + jsonString("ext_temp", event.getTool().getCurrentTemperature())
+        + "}"
+        + "\n"
     );
 
   }

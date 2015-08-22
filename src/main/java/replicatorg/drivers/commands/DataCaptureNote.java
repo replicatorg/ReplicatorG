@@ -23,7 +23,7 @@ public class DataCaptureNote implements DriverCommand {
   public void run(Driver driver) throws RetryException, StopException {
     Base.logger.info("writing message to data capture: " + message);
     if(Base.capture != null)
-      Base.capture.WriteMessage(message);
+      Base.capture.writeMessage(message);
     else
       Base.logger.severe("trying to write a log message to nonexistant log file");
   }
