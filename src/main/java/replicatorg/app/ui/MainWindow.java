@@ -3348,7 +3348,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
   boolean canVerifyDeviceType(String targetPort) {
     Vector<Name> names = Serial.scanSerialNames();
     for (Name n : names) {
-      if( n.getName() == targetPort && n.isVerified() == true )
+      if(n.getName().equals(targetPort) && n.isVerified())
         return true;
     }
     return false;
@@ -3358,7 +3358,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
   boolean connectionVerified(String targetPort, String machineName) {
     Vector<Name> names = Serial.scanSerialNames();
     for (Name n : names) {
-      if( n.getName() == targetPort) {
+      if(n.getName().equals(targetPort)) {
         return n.isValidConnectorForMachineName(machineName);
       }
     }
