@@ -1,6 +1,36 @@
 package replicatorg.app.ui.controlpanel;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+
 import net.miginfocom.swing.MigLayout;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -14,23 +44,12 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeTableXYDataset;
+
 import replicatorg.app.Base;
 import replicatorg.app.ui.CallbackTextField;
 import replicatorg.drivers.commands.DriverCommand.AxialDirection;
 import replicatorg.machine.MachineInterface;
 import replicatorg.machine.model.ToolModel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ExtruderPanel extends JPanel {
   private final MachineInterface machine;
@@ -239,7 +258,7 @@ public class ExtruderPanel extends JPanel {
       // Due to current implementation issues, we need to send the PWM
       // before the RPM for a stepper motor. Thus we display both controls in these
       // cases. This shouldn't be necessary for a Gen4 stepper extruder. (it's not!)
-      if ((tool.getMotorStepperAxisName().equals("")) &&
+      if ((tool.getMotorStepperAxisName() == "") &&
           !(tool.motorHasEncoder() || tool.motorIsStepper())) {
         // our motor speed vars
         JLabel label = makeLabel("Motor Speed (PWM)");
@@ -278,6 +297,7 @@ public class ExtruderPanel extends JPanel {
         panel.add(label, "");
         panel.add(field,"wrap");
 
+        if (tool.getMotorStepperAxisName() != "") {
           label = makeLabel("Extrude duration");
 
           JComboBox timeList = new JComboBox(extrudeTimeStrings);
@@ -812,7 +832,7 @@ public class ExtruderPanel extends JPanel {
     /* Handle stepper extruder commands */
     if (actionName.equals("forward")) {
 
-      if (!tool.getMotorStepperAxisName().equals("")) {
+      if (tool.getMotorStepperAxisName() != "") {
         machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(AxialDirection.CLOCKWISE,toolhead));
         // Reverted to one single command for RepRap5D driver
         if (machine.getDriver().getDriverName().equals("RepRap5D")) {
@@ -827,7 +847,7 @@ public class ExtruderPanel extends JPanel {
         }
       }
     } else if (actionName.equals("reverse")) {
-      if (!tool.getMotorStepperAxisName().equals("")) {
+      if (tool.getMotorStepperAxisName() != "") {
         machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(AxialDirection.COUNTERCLOCKWISE,toolhead));
         // Reverted to one single command for RepRap5D driver
         if (machine.getDriver().getDriverName().equals("RepRap5D")) {
@@ -844,7 +864,7 @@ public class ExtruderPanel extends JPanel {
     } else if (actionName.equals("stop")) {
       machine.runCommand(new replicatorg.drivers.commands.DisableMotor(toolhead));
 
-      if (!tool.getMotorStepperAxisName().equals("")) {
+      if (tool.getMotorStepperAxisName() != "") {
         machine.stopMotion();
       }
     }
