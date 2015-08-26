@@ -179,7 +179,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
 
   static final String MODEL_TAB_KEY = "MODEL";
   static final String GCODE_TAB_KEY = "GCODE";
-  // p5 icon for the window
+
   Image icon;
 
   MachineLoader machineLoader;
@@ -969,6 +969,15 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
         dialog.setResizable(true); // since the list is long, make the dialog resizeable
         dialog.setVisible(true);
         dialog.dispose();
+      }
+    });
+    menu.add(item);
+
+    item = new JMenuItem("About ReplicatorG");
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        handleAbout();
       }
     });
     menu.add(item);
@@ -1809,27 +1818,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
         String version = Base.VERSION_NAME;
         Rectangle2D r = fm.getStringBounds(version,g);
         g.drawString(version, (int)(364-r.getWidth()), (int)(95-r.getMinY()));
-
-        AttributedString text = new AttributedString("\u00a9 2008, 2009, 2010 by Zach Smith, Adam Mayer, and numerous contributors. " +
-            "See Contributors.txt for a full list.  \n\r" +
-            "This program is free software; you can redistribute it and/or modify "+
-            "it under the terms of the GNU General Public License as published by "+
-            "the Free Software Foundation; either version 2 of the License, or "+
-            "(at your option) any later version.");
-        AttributedCharacterIterator iterator = text.getIterator();
-        FontRenderContext frc = g2.getFontRenderContext();
-        LineBreakMeasurer measurer = new LineBreakMeasurer(text.getIterator(), frc);
-        measurer.setPosition(iterator.getBeginIndex());
-        final int margins = 32;
-        float wrappingWidth = image.getWidth(this) - (margins*2);
-        float x = margins;
-        float y = 140;
-        while (measurer.getPosition() < iterator.getEndIndex()) {
-          TextLayout layout = measurer.nextLayout(wrappingWidth);
-          y += (layout.getAscent());
-          layout.draw(g2, x, y);
-          y += layout.getDescent() + layout.getLeading();
-        }
       }
     };
     window.addMouseListener(new MouseAdapter() {
