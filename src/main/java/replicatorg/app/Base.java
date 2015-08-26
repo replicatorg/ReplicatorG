@@ -692,7 +692,7 @@ public class Base {
    * this to be a float because there's no good way to specify a double with
    * the preproc.
    */
-  public static final float javaVersion = new Float(javaVersionName.substring(0, 3)).floatValue();
+  public static final float javaVersion = Float.parseFloat(javaVersionName.substring(0, 3));
 
   /**
    * Current platform in use
@@ -712,7 +712,7 @@ public class Base {
     // figure out which operating system
     // this has to be first, since editor needs to know
 
-    if (platformName.toLowerCase().indexOf("mac") != -1) {
+    if (platformName.toLowerCase().contains("mac")) {
       // can only check this property if running on a mac
       // on a pc it throws a security exception and kills the applet
       // (but on the mac it does just fine)
@@ -724,7 +724,7 @@ public class Base {
     } else {
       String osname = System.getProperty("os.name");
 
-      if (osname.indexOf("Windows") != -1) {
+      if (osname.contains("Windows")) {
         platform = Platform.WINDOWS;
 
       } else if (osname.equals("Linux")) { // true for the ibm vm
@@ -858,11 +858,11 @@ public class Base {
           if (url.indexOf(' ') != -1) {
             StringBuffer sb = new StringBuffer();
             char c[] = url.toCharArray();
-            for (int i = 0; i < c.length; i++) {
-              if (c[i] == ' ') {
+            for (char ch : c) {
+              if (ch == ' ') {
                 sb.append("%20");
               } else {
-                sb.append(c[i]);
+                sb.append(ch);
               }
             }
             url = sb.toString();
@@ -1055,10 +1055,6 @@ public class Base {
       image = img2;
     } catch (InterruptedException e) {
       Base.logger.log(Level.FINE, "Could not load image: "+name, e);
-    } catch (IOException ioe) {
-      Base.logger.log(Level.FINE, "Could not load image: "+name, ioe);
-    } catch (IllegalArgumentException iae) {
-      Base.logger.log(Level.FINE, "Could not load image: "+name, iae);
     }
     return image;
   }
