@@ -3,23 +3,22 @@
   */
 package replicatorg.app.ui.onboard;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.Color;
-import java.text.NumberFormat;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Arrays;
-
-import java.util.prefs.BackingStoreException;
-import javax.swing.*;
-import javax.swing.text.InternationalFormatter;
-
 import net.miginfocom.swing.MigLayout;
 import replicatorg.app.Base;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.OnboardParameters;
 import replicatorg.machine.model.AxisId;
+
+import javax.swing.*;
+import javax.swing.text.InternationalFormatter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.prefs.BackingStoreException;
 
 /**
  * A panel for editing the options stored onboard a machine.
@@ -32,7 +31,7 @@ public class MachineOnboardParameters extends JPanel {
   private final Driver driver;
   private final JFrame parent;
   private final JTabbedPane subTabs;
-  private final MachineOnboardAccelerationParameters accelUI;
+  private transient final MachineOnboardAccelerationParameters accelUI;
 
   private boolean isMightyBoard = false;
   private boolean isSailfish = false;
