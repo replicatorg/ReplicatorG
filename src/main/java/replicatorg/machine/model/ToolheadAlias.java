@@ -18,8 +18,8 @@ public enum ToolheadAlias {
   public final String recallOffsetCmd; // recall command (gcode command)
 
   // These can be overridden in some cases. Beware!
-  protected String guiName;		/// Toolhead GUI name
-  protected String axis;			/// If we use this to override an aixs, this indicates which one
+  public String guiName;		/// Toolhead GUI name
+  public String axis;			/// If we use this to override an aixs, this indicates which one
 
   /// standard constructor.
   private ToolheadAlias(int n, String guiName, String axis, String tcodeName, String pcodeName,
