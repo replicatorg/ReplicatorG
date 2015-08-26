@@ -855,17 +855,8 @@ public class Base {
           // can't just use URLEncoder, since that makes slashes into
           // %2F characters, which is no good. some might say
           // "useless"
-          if (url.indexOf(' ') != -1) {
-            StringBuffer sb = new StringBuffer();
-            char c[] = url.toCharArray();
-            for (char ch : c) {
-              if (ch == ' ') {
-                sb.append("%20");
-              } else {
-                sb.append(ch);
-              }
-            }
-            url = sb.toString();
+          if (url.contains(" ")) {
+            url = url.replaceAll(" ", "%20");
           }
         }
         com.apple.mrj.MRJFileUtils.openURL(url);
@@ -1136,15 +1127,15 @@ public class Base {
   throws IOException {
     targetDir.mkdirs();
     String files[] = sourceDir.list();
-    for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || files[i].equals(".."))
+    for (String file : files) {
+      if (file.equals(".") || file.equals(".."))
         continue;
-      File source = new File(sourceDir, files[i]);
-      File target = new File(targetDir, files[i]);
+
+      File source = new File(sourceDir, file);
+      File target = new File(targetDir, file);
       if (source.isDirectory()) {
-        // target.mkdirs();
         copyDir(source, target);
-        target.setLastModified(source.lastModified());
+        target.setLastModified(source.lastModified()); // fix the mod time since we didn't *really* change it. TODO: should this be this way?
       } else {
         copyFile(source, target);
       }
