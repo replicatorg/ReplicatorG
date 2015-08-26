@@ -2,6 +2,7 @@ ReplicatorG
 ===========
 
 [![Join the chat at https://gitter.im/replicatorg/ReplicatorG](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/replicatorg/ReplicatorG?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/replicatorg/ReplicatorG.svg?branch=master)](https://travis-ci.org/replicatorg/ReplicatorG)
 [![Java Style: Google](https://img.shields.io/badge/java%20style-google-3369e8.svg?style=flat-square)](https://google.github.io/styleguide/javaguide.html)
 [![Issue Stats](http://issuestats.com/github/replicatorg/ReplicatorG/badge/issue?style=flat-square)](http://issuestats.com/github/replicatorg/ReplicatorG) [![Issue Stats](http://issuestats.com/github/replicatorg/ReplicatorG/badge/pr?style=flat-square)](http://issuestats.com/github/replicatorg/ReplicatorG)
 
