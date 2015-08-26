@@ -6,7 +6,6 @@ plugins {
 
 findbugs {
   ignoreFailures = true
-  reportLevel = 'low'
 }
 
 repositories {
