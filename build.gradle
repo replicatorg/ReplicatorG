@@ -4,6 +4,11 @@ plugins {
   id 'findbugs'
 }
 
+findbugs {
+  ignoreFailures = true
+  reportLevel = 'low'
+}
+
 repositories {
   mavenCentral()
 }
