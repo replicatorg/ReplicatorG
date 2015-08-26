@@ -27,29 +27,54 @@
 
 package replicatorg.app.ui;
 
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import com.apple.mrj.*;
+import net.iharder.dnd.FileDrop;
+import net.miginfocom.swing.MigLayout;
+import replicatorg.app.Base;
+import replicatorg.app.Base.InitialOpenBehavior;
+import replicatorg.app.MRUList;
+import replicatorg.app.gcode.GCodeEnumeration;
+import replicatorg.app.gcode.MutableGCodeSource;
+import replicatorg.app.syntax.*;
+import replicatorg.app.ui.controlpanel.ControlPanelWindow;
+import replicatorg.app.ui.modeling.EditingModel;
+import replicatorg.app.ui.modeling.PreviewPanel;
+import replicatorg.app.ui.onboard.OnboardParametersWindow;
+import replicatorg.app.util.PythonUtils;
+import replicatorg.app.util.StreamLoggerThread;
+import replicatorg.app.util.SwingPythonSelector;
+import replicatorg.app.util.serial.Name;
+import replicatorg.app.util.serial.Serial;
+import replicatorg.drivers.*;
+import replicatorg.machine.*;
+import replicatorg.machine.model.BuildVolume;
+import replicatorg.machine.model.MachineType;
+import replicatorg.machine.model.ToolheadAlias;
+import replicatorg.model.*;
+import replicatorg.plugin.toolpath.ToolpathGenerator;
+import replicatorg.plugin.toolpath.ToolpathGenerator.GeneratorEvent;
+import replicatorg.plugin.toolpath.ToolpathGeneratorFactory;
+import replicatorg.plugin.toolpath.ToolpathGeneratorFactory.ToolpathGeneratorDescriptor;
+import replicatorg.plugin.toolpath.ToolpathGeneratorThread;
+import replicatorg.plugin.toolpath.miraclegrue.MiracleGrueGenerator;
+import replicatorg.plugin.toolpath.miraclegrue.MiracleGruePostProcessor;
+import replicatorg.plugin.toolpath.skeinforge.SkeinforgeGenerator;
+import replicatorg.plugin.toolpath.skeinforge.SkeinforgePostProcessor;
+import replicatorg.uploader.FirmwareUploader;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.text.BadLocationException;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.CompoundEdit;
+import javax.swing.undo.UndoManager;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
@@ -61,109 +86,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ButtonGroup;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.text.BadLocationException;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-import javax.swing.undo.CompoundEdit;
-import javax.swing.undo.UndoManager;
-
-import net.iharder.dnd.FileDrop;
-import net.miginfocom.swing.MigLayout;
-import replicatorg.app.Base;
-import replicatorg.app.Base.InitialOpenBehavior;
-import replicatorg.app.MRUList;
-import replicatorg.app.gcode.GCodeEnumeration;
-import replicatorg.app.gcode.MutableGCodeSource;
-import replicatorg.app.syntax.JEditTextArea;
-import replicatorg.app.syntax.PdeKeywords;
-import replicatorg.app.syntax.PdeTextAreaDefaults;
-import replicatorg.app.syntax.SyntaxDocument;
-import replicatorg.app.syntax.TextAreaPainter;
-import replicatorg.app.ui.controlpanel.ControlPanelWindow;
-import replicatorg.app.ui.modeling.EditingModel;
-import replicatorg.app.ui.modeling.PreviewPanel;
-import replicatorg.app.ui.onboard.OnboardParametersWindow;
-import replicatorg.app.util.PythonUtils;
-import replicatorg.app.util.StreamLoggerThread;
-import replicatorg.app.util.SwingPythonSelector;
-import replicatorg.app.util.serial.Name;
-import replicatorg.app.util.serial.Serial;
-import replicatorg.drivers.Driver;
-import replicatorg.drivers.EstimationDriver;
-import replicatorg.drivers.MultiTool;
-import replicatorg.drivers.OnboardParameters;
-import replicatorg.drivers.RealtimeControl;
-import replicatorg.drivers.SDCardCapture;
-import replicatorg.machine.MachineFactory;
-import replicatorg.machine.MachineInterface;
-import replicatorg.machine.MachineListener;
-import replicatorg.machine.MachineLoader;
-import replicatorg.machine.MachineProgressEvent;
-import replicatorg.machine.MachineState;
-import replicatorg.machine.MachineStateChangeEvent;
-import replicatorg.machine.MachineToolStatusEvent;
-import replicatorg.machine.model.BuildVolume;
-import replicatorg.machine.model.MachineType;
-import replicatorg.machine.model.ToolheadAlias;
-import replicatorg.model.Build;
-import replicatorg.model.BuildCode;
-import replicatorg.model.BuildElement;
-import replicatorg.model.BuildModel;
-import replicatorg.model.JEditTextAreaSource;
-import replicatorg.plugin.toolpath.ToolpathGenerator;
-import replicatorg.plugin.toolpath.ToolpathGenerator.GeneratorEvent;
-import replicatorg.plugin.toolpath.ToolpathGeneratorFactory;
-import replicatorg.plugin.toolpath.ToolpathGenerator.GeneratorListener.Completion;
-import replicatorg.plugin.toolpath.ToolpathGeneratorFactory.ToolpathGeneratorDescriptor;
-import replicatorg.plugin.toolpath.ToolpathGeneratorThread;
-import replicatorg.plugin.toolpath.skeinforge.SkeinforgeGenerator;
-import replicatorg.plugin.toolpath.skeinforge.SkeinforgePostProcessor;
-import replicatorg.plugin.toolpath.miraclegrue.MiracleGrueGenerator;
-import replicatorg.plugin.toolpath.miraclegrue.MiracleGruePostProcessor;
-import replicatorg.uploader.FirmwareUploader;
-
-import com.apple.mrj.MRJAboutHandler;
-import com.apple.mrj.MRJApplicationUtils;
-import com.apple.mrj.MRJOpenDocumentHandler;
-import com.apple.mrj.MRJPrefsHandler;
-import com.apple.mrj.MRJQuitHandler;
 
 public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandler,
   MRJPrefsHandler, MRJOpenDocumentHandler,
@@ -940,7 +868,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
       @Override
       public void actionPerformed(ActionEvent arg0) {
         // open up the local copy of replicat.org
-        if(java.awt.Desktop.isDesktopSupported()) {
+        if (java.awt.Desktop.isDesktopSupported()) {
           try {
             File toOpen = Base.getApplicationFile("docs/replicat.org/index.html");
             URI uri = toOpen.toURI();
@@ -961,7 +889,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
         Object[] codes = GCodeEnumeration.getDocumentation().toArray();
         JScrollPane displayPane = new JScrollPane(new JList(codes));
         JOptionPane pane = new JOptionPane(displayPane, JOptionPane.PLAIN_MESSAGE,
-                                           JOptionPane.DEFAULT_OPTION, null, null, null);
+          JOptionPane.DEFAULT_OPTION, null, null, null);
         pane.setInitialValue(null);
         pane.setComponentOrientation(MainWindow.this.getComponentOrientation());
         JDialog dialog = pane.createDialog(MainWindow.this, "Supported GCodes");
@@ -1813,11 +1741,32 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
                             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         g.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        g.setColor(Color.black);
+        g.setColor(Color.white);
         FontMetrics fm = g.getFontMetrics();
         String version = Base.VERSION_NAME;
         Rectangle2D r = fm.getStringBounds(version,g);
         g.drawString(version, (int)(364-r.getWidth()), (int)(95-r.getMinY()));
+
+        AttributedString text = new AttributedString("\u00a9 2008, 2009, 2010 by Zach Smith, Adam Mayer, and numerous contributors. " +
+          "See Contributors.txt for a full list.  \n\r" +
+          "This program is free software; you can redistribute it and/or modify "+
+          "it under the terms of the GNU General Public License as published by "+
+          "the Free Software Foundation; either version 2 of the License, or "+
+          "(at your option) any later version.");
+        AttributedCharacterIterator iterator = text.getIterator();
+        FontRenderContext frc = g2.getFontRenderContext();
+        LineBreakMeasurer measurer = new LineBreakMeasurer(text.getIterator(), frc);
+        measurer.setPosition(iterator.getBeginIndex());
+        final int margins = 32;
+        float wrappingWidth = image.getWidth(this) - (margins*2);
+        float x = margins;
+        float y = 155;
+        while (measurer.getPosition() < iterator.getEndIndex()) {
+          TextLayout layout = measurer.nextLayout(wrappingWidth);
+          y += (layout.getAscent());
+          layout.draw(g2, x, y);
+          y += layout.getDescent() + layout.getLeading();
+        }
       }
     };
     window.addMouseListener(new MouseAdapter() {
@@ -3443,8 +3392,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler, MRJQuitHandle
 
   /** Function called automatically when new gcode generation completes
    *  does post-processing for newly created gcode
-   * @param completion
-   * @param details
+   * @param evt
    */
   @Override
   public void generationComplete(GeneratorEvent evt) {
